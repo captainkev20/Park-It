@@ -1,4 +1,4 @@
-package com.example.kevinwalker.parkit;
+package com.example.kevinwalker.parkit.badges;
 
 import android.widget.EditText;
 import android.widget.ImageView;

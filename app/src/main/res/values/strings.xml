@@ -1,3 +1,35 @@
 <resources>
     <string name="app_name">Park It</string>
+    <string name="cost">Cost</string>
+    <string name="last_updated">Last Updated: </string>
+    <string name="surface">Surface: </string>
+    <string name="payment_type">Payment Type: </string>
+    <string name="distance">Distance: </string>
+    <string name="park_button">PARK</string>
+    <string name="rating">Rating: </string>
+    <string name="name">Name: </string>
+    <string name="score">Score: </string>
+    <string name="vehicle">Vehicle: </string>
+    <string name="license">License: </string>
+    <string name="address">Address: </string>
+    <string name="score_placeholder">000099</string>
+    <string name="badges">Badges: </string>
+    <string name="btn_park_status">Park Status: </string>
+
+
+
+    <string name="name_on_card">Name on Card: </string>
+    <string name="card_num">Card Number: </string>
+    <string name="cvv">CVV: </string>
+    <string name="expiration_date">Expiration Date: </string>
+    <string name="zip">Zip: </string>
+
+    <string name="btn_save">SAVE </string>
+    <string name="btn_cancel">CANCEL </string>
+
+
+
+
+
+
 </resources>

@@ -1,4 +1,4 @@
-package com.example.kevinwalker.parkit;
+package com.example.kevinwalker.parkit.spot;
 
 /**
  * Created by kevinwalker on 3/19/18.

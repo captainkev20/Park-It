@@ -1,4 +1,4 @@
-package com.example.kevinwalker.parkit;
+package com.example.kevinwalker.parkit.users;
 
 import android.widget.EditText;
 
