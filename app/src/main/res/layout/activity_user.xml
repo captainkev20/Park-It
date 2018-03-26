@@ -8,19 +8,19 @@
 
     <android.support.v7.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="120dp"
+        android:layout_height="218dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:cardBackgroundColor="@android:color/darker_gray"
+        app:cardBackgroundColor="#20B2AA	"
         app:cardElevation="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.413">
+        app:layout_constraintVertical_bias="0.305">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -28,11 +28,12 @@
 
             <TextView
                 android:id="@+id/txt_score_placeholder"
-                android:layout_width="73dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                android:layout_marginTop="12dp"
+                android:layout_marginTop="20dp"
                 android:text="@string/score_placeholder"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
@@ -41,6 +42,7 @@
 
             <TextView
                 android:id="@+id/txt_badges"
+                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -56,6 +58,7 @@
 
             <TextView
                 android:id="@+id/txt_score"
+                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -65,9 +68,10 @@
                 android:text="@string/score"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.317" />
+                app:layout_constraintVertical_bias="0.506" />
         </android.support.constraint.ConstraintLayout>
     </android.support.v7.widget.CardView>
 
@@ -78,7 +82,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        app:cardBackgroundColor="@android:color/darker_gray"
+        app:cardBackgroundColor="#20B2AA	"
         app:cardElevation="14dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,12 +97,14 @@
 
             <TextView
                 android:id="@+id/txt_name"
-                android:layout_width="52dp"
-                android:layout_height="29dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="sans-serif"
                 android:text="@string/name"
                 android:textColor="@android:color/white"
                 android:textSize="18sp"
@@ -128,8 +134,9 @@
 
             <TextView
                 android:id="@+id/txt_rating"
-                android:layout_width="53dp"
-                android:layout_height="24dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
@@ -146,21 +153,21 @@
     </android.support.v7.widget.CardView>
 
     <android.support.v7.widget.CardView
-        android:layout_width="368dp"
-        android:layout_height="126dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:clipChildren="false"
         android:clipToPadding="false"
-        app:cardBackgroundColor="@android:color/darker_gray"
+        app:cardBackgroundColor="#20B2AA	"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.853">
+        app:layout_constraintVertical_bias="0.893">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -168,8 +175,9 @@
 
             <TextView
                 android:id="@+id/txt_address"
-                android:layout_width="73dp"
-                android:layout_height="26dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:text="@string/address"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -179,8 +187,9 @@
 
             <TextView
                 android:id="@+id/txt_license"
-                android:layout_width="73dp"
-                android:layout_height="25dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="48dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="16dp"
@@ -195,8 +204,9 @@
 
             <TextView
                 android:id="@+id/txt_vehicle"
-                android:layout_width="73dp"
-                android:layout_height="25dp"
+                style="@style/CustomText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="16dp"
