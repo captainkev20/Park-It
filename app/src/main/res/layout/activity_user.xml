@@ -28,7 +28,6 @@
 
             <TextView
                 android:id="@+id/txt_score_placeholder"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_marginEnd="8dp"
@@ -42,7 +41,6 @@
 
             <TextView
                 android:id="@+id/txt_badges"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -58,7 +56,6 @@
 
             <TextView
                 android:id="@+id/txt_score"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -97,7 +94,6 @@
 
             <TextView
                 android:id="@+id/txt_name"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -134,7 +130,6 @@
 
             <TextView
                 android:id="@+id/txt_rating"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -175,7 +170,6 @@
 
             <TextView
                 android:id="@+id/txt_address"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -187,7 +181,6 @@
 
             <TextView
                 android:id="@+id/txt_license"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="48dp"
@@ -204,7 +197,6 @@
 
             <TextView
                 android:id="@+id/txt_vehicle"
-                style="@style/CustomText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
