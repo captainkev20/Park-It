@@ -17,7 +17,6 @@
     <string name="btn_park_status">Park Status: </string>
 
 
-
     <string name="name_on_card">Name on Card: </string>
     <string name="card_num">Card Number: </string>
     <string name="cvv">CVV: </string>
@@ -26,10 +25,7 @@
 
     <string name="btn_save">SAVE </string>
     <string name="btn_cancel">CANCEL </string>
-
-
-
-
+    <string name="title_activity_maps">Map</string>
 
 
 </resources>
