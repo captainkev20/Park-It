@@ -14,10 +14,21 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <!--<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAn7kfl181phm9DgmEpUsajwJGzdw1Pj0k"/>-->
+        <meta-data
+            android:name="https://www.googleapis.com/geolocation/v1/geolocate"
+            android:value="AIzaSyBwa3wtP3D0QOpX36GMWQexdGRB8v1bwR0"/>
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyBwa3wtP3D0QOpX36GMWQexdGRB8v1bwR0"/>
         <activity android:name=".users.User">
 
         </activity>
         <activity android:name=".spot.Spot">
+
+        </activity>
+
+        <activity android:name=".MapsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
