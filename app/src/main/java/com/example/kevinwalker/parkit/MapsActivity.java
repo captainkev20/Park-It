@@ -2,6 +2,8 @@ package com.example.kevinwalker.parkit;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.support.annotation.NonNull;
@@ -9,6 +11,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -21,6 +24,11 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import android.location.Address;
+
+
+import java.io.IOException;
+import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
 
@@ -28,6 +36,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
+    private static final String TAG = "You are here";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +55,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     .build();
         }
 
+        Log.i(TAG, "onCreate");
+
+
     }
 
     @Override
@@ -53,6 +65,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onStart();
 
         mGoogleApiClient.connect();
+        Log.i(TAG, "onStart");
     }
 
     @Override
@@ -62,9 +75,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+
+        Log.i(TAG, "onStop");
     }
 
     private void setUpMap() {
+        // Verify fine location has been granted. If not, request permission,
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
@@ -78,11 +94,46 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
 
             if (mLastLocation != null) {
+                // Gets Lat and Long
                 LatLng currentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+                // Puts marker on the map by calling UDF and passing in location
+                placeMarkerOnMap(currentLocation);
+                // Sets zoom level
                 mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
             }
         }
 
+    }
+
+    protected void placeMarkerOnMap(LatLng location) {
+        MarkerOptions markerOptions = new MarkerOptions().position(location);
+
+        String titleStr = getAddress(location);
+        markerOptions.title(titleStr);
+
+        mMap.addMarker(markerOptions);
+    }
+
+    private String getAddress(LatLng latLng) {
+
+        Geocoder geocoder = new Geocoder(this);
+        String addressText = "";
+        List<Address> addresses = null;
+        Address address = null;
+        try {
+
+            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude,1);
+
+            if (null != addresses && !addresses.isEmpty()) {
+                address = addresses.get(0);
+                for (int i =0; i< address.getMaxAddressLineIndex(); i++) {
+                    addressText += (i ==0)?address.getAddressLine(i):("/n" + address.getAddressLine(i));
+                }
+            }
+        } catch (IOException e) {
+
+        }
+        return  addressText;
     }
 
 
