@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -38,6 +39,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Location mLastLocation;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
     private static final String TAG = "You are here";
+
+    // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +61,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
 
         Log.i(TAG, "onCreate");
-
 
     }
 
@@ -120,6 +122,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(markerOptions);
     }
 
+    // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
+    protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor) {
+        MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(latLng);
+                markerOptions.icon(bitmapDescriptor);
+                markerOptions.title(title);
+
+                mMap.addMarker(markerOptions);
+    }
+
+    // TODO: Fix this - Geocoder not working correctly
     private String getAddress(LatLng latLng) {
 
         Geocoder geocoder = new Geocoder(this);
@@ -165,6 +178,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
 
@@ -185,6 +199,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // TODO: Clear 'GPS unavailable' notification
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         setUpMap();
@@ -195,11 +210,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     }
 
+    // TODO: Notify user that their GPS is unavailable
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
 
+    // TODO: Pull information from Marker; display to user
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
