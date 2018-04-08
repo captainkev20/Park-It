@@ -6,39 +6,42 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationAvailability;
+import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import android.location.Address;
-
-
+import android.widget.Toast;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.List;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
 
+    private static final String TAG = "MapActivity";
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private Boolean mLoationPermissionStatus = false;
     private GoogleMap mMap;
-    private GoogleApiClient mGoogleApiClient;
-    private Location mLastLocation;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1;
-    private static final String TAG = "You are here";
+    private FusedLocationProviderClient mFusedLocationProviderClient;
+    private static final float DEFAULT_ZOOM = 15f;
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -46,113 +49,138 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.map);
-        mapFragment.getMapAsync(this);
 
-        // Create Google Play connection if possible
-        if (mGoogleApiClient == null) {
-            mGoogleApiClient = new GoogleApiClient.Builder(this)
-                    .addConnectionCallbacks(this)
-                    .addOnConnectionFailedListener(this)
-                    .addApi(LocationServices.API)
-                    .build();
+        getLocationPermission();
+    }
+
+    private void initMap() {
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+        mapFragment.getMapAsync(MapsActivity.this);
+    }
+
+    private void getLocationPermission() {
+        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
+
+        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            mLoationPermissionStatus = true;
+            initMap();
+        } else {
+            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
+    }
 
-        Log.i(TAG, "onCreate");
+    private void moveCamera(LatLng latLng, float zoom, String title) {
+        Log.d(TAG, "Moving camera to: ");
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+    }
 
+    private void getDeviceLocation() {
+        Log.d(TAG, "Get Device Location");
+
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
+        try {
+            if (mLoationPermissionStatus) {
+                final Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()) {
+                            Log.d(TAG, "Found location");
+                            Location currentLocation = (Location) task.getResult();
+
+                            /*moveCamera(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()),
+                                    DEFAULT_ZOOM, "My Location" );
+
+                            placeMarkerOnMap(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));*/
+
+                            getAddress(new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude()));
+
+                        } else {
+                            Log.d(TAG, "location is null");
+                            Toast.makeText(MapsActivity.this, "unable to find", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        }catch (SecurityException e) {
+            Log.e(TAG, "Security issue");
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        mLoationPermissionStatus = false;
+
+        switch(requestCode) {
+            case LOCATION_PERMISSION_REQUEST_CODE: {
+                if(grantResults.length > 0) {
+                    for(int i = 0; i < grantResults.length; i++) {
+                        if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
+
+                            mLoationPermissionStatus = false;
+                            return;
+                        }
+                    }
+                    mLoationPermissionStatus = true;
+                    initMap();
+                }
+            }
+        }
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        // Creates connection to Google Play services
-        mGoogleApiClient.connect();
-        Log.i(TAG, "onStart");
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-        // Close connection if not null and connected
-        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
-
-        Log.i(TAG, "onStop");
-    }
-
-    private void setUpMap() {
-        // Verify fine location has been granted. If not, request permission,
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-            return;
-        }
-
-        mMap.setMyLocationEnabled(true);
-
-        // Determines if you can get location data for device
-        LocationAvailability locationAvailability = LocationServices.FusedLocationApi.getLocationAvailability(mGoogleApiClient);
-        if (null != locationAvailability && locationAvailability.isLocationAvailable()) {
-            // Gives last known location
-            mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-            if (mLastLocation != null) {
-                // Gets Lat and Long
-                LatLng currentLocation = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-                // Puts marker on the map by calling UDF and passing in location
-                placeMarkerOnMap(currentLocation);
-                // Sets zoom level
-                mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(currentLocation, 12));
-            }
-        }
-
     }
 
     protected void placeMarkerOnMap(LatLng location) {
-        MarkerOptions markerOptions = new MarkerOptions().position(location);
+        Marker marker = mMap.addMarker(new MarkerOptions().position(location).title("Current Location"));
 
-        String titleStr = getAddress(location);
-        markerOptions.title(titleStr);
+        // Always shows marker window
+        marker.showInfoWindow();
+    }
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
-        mMap.addMarker(markerOptions);
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor) {
-        MarkerOptions markerOptions = new MarkerOptions();
-                markerOptions.position(latLng);
-                markerOptions.icon(bitmapDescriptor);
-                markerOptions.title(title);
 
-                mMap.addMarker(markerOptions);
     }
 
     // TODO: Fix this - Geocoder not working correctly
-    private String getAddress(LatLng latLng) {
+    private void getAddress(LatLng latLng) {
 
-        Geocoder geocoder = new Geocoder(this);
-        String addressText = "";
-        List<Address> addresses = null;
-        Address address = null;
+        Geocoder geocoder = new Geocoder(getApplicationContext());
         try {
-
-            addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude,1);
-
-            if (null != addresses && !addresses.isEmpty()) {
-                address = addresses.get(0);
-                for (int i =0; i< address.getMaxAddressLineIndex(); i++) {
-                    addressText += (i ==0)?address.getAddressLine(i):("/n" + address.getAddressLine(i));
-                }
-            }
+            String str = null;
+            List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            str += addressList.get(0).getLocality()+", ";
+            str += addressList.get(0).getCountryName();
+            mMap.addMarker(new MarkerOptions()
+                    .position(latLng)
+                    .title(str)
+                    .icon(BitmapDescriptorFactory.fromResource(
+                            R.drawable.ic_castle
+                    )));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
         } catch (IOException e) {
-
+            e.printStackTrace();
         }
-        return  addressText;
+        //return str;
+
     }
 
 
@@ -167,15 +195,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
      */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng newYork = new LatLng(40.73, -73.99);
-        mMap.addMarker(new MarkerOptions().position(newYork).title("This is NY"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(newYork, 12));
-        mMap.getUiSettings().setZoomControlsEnabled(true);
-        mMap.setOnMarkerClickListener(this);
+        // Checks for permission
+        if(mLoationPermissionStatus) {
+            getDeviceLocation();
 
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            // Adds blue dot to current location once map is centered on it
+            mMap.setMyLocationEnabled(true);
+
+
+
+
+
+        }
     }
 
     // TODO: Update user's Marker
@@ -202,7 +241,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // TODO: Clear 'GPS unavailable' notification
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        setUpMap();
+
     }
 
     @Override
