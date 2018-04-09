@@ -17,10 +17,11 @@
         <!--<meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyAn7kfl181phm9DgmEpUsajwJGzdw1Pj0k"/>-->
         <meta-data
             android:name="https://www.googleapis.com/geolocation/v1/geolocate"
-            android:value="AIzaSyBwa3wtP3D0QOpX36GMWQexdGRB8v1bwR0"/>
+            android:value="@string/google_maps_key"/>
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyBwa3wtP3D0QOpX36GMWQexdGRB8v1bwR0"/>
+            android:value="@string/google_maps_key" />
         <activity android:name=".users.User">
 
         </activity>
@@ -28,7 +29,7 @@
 
         </activity>
 
-        <activity android:name=".MapsActivity">
+        <activity android:name=".maps.MapsActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
