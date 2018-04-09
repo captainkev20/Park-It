@@ -1,4 +1,4 @@
-package com.example.kevinwalker.parkit;
+package com.example.kevinwalker.parkit.maps;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.kevinwalker.parkit.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -23,7 +24,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -157,29 +157,28 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor) {
+        mMap.addMarker(new MarkerOptions()
+                .position(latLng)
+                .title(title)
+                .icon(bitmapDescriptor));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
 
     }
 
     // TODO: Fix this - Geocoder not working correctly
-    private void getAddress(LatLng latLng) {
+    private String getAddress(LatLng latLng) {
 
         Geocoder geocoder = new Geocoder(getApplicationContext());
+        String str = "";
         try {
-            String str = null;
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
             str += addressList.get(0).getLocality()+", ";
             str += addressList.get(0).getCountryName();
-            mMap.addMarker(new MarkerOptions()
-                    .position(latLng)
-                    .title(str)
-                    .icon(BitmapDescriptorFactory.fromResource(
-                            R.drawable.ic_castle
-                    )));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
+            return str;
         } catch (IOException e) {
             e.printStackTrace();
         }
-        //return str;
+        return str;
 
     }
 
