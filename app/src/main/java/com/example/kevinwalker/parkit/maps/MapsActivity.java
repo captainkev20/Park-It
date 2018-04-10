@@ -126,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             }
 
                             moveCamera(currentLatLng, 13, "hi");
-                            placeMarkerOnMap(currentLatLng, "title", BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), markerVisible);
+                            placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
 
                         } else {
                             Log.d(TAG, "location is null");
@@ -218,8 +218,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         String str = "";
         try {
             List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            currentAddress += addressList.get(0).getLocality()+", ";
-            currentAddress += addressList.get(0).getCountryName();
+            currentAddress += addressList.get(0).getAddressLine(0);
             return currentAddress;
         } catch (IOException e) {
             e.printStackTrace();
