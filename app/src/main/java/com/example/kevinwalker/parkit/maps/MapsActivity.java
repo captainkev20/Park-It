@@ -47,13 +47,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Boolean mLoationPermissionStatus = false;
     private GoogleMap mMap;
     private FusedLocationProviderClient mFusedLocationProviderClient;
-    private static final float DEFAULT_ZOOM = 15f;
+    private static final float DEFAULT_ZOOM = 19f;
     private Button btn_park;
     private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938);
     private static LocationRequest mLocationRequest;
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Boolean parkButtonClicked = false;
+    private Geocoder geocoder;
+    private List<Address> addressList;
+    private Location currentLocation;
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -62,11 +65,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        geocoder = new Geocoder(getApplicationContext());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+
         btn_park = findViewById(R.id.btn_park);
         btn_park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 parkButtonClicked();
+                placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
             }
         });
 
@@ -98,51 +105,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
-    private LatLng getCurrentLatLng() {
-        return this.currentLatLng;
-    }
-
-    private LatLng setLatLng() {
-        Log.d(TAG, "Get Device Location");
-
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-
-        try {
-            if (mLoationPermissionStatus) {
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()) {
-                            Log.d(TAG, "Found location");
-                            Location currentLocation = (Location) task.getResult();
-                            currentLatLng = new LatLng(currentLocation.getLatitude(), currentLocation.getLongitude());
-
-                            currentAddress = getAddress(currentLatLng);
-
-                            if (parkButtonClicked == true) {
-                                markerVisible = true;
-                            }
-
-                            moveCamera(currentLatLng, 13, "hi");
-                            placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
-
-                        } else {
-                            Log.d(TAG, "location is null");
-                            Toast.makeText(MapsActivity.this, "unable to find", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        }catch (SecurityException e) {
-            Log.e(TAG, "Security issue");
-        }
-
-        return currentLatLng;
-
-    }
-
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         mLoationPermissionStatus = false;
@@ -164,69 +126,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-    }
-
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
                 .icon(bitmapDescriptor).visible(markerVisible));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, DEFAULT_ZOOM));
-
     }
 
-    // TODO: Fix this - Geocoder not working correctly
-    /*private String getAddress(LatLng latLng) {
+    private String getAddressFromGeocoder(LatLng latLng) {
 
-        Geocoder geocoder = new Geocoder(getApplicationContext());
-        String str = "";
+        String address = "";
         try {
-            List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            str += addressList.get(0).getLocality()+", ";
-            str += addressList.get(0).getCountryName();
-            return str;
+            addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+            address = addressList.get(0).getAddressLine(0);
         } catch (IOException e) {
-            e.printStackTrace();
+            e.getStackTrace().toString();
         }
-        return str;
 
-    }*/
+        addressList.clear();
 
-    private String getAddress(LatLng latLng) {
-
-        Geocoder geocoder = new Geocoder(getApplicationContext());
-        String str = "";
-        try {
-            List<Address> addressList = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-            currentAddress += addressList.get(0).getAddressLine(0);
-            return currentAddress;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return str;
-
+        return address;
     }
 
+    private void setCurrentAddress(String address) {
+        currentAddress = address;
+    }
+
+    private String getCurrentAddress() {
+        return this.currentAddress;
+    }
+
+    private LatLng getCurrentLatLng() {
+        return this.currentLatLng;
+    }
+
+
+    private void setCurrentLatLng(Location location) {
+        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+    }
+
+    // Update objects and perform actions as necessary once fetchCurrentLocation task completes
+    private void fetchCurrentLocationCompleted(Location location) {
+        currentLocation = location;
+        setCurrentLatLng(location);
+        setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
+        moveCamera(getCurrentLatLng(), 19F, "Your current location");
+    }
+
+    private void fetchCurrentLocation() {
+        try {
+            if (mLoationPermissionStatus) {
+                final Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()) {
+                            fetchCurrentLocationCompleted((Location) task.getResult());
+                        } else {
+                            Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Security issue");
+        }
+    }
 
     /**
      * Manipulates the map once available.
@@ -240,20 +206,18 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("RestrictedApi")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
+//        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
         mMap = googleMap;
 
         // Checks for permission
         if(mLoationPermissionStatus) {
-            //getCurrentLatLng();
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
 
-            // Call function to get current location and work to move camera once map opens
-            setLatLng();
+            fetchCurrentLocation();
 
             // Adds blue dot to current location once map is centered on it
             mMap.setMyLocationEnabled(true);
@@ -266,7 +230,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-
 
     }
 
@@ -315,5 +278,26 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public boolean onMarkerClick(Marker marker) {
         return false;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
     }
 }
