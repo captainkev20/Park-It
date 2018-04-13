@@ -72,8 +72,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_park.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                parkButtonClicked();
-                placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+//                parkButtonClicked();
+                mMap.clear();
+                fetchCurrentLocationAndPark();
             }
         });
 
@@ -193,6 +194,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "Security issue");
         }
     }
+
+    private void fetchCurrentLocationAndPark() {
+        try {
+            if (mLoationPermissionStatus) {
+                final Task location = mFusedLocationProviderClient.getLastLocation();
+                location.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()) {
+                            placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+                        } else {
+                            Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        } catch (SecurityException e) {
+            Log.e(TAG, "Security issue");
+        }
+    }
+
 
     /**
      * Manipulates the map once available.
