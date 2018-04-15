@@ -7,6 +7,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -21,7 +22,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -46,22 +50,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private static final String TAG = "MapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private Boolean mLoationPermissionStatus = false;
-    private GoogleMap mMap;
+    private Boolean mLocationPermissionStatus = false;
+    private GoogleMap map;
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static final float DEFAULT_ZOOM = 19f;
     private Button btn_park;
     private Button btn_leave;
     private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938);
-    private static LocationRequest mLocationRequest;
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Geocoder geocoder;
     private List<Address> addressList;
-    private Location currentLocation;
     private LocationRequest locationRequest;
-    private LocationCallback mLocationCallback;
+    private LocationCallback locationCallback;
     private Boolean isUserParked = false;
+    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
+    private long FASTEST_INTERVAL = 2000; /* 2 sec */
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -78,7 +82,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_leave = findViewById(R.id.btn_leave);
         btn_leave.setOnClickListener(this);
 
-        getLocationPermission();
+        initMap();
     }
 
     @Override
@@ -87,14 +91,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.btn_park:
                 isUserParked = true;
                 moveCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
-                fetchCurrentLocationAndPark();
+                placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
                 btn_park.setEnabled(false);
                 btn_leave.setEnabled(true);
                 break;
 
             case R.id.btn_leave:
                 isUserParked = false;
-                mMap.clear();
+                // TODO: Remove only the User's parked marker - do not use map.clear()
+                map.clear();
                 btn_leave.setEnabled(false);
                 btn_park.setEnabled(true);
                 break;
@@ -102,45 +107,73 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-
-
     private void initMap() {
-        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-        mapFragment.getMapAsync(MapsActivity.this);
-    }
-
-    private void getLocationPermission() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
         if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            mLoationPermissionStatus = true;
-            initMap();
+            mLocationPermissionStatus = true;
+            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+            mapFragment.getMapAsync(MapsActivity.this);
         } else {
             ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
+    protected void startLocationUpdates() {
+
+        // Create the location request to start receiving updates
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(UPDATE_INTERVAL);
+        locationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        // Create LocationSettingsRequest object using location request
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(locationRequest);
+        LocationSettingsRequest locationSettingsRequest = builder.build();
+
+        // Check whether location settings are satisfied
+        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
+        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                // do work here
+                onLocationChanged(locationResult.getLastLocation());
+            }
+        };
+
+
+        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            // new Google API SDK v11 uses getFusedLocationProviderClient(this)
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,
+                    Looper.myLooper());
+        }
+    }
+
     private void moveCamera(LatLng latLng, float zoom, String title) {
         Log.d(TAG, "Moving camera to: ");
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        mLoationPermissionStatus = false;
 
         switch(requestCode) {
             case LOCATION_PERMISSION_REQUEST_CODE: {
                 if(grantResults.length > 0) {
                     for(int i = 0; i < grantResults.length; i++) {
                         if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-
-                            mLoationPermissionStatus = false;
+                            initMap();
+                            // TODO: Do not continue the MapsActivity, continue to request permission or force them out of the Activity
                             return;
+                        } else {
+                            mLocationPermissionStatus = true;
+                            initMap();
                         }
                     }
-                    mLoationPermissionStatus = true;
-                    initMap();
                 }
             }
         }
@@ -148,7 +181,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
-        mMap.addMarker(new MarkerOptions()
+        map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
                 .icon(bitmapDescriptor)
@@ -189,8 +222,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     }
 
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
-    private void fetchCurrentLocationCompleted(Location location) {
-        currentLocation = location;
+    private void currentLocationUpdated(Location location) {
         setCurrentLatLng(location);
         setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
         moveCamera(getCurrentLatLng(), 19F, "Your current location");
@@ -198,13 +230,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void fetchCurrentLocation() {
         try {
-            if (mLoationPermissionStatus) {
+            if (mLocationPermissionStatus) {
                 final Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
-                            fetchCurrentLocationCompleted((Location) task.getResult());
+                            currentLocationUpdated((Location) task.getResult());
                         } else {
                             Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
@@ -215,27 +247,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             Log.e(TAG, "Security issue");
         }
     }
-
-    private void fetchCurrentLocationAndPark() {
-        try {
-            if (mLoationPermissionStatus) {
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()) {
-                            placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
-                        } else {
-                            Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        } catch (SecurityException e) {
-            Log.e(TAG, "Security issue");
-        }
-    }
-
 
     /**
      * Manipulates the map once available.
@@ -249,11 +260,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("RestrictedApi")
     @Override
     public void onMapReady(GoogleMap googleMap) {
-//        Toast.makeText(MapsActivity.this, "Map is ready", Toast.LENGTH_LONG).show();
-        mMap = googleMap;
+
+        map = googleMap;
 
         // Checks for permission
-        if(mLoationPermissionStatus) {
+        if(mLocationPermissionStatus) {
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
@@ -263,7 +274,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             fetchCurrentLocation();
 
             // Adds blue dot to current location once map is centered on it
-            mMap.setMyLocationEnabled(true);
+            map.setMyLocationEnabled(true);
 
             // Set the button to be enabled when the map is ready
             btn_park.setEnabled(true);
@@ -274,23 +285,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-
-
-        fetchCurrentLocation();
-
-        // Checks for permission
-        if (mLoationPermissionStatus) {
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-
-            fetchCurrentLocationAndPark();
-
-            mMap.setMyLocationEnabled(true);
-
-        }
+        currentLocationUpdated(location);
     }
 
     @Override
@@ -313,18 +308,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onConnected(@Nullable Bundle bundle) {
 
-    }
-
-    protected void createLocationRequest() {
-
-        if (mLoationPermissionStatus) {
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
-        }
     }
 
     @Override
@@ -357,11 +340,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
+        mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
+        startLocationUpdates();
     }
 }
