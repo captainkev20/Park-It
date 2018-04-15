@@ -19,6 +19,7 @@ import com.example.kevinwalker.parkit.R;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -39,7 +40,8 @@ import com.google.android.gms.tasks.Task;
 import java.io.IOException;
 import java.util.List;
 
-public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
+
+public class MapsActivity extends FragmentActivity implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
 
     private static final String TAG = "MapActivity";
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -49,14 +51,17 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private static final float DEFAULT_ZOOM = 19f;
     private Button btn_park;
+    private Button btn_leave;
     private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938);
     private static LocationRequest mLocationRequest;
     private String currentAddress = "";
     private Boolean markerVisible = false;
-    private Boolean parkButtonClicked = false;
     private Geocoder geocoder;
     private List<Address> addressList;
     private Location currentLocation;
+    private LocationRequest locationRequest;
+    private LocationCallback mLocationCallback;
+    private Boolean isUserParked = false;
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -69,21 +74,35 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
 
         btn_park = findViewById(R.id.btn_park);
-        btn_park.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                parkButtonClicked();
-                mMap.clear();
-                fetchCurrentLocationAndPark();
-            }
-        });
+        btn_park.setOnClickListener(this);
+        btn_leave = findViewById(R.id.btn_leave);
+        btn_leave.setOnClickListener(this);
 
         getLocationPermission();
     }
 
-    private void parkButtonClicked() {
-        parkButtonClicked = true;
+    @Override
+    public void onClick(View v){
+        switch (v.getId()) {
+            case R.id.btn_park:
+                isUserParked = true;
+                moveCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
+                fetchCurrentLocationAndPark();
+                btn_park.setEnabled(false);
+                btn_leave.setEnabled(true);
+                break;
+
+            case R.id.btn_leave:
+                isUserParked = false;
+                mMap.clear();
+                btn_leave.setEnabled(false);
+                btn_park.setEnabled(true);
+                break;
+
+        }
     }
+
+
 
     private void initMap() {
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
@@ -132,7 +151,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         mMap.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
-                .icon(bitmapDescriptor).visible(markerVisible));
+                .icon(bitmapDescriptor)
+                .visible(markerVisible));
+
     }
 
     private String getAddressFromGeocoder(LatLng latLng) {
@@ -246,6 +267,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Set the button to be enabled when the map is ready
             btn_park.setEnabled(true);
+            //btn_leave.setEnabled(true);
         }
     }
 
@@ -253,6 +275,22 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onLocationChanged(Location location) {
 
+
+        fetchCurrentLocation();
+
+        // Checks for permission
+        if (mLoationPermissionStatus) {
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+
+            fetchCurrentLocationAndPark();
+
+            mMap.setMyLocationEnabled(true);
+
+        }
     }
 
     @Override
@@ -274,15 +312,19 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @SuppressLint("RestrictedApi")
     @Override
     public void onConnected(@Nullable Bundle bundle) {
-        //mLocationRequest = new LocationRequest().create();
 
-        // Surrpressed above. Set interval to 1 second and high accuracy
-        mLocationRequest = new LocationRequest();
-        mLocationRequest
-                .setPriority(1000)
-                .setFastestInterval(1000)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
 
+    protected void createLocationRequest() {
+
+        if (mLoationPermissionStatus) {
+
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, mLocationCallback, null);
+        }
     }
 
     @Override
