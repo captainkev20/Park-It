@@ -2,6 +2,7 @@ package com.example.kevinwalker.parkit.maps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -66,6 +67,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Boolean isUserParked = false;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
+    private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
+    private static String SHARED_PREFS_IS_PARKED_KEY = "is_parked";
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -90,6 +96,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (v.getId()) {
             case R.id.btn_park:
                 isUserParked = true;
+                saveLatlngAsUserParked(currentLatLng);
                 moveCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
                 placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
                 btn_park.setEnabled(false);
@@ -105,6 +112,27 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
 
         }
+    }
+
+    private void saveLatlngAsUserParked(LatLng latLng) {
+
+        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+
+        editor.putBoolean(SHARED_PREFS_IS_PARKED_KEY, true);
+        editor.putString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(latLng.latitude)).apply();
+        editor.putString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(latLng.longitude)).apply();
+    }
+
+    private boolean isUserParked() {
+        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        return sharedPreferences.getBoolean(SHARED_PREFS_IS_PARKED_KEY, false);
+    }
+
+    private LatLng getParkedLatlngFromSharedPrefs() {
+        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+
+        return new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, "")), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, "")));
     }
 
     private void initMap() {
@@ -261,6 +289,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        if (isUserParked) {
+            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+        }
+
         map = googleMap;
 
         // Checks for permission
@@ -347,5 +379,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onResume() {
         super.onResume();
         startLocationUpdates();
+        if (isUserParked) {
+            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+        }
     }
 }
