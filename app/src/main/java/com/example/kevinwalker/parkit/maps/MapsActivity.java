@@ -1,7 +1,10 @@
+
 package com.example.kevinwalker.parkit.maps;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Address;
@@ -65,6 +68,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Boolean isUserParked = false;
+    private Marker userMarker;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
     private SharedPreferences sharedPreferences;
@@ -106,7 +110,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             case R.id.btn_leave:
                 isUserParked = false;
                 // TODO: Remove only the User's parked marker - do not use map.clear()
-                map.clear();
+                userMarker.remove();
                 btn_leave.setEnabled(false);
                 btn_park.setEnabled(true);
                 break;
@@ -138,12 +142,37 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private void initMap() {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // Show user rationale BEFORE permission box
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(MapsActivity.this)
+                        .setTitle("Location Permission")
+                        .setMessage("Hi there! Our app can't function properly without your location. Will you please grant it?")
+                        .setPositiveButton("Okay!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                                // They said yes, so set to true
+                                mLocationPermissionStatus = true;
+                            }
+                        })
+                        .setNegativeButton("No thanks!", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+                                Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
+                                // User said no, set to false
+                                mLocationPermissionStatus = false;
+                            }
+                        }).show();
+            } else {
+                // Request permission
+                ActivityCompat.requestPermissions(MapsActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+            }
+        } else {
+            // Already have permission, so set up map
             mLocationPermissionStatus = true;
             SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
             mapFragment.getMapAsync(MapsActivity.this);
-        } else {
-            ActivityCompat.requestPermissions(this, permissions, LOCATION_PERMISSION_REQUEST_CODE);
         }
     }
 
@@ -209,7 +238,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
-        map.addMarker(new MarkerOptions()
+        userMarker = map.addMarker(new MarkerOptions()
                 .position(latLng)
                 .title(title)
                 .icon(bitmapDescriptor)
