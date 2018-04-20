@@ -21,6 +21,8 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.spot.Spot;
+import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -61,6 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btn_park;
     private Button btn_leave;
     private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938);
+    private LatLng parkedLatLng = new LatLng(0,0);
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Geocoder geocoder;
@@ -73,6 +76,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
+    private User currentUser;
+    private Spot userSpot;
     private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
     private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
     private static String SHARED_PREFS_IS_PARKED_KEY = "is_parked";
@@ -83,6 +88,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+//        userSpot = new Spot(parkedLatLng);
+//        currentUser = new User(isUserParked, userSpot);
 
         geocoder = new Geocoder(getApplicationContext());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
@@ -100,7 +108,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         switch (v.getId()) {
             case R.id.btn_park:
                 isUserParked = true;
-                saveLatlngAsUserParked(currentLatLng);
+                saveUserParkingData(currentLatLng, isUserParked);
                 moveCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
                 placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
                 btn_park.setEnabled(false);
@@ -109,7 +117,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             case R.id.btn_leave:
                 isUserParked = false;
-                // TODO: Remove only the User's parked marker - do not use map.clear()
+                // TODO: Remove only the UserActivity's parked marker - do not use map.clear()
                 userMarker.remove();
                 btn_leave.setEnabled(false);
                 btn_park.setEnabled(true);
@@ -118,7 +126,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         }
     }
 
-    private void saveLatlngAsUserParked(LatLng latLng) {
+    private void saveUserParkingData(LatLng latLng, boolean isUserParked) {
 
         sharedPreferences = this.getPreferences(MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -126,6 +134,12 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         editor.putBoolean(SHARED_PREFS_IS_PARKED_KEY, true);
         editor.putString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(latLng.latitude)).apply();
         editor.putString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(latLng.longitude)).apply();
+    }
+
+    private void loadUserParkingData() {
+        isUserParked = isUserParked();
+
+        parkedLatLng = getParkedLatlngFromSharedPrefs();
     }
 
     private boolean isUserParked() {
@@ -136,7 +150,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng getParkedLatlngFromSharedPrefs() {
         sharedPreferences = this.getPreferences(MODE_PRIVATE);
 
-        return new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, "")), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, "")));
+        LatLng latLng = new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, "")), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, "")));
+
+        return latLng;
     }
 
     private void initMap() {
@@ -160,7 +176,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Toast.makeText(MapsActivity.this, "", Toast.LENGTH_SHORT).show();
-                                // User said no, set to false
+                                // UserActivity said no, set to false
                                 mLocationPermissionStatus = false;
                             }
                         }).show();
@@ -318,11 +334,11 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        map = googleMap;
+
         if (isUserParked) {
             placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
         }
-
-        map = googleMap;
 
         // Checks for permission
         if(mLocationPermissionStatus) {
@@ -401,6 +417,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
+        saveUserParkingData(parkedLatLng, isUserParked);
         mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
@@ -408,8 +425,14 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     public void onResume() {
         super.onResume();
         startLocationUpdates();
+        loadUserParkingData();
+
         if (isUserParked) {
-            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+            btn_leave.setEnabled(true);
+            btn_park.setEnabled(false);
+        } else {
+            btn_park.setEnabled(true);
+            btn_leave.setEnabled(false);
         }
     }
 }
