@@ -26,6 +26,47 @@
 
     <string name="btn_save">SAVE </string>
     <string name="btn_cancel">CANCEL </string>
+    <string name="go_back">Go Back</string>
+    <string name="et_email_hint">enter your email...</string>
+    <string name="et_password_hint">******</string>
+    <string name="tv_homepage_welcome">Welcome to HomePage</string>
+    <string name="onCreate">Hello from onCreate()!</string>
+    <string name="onStart">Hello from onStart()!</string>
+    <string name="onResume">Hello from onResume()!</string>
+    <string name="onPause">Hello from onPause()!</string>
+    <string name="onStop">Hello from onStop()!</string>
+    <string name="onDestroy">Hello from onDestroy()!</string>
+    <string name="login">Login</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="login_banned">Feel the wrath of the BAN HAMMER!!!</string>
+    <string name="login_success">Login Successful!</string>
+    <string name="login_incorrect_password">Incorrect Password</string>
+    <string name="login_registration_required">Please register before attempting to login</string>
+    <string name="login_username_empty">Your username is blank</string>
+    <string name="login_password_empty">Your password field is blank</string>
+    <string name="registration_register">Register</string>
+    <string name="registration_success">You are now registered</string>
+    <string name="registration_failure">We\'re sorry but an error occurred during registration...</string>
+    <string name="registration_password_mismatch">Your passwords do not match</string>
+    <string name="registration_already_registered">You have already registered this email</string>
+    <string name="registration_email_banned">The email you entered is banned from this app</string>
+    <string name="registration_username_empty">Please enter your email as a username</string>
+    <string name="registration_password_empty">Please supply a password</string>
+    <string name="registration_confirm_password_empty">Please confirm your password</string>
+    <string name="registration_weak_password">Your password is weak</string>
+    <string name="registration_invalid_credentials">Invalid credentials</string>
+    <string name="registration_user_collision">Your credentials are tied to another account</string>
+    <string name="registration_password_short">Your password needs to be longer than 7 characters</string>
+    <string name="registration_password_long">Your password needs to be less than 16 characters</string>
+    <string name="title_activity_nav_drawer">NavDrawer</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 

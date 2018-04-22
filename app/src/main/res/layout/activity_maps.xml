@@ -29,6 +29,15 @@
         android:text="Leave"
         android:textColor="@color/common_google_signin_btn_text_light" />
 
+    <Button
+        android:id="@+id/btn_find_user_parked"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/leave_button"
+        android:enabled="false"
+        android:text="FIND MY VEHICLE"
+        android:textColor="@color/common_google_signin_btn_text_light" />
+
     <fragment
         android:layout_width="match_parent"
         android:layout_height="match_parent"
