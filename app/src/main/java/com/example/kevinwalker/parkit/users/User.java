@@ -1,17 +1,19 @@
 package com.example.kevinwalker.parkit.users;
 
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.widget.ImageView;
 
-import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.vehicle.Vehicle;
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.payments.PaymentType;
+import com.example.kevinwalker.parkit.spot.Spot;
+import com.example.kevinwalker.parkit.vehicle.Vehicle;
 
 import java.util.UUID;
 
-public class User extends AppCompatActivity {
+/**
+ * Created by hollis on 4/19/18.
+ */
+
+public class User {
 
     private String firstName;
     private String lastName;
@@ -23,6 +25,15 @@ public class User extends AppCompatActivity {
     private Long userScore;
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
+    private Spot spot;
+    private boolean isParked = false;
+
+    public User() {};
+
+    public User(boolean isParked, Spot spot) {
+        this.isParked = isParked;
+        this.spot = spot;
+    }
 
     public String getFirstName() {
         return firstName;
@@ -104,12 +115,11 @@ public class User extends AppCompatActivity {
         this.paymentTypes = paymentTypes;
     }
 
+    public Spot getSpot() {
+        return spot;
+    }
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
-
-
+    public void setSpot(Spot spot) {
+        this.spot = spot;
     }
 }

@@ -22,10 +22,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
-        <activity android:name=".users.User">
+        <activity android:name=".users.UserActivity">
 
         </activity>
-        <activity android:name=".spot.Spot">
+        <activity android:name=".spot.SpotActivity">
 
         </activity>
 
