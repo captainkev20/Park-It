@@ -62,8 +62,8 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private Button btn_park;
     private Button btn_leave;
     private Button btn_find_user_parked;
-    private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938);
-    private LatLng parkedLatLng = new LatLng(0,0);
+    private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938); // Initialized to City View
+    private LatLng parkedLatLng = new LatLng(0,0); // Initialized to middle of map
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Geocoder geocoder;
@@ -93,6 +93,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        fetchCurrentLocation();
+
+
 //        userSpot = new Spot(parkedLatLng);
 //        currentUser = new User(isUserParked, userSpot);
 
@@ -105,6 +108,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         btn_leave.setOnClickListener(this);
         btn_find_user_parked = findViewById(R.id.btn_find_user_parked);
         btn_find_user_parked.setOnClickListener(this);
+
+        if(isUserParked) {
+            btn_find_user_parked.setEnabled(true);
+        }
 
         initMap();
     }
@@ -131,9 +138,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 break;
 
             case R.id.btn_find_user_parked:
+                loadUserParkingData();
                 animateCamera(parkedLatLng, DEFAULT_ZOOM, currentAddress);
+                System.out.println("from case userparked: " + parkedLatLng);
                 break;
-
         }
     }
 
@@ -163,7 +171,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     private LatLng getParkedLatlngFromSharedPrefs() {
         sharedPreferences = this.getPreferences(MODE_PRIVATE);
 
-        // Made correction to pass in initialized value of parkedLatLng as default
         LatLng latLng = new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(parkedLatLng.latitude))), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(parkedLatLng.longitude))));
 
         System.out.println("Here is data from getParkedLatLngFromSharedPrefs: " + latLng);
@@ -187,6 +194,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                                 requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                                 // They said yes, so set to true
                                 mLocationPermissionStatus = true;
+                                System.out.println("currentLatLng from init map is: " + currentLatLng);
                             }
                         })
                         .setNegativeButton(PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT, new DialogInterface.OnClickListener() {
@@ -309,13 +317,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
     private void setCurrentLatLng(Location location) {
         currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
+        System.out.println("setCurrentLatLng value is: " + currentLatLng);
     }
 
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
     private void currentLocationUpdated(Location location) {
         setCurrentLatLng(location);
         setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
-        //animateCamera(getCurrentLatLng(), 19F, "Your current location");
     }
 
     private void fetchCurrentLocation() {
@@ -327,6 +335,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
                             currentLocationUpdated((Location) task.getResult());
+                            System.out.println("LatLng from FetchCurrentLocation: " + location.getResult());
                         } else {
                             Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
@@ -374,7 +383,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
             // Set the button to be enabled when the map is ready
             btn_park.setEnabled(true);
-            //btn_leave.setEnabled(true);
+            //animateCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
+            System.out.println("mapready parkedLatLng is: " + getCurrentLatLng());
+            System.out.println("mapready currenaddress is: " + currentAddress);
         }
     }
 
@@ -436,8 +447,6 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     @Override
     protected void onPause() {
         super.onPause();
-        // Commented out this as it was overwriting parkedLatLng.
-        //saveUserParkingData(parkedLatLng, isUserParked);
         mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
@@ -446,18 +455,15 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         super.onResume();
         startLocationUpdates();
         loadUserParkingData();
-        System.out.println("Current spot is at: " + parkedLatLng);
-        System.out.println("Current address is: " + currentAddress);
-        System.out.println("User Parked from MapReady is: " + isUserParked);
-        //animateCamera(parkedLatLng, DEFAULT_ZOOM, currentAddress);
-
 
         if (isUserParked) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
+            btn_find_user_parked.setEnabled(true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
         }
+        
     }
 }
