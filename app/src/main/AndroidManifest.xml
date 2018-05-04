@@ -3,7 +3,9 @@
     package="com.example.kevinwalker.parkit">
 
     <uses-permission android:name="android.permission.INTERNET" />
+
     <uses-feature android:name="android.hardware.location.gps" />
+
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <application
@@ -24,8 +26,7 @@
 
         <activity android:name=".users.UserActivity" />
         <activity android:name=".spot.SpotActivity" />
-        <activity android:name=".maps.MapsActivity">
-        </activity>
+        <activity android:name=".maps.MapsActivity"></activity>
         <activity
             android:name=".authentication.Login"
             android:label="@string/title_activity_login"
@@ -36,10 +37,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <activity android:name=".authentication.Registration" />
-        <activity android:name=".authentication.ForgotPassword">
+        <activity android:name=".authentication.ForgotPassword"></activity>
+        <activity
+            android:name=".NavDrawer"
+            android:label="@string/title_activity_nav_drawer"
+            android:theme="@style/AppTheme.NoActionBar">
+
         </activity>
     </application>
 
