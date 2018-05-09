@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.ActionBar;
 import android.view.Gravity;
@@ -19,6 +20,9 @@ import android.view.MenuItem;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsActivity;
+import com.example.kevinwalker.parkit.notifications.AlertDialogFragment;
+
+import static com.example.kevinwalker.parkit.R.id.action_log_off;
 
 public class NavDrawer extends FragmentActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -32,12 +36,14 @@ public class NavDrawer extends FragmentActivity
         setContentView(R.layout.activity_nav_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitle("Homepage");
+        toolbar.inflateMenu(R.menu.nav_drawer);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -66,12 +72,17 @@ public class NavDrawer extends FragmentActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_log_off) {
+            Bundle alertMessage = new Bundle();
+            alertMessage.putString(AlertDialogFragment.DIALOG_MESSAGE, "Are you sure you want to log off?");
+            alertMessage.putString(AlertDialogFragment.TYPE, AlertDialogFragment.ALERT_DIALOG_TYPE_LOGOFF);
+            //AlertDialogFragment.newInstance(alertMessage).show(getSupportFragmentManager(), AlertDialogFragment.TAG_ALERT_DIALOG_FRAGMENT);
+
+            //DialogFragment dialog = DialogFragment.instantiate(NavDrawer.this.getCallingActivity().getCont, "Hello world");
+            //dialog.show(getFragmentManager(), "dialog");
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
