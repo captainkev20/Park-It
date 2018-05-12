@@ -1,13 +1,11 @@
 package com.example.kevinwalker.parkit;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.ActionBar;
-import android.view.Gravity;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -21,11 +19,10 @@ import android.view.MenuItem;
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsActivity;
 import com.example.kevinwalker.parkit.notifications.AlertDialogFragment;
+import com.google.firebase.auth.FirebaseAuth;
 
-import static com.example.kevinwalker.parkit.R.id.action_log_off;
-
-public class NavDrawer extends FragmentActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class NavDrawer extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, AlertDialogFragment.AlertDialogFragmentInteractionListener {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -35,8 +32,7 @@ public class NavDrawer extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitle("Homepage");
-        toolbar.inflateMenu(R.menu.nav_drawer);
+        setSupportActionBar(toolbar);
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -44,9 +40,21 @@ public class NavDrawer extends FragmentActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+    }
+
+    private void showAlertDialog() {
+        AlertDialogFragment newFragment = new AlertDialogFragment();
+        newFragment.show(getSupportFragmentManager(), "sup");
+
+    }
+
+    @Override
+    public void logOff() {
+        FirebaseAuth.getInstance().signOut();
+        startActivity(new Intent(NavDrawer.this, Login.class));
     }
 
     @Override
@@ -72,17 +80,12 @@ public class NavDrawer extends FragmentActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
+
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_log_off) {
-            Bundle alertMessage = new Bundle();
-            alertMessage.putString(AlertDialogFragment.DIALOG_MESSAGE, "Are you sure you want to log off?");
-            alertMessage.putString(AlertDialogFragment.TYPE, AlertDialogFragment.ALERT_DIALOG_TYPE_LOGOFF);
-            //AlertDialogFragment.newInstance(alertMessage).show(getSupportFragmentManager(), AlertDialogFragment.TAG_ALERT_DIALOG_FRAGMENT);
-
-            //DialogFragment dialog = DialogFragment.instantiate(NavDrawer.this.getCallingActivity().getCont, "Hello world");
-            //dialog.show(getFragmentManager(), "dialog");
-            return true;
+            showAlertDialog();
         }
+
         return super.onOptionsItemSelected(item);
     }
 
@@ -110,5 +113,15 @@ public class NavDrawer extends FragmentActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onPositiveClick() {
+
+    }
+
+    @Override
+    public void onNegativeClick() {
+
     }
 }

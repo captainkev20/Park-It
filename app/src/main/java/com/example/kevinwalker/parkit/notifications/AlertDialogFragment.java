@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,16 +12,10 @@ import android.view.ViewGroup;
 
 import com.example.kevinwalker.parkit.R;
 
+
 public class AlertDialogFragment extends DialogFragment {
 
     private AlertDialogFragmentInteractionListener mListener;
-    public static final String TYPE = "type";
-    public static final String DIALOG_MESSAGE = "dialogMessage";
-    public static final String ALERT_DIALOG_TYPE_EDIT_PROFILE_PICTURE = "editProfilePicture";
-    public static final String ALERT_DIALOG_TYPE_LOGOFF = "logOff";
-    public static final String ALERT_DIALOG_TYPE_PHONE_CALL = "phoneCall";
-    public static final String TAG_ALERT_DIALOG_FRAGMENT = "ALERT_DIALOG";
-    private Bundle bundle;
 
     public AlertDialogFragment() {
         // Required empty public constructor
@@ -36,27 +29,33 @@ public class AlertDialogFragment extends DialogFragment {
      */
     public static AlertDialogFragment newInstance() {
         AlertDialogFragment fragment = new AlertDialogFragment();
+
         return fragment;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("You up out dis bitch?")
-                .setPositiveButton("Fo' sho", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        mListener.onPositiveClick();
+        builder.setTitle("Confirmation")
+                // Set Dialog Message
+                .setMessage("Are you sure you want to log off?")
+
+                // positive button
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        mListener.logOff();
                     }
                 })
-                .setNegativeButton("Nah", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+                // negative button
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         mListener.onNegativeClick();
                     }
                 });
-        // Create the AlertDialog object and return it
         return builder.create();
+
     }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -103,5 +102,7 @@ public class AlertDialogFragment extends DialogFragment {
         void onPositiveClick();
 
         void onNegativeClick();
+
+        void logOff();
     }
 }
