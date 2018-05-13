@@ -17,7 +17,6 @@
     <string name="btn_park_status">Park Status: </string>
 
 
-
     <string name="name_on_card">Name on Card: </string>
     <string name="card_num">Card Number: </string>
     <string name="cvv">CVV: </string>
@@ -63,11 +62,12 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+    <string name="action_log_off">Log off</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="title_activity_login">Hi</string>
+
 
     <string name="PERMISSION_DIALOG_TITLE">Location Permission </string>
     <string name="PERMISSION_DIALOG_MESSAGE">Hi there! Our app can\'t function properly without your location. Will you please grant it? </string>
