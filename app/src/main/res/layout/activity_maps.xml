@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/leave_button"
         android:enabled="false"
-        android:text="FIND MY VEHICLE"
+        android:text="FIND ME"
         android:textColor="@color/common_google_signin_btn_text_light" />
 
     <fragment
