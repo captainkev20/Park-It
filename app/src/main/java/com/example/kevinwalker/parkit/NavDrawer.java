@@ -19,6 +19,7 @@ import android.view.MenuItem;
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsActivity;
 import com.example.kevinwalker.parkit.notifications.AlertDialogFragment;
+import com.example.kevinwalker.parkit.users.UserActivity;
 import com.google.firebase.auth.FirebaseAuth;
 
 public class NavDrawer extends AppCompatActivity
@@ -96,6 +97,7 @@ public class NavDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_my_profile) {
+            startActivity(new Intent(NavDrawer.this, UserActivity.class));
 
         } else if (id == R.id.nav_listings) {
 

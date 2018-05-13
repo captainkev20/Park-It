@@ -7,6 +7,7 @@
     <string name="distance">Distance: </string>
     <string name="park_button">PARK</string>
     <string name="rating">Rating: </string>
+    <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
     <string name="score">Score: </string>
     <string name="vehicle">Vehicle: </string>
@@ -25,6 +26,7 @@
 
     <string name="btn_save">SAVE </string>
     <string name="btn_cancel">CANCEL </string>
+    <string name="btn_user_cars_">MY CARS</string>
     <string name="go_back">Go Back</string>
     <string name="et_email_hint">enter your email...</string>
     <string name="et_password_hint">******</string>

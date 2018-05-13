@@ -31,7 +31,11 @@ dependencies {
     implementation 'com.android.support:design:27.1.1'
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
-    compile 'de.hdodenhof:circleimageview:2.2.0'
+    implementation 'com.android.support:design:27.1.1'
+    implementation 'com.android.support:appcompat-v7:27.1.1'
+    implementation 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+    implementation 'de.hdodenhof:circleimageview:2.2.0'
     dependencies {
         implementation 'com.android.support:appcompat-v7:27.1.1'
         implementation 'com.android.support:design:27.1.1'
@@ -41,3 +45,4 @@ dependencies {
 }
 
 apply plugin: 'com.google.gms.google-services'
+
