@@ -23,9 +23,6 @@ public class UserActivity extends AppCompatActivity {
     @BindView(R.id.txt_badges) TextView txt_badges;
     @BindView(R.id.txt_score) TextView txt_score;
     @BindView(R.id.txt_score_placeholder) TextView txt_score_placholder;
-    @BindView(R.id.txt_address) TextView txt_address;
-    @BindView(R.id.txt_license) TextView txt_license;
-    @BindView(R.id.txt_vehicle) TextView txt_vehicle;
     @BindView(R.id.image_logo) CircleImageView image_logo;
     @BindView(R.id.txt_rating_placeholder) TextView txt_rating_placeholder;
     @BindView(R.id.btn_user_cars) TextView btn_user_cars;
