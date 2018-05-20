@@ -4,7 +4,6 @@ import android.widget.ImageView;
 
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.payments.PaymentType;
-import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
 
 import java.util.UUID;
@@ -25,14 +24,12 @@ public class User {
     private Long userScore;
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
-    private Spot spot;
     private boolean isParked = false;
 
     public User() {};
 
-    public User(boolean isParked, Spot spot) {
+    public User(boolean isParked) {
         this.isParked = isParked;
-        this.spot = spot;
     }
 
     public String getFirstName() {
@@ -115,11 +112,5 @@ public class User {
         this.paymentTypes = paymentTypes;
     }
 
-    public Spot getSpot() {
-        return spot;
-    }
 
-    public void setSpot(Spot spot) {
-        this.spot = spot;
-    }
 }

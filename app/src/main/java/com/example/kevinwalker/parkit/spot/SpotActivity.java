@@ -4,8 +4,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.profiles.ParentProfileActivity;
 
-public class SpotActivity extends AppCompatActivity {
+public class SpotActivity extends ParentProfileActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

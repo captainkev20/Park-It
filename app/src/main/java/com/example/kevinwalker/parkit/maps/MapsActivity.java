@@ -22,7 +22,6 @@ import android.util.Log;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -82,7 +81,6 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private User currentUser;
-    private Spot userSpot;
     private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
     private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
     private static String SHARED_PREFS_IS_PARKED_KEY = "is_parked";
@@ -134,7 +132,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                     isUserParked = true;
                     saveUserParkingData(currentLatLng, isUserParked);
                     animateCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
-                    placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+                    placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
@@ -390,7 +388,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
 
 
         if (isUserParked) {
-            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.ic_castle), true);
+            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
         } else {
             animateCamera(currentLatLng, DEFAULT_ZOOM, currentAddress);
         }
