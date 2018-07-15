@@ -3,6 +3,8 @@ package com.example.kevinwalker.parkit;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -10,23 +12,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.example.kevinwalker.parkit.authentication.Login;
-import com.example.kevinwalker.parkit.maps.MapsActivity;
-import com.example.kevinwalker.parkit.notifications.AlertDialogFragment;
-import com.example.kevinwalker.parkit.users.UserActivity;
-import com.google.firebase.auth.FirebaseAuth;
+import com.example.kevinwalker.parkit.maps.MapsFragment;
+import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
+import com.example.kevinwalker.parkit.users.UserProfileFragment;
+import com.google.firebase.auth.FirebaseAuth;;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, AlertDialogFragment.AlertDialogFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
+    private FragmentManager fragmentManager;
+    private FragmentTransaction fragmentTransaction;
+    private FragmentTransaction userFragmentTransaction;
+    private MapsFragment mapFragment;
+    private UserProfileFragment userProfileFragment;
+    private FrameLayout container;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -36,16 +46,32 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
 
+        // Set the default fragment to display
+        container = findViewById(R.id.container);
+        fragmentManager = getSupportFragmentManager();
+        fragmentTransaction = fragmentManager.beginTransaction();
+        userFragmentTransaction = fragmentManager.beginTransaction();
+        mapFragment = new MapsFragment();
+
+        userProfileFragment = new UserProfileFragment();
+        fragmentTransaction.replace(R.id.container, mapFragment);
+        fragmentTransaction.commit();
+
     }
 
-    private void showAlertDialog() {
-        AlertDialogFragment newFragment = new AlertDialogFragment();
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    private void showLogOffAlertDialog() {
+        LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
         newFragment.show(getSupportFragmentManager(), "AlertDiaLog");
 
     }
@@ -58,7 +84,7 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -81,7 +107,7 @@ public class NavDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.action_log_off) {
-            showAlertDialog();
+            showLogOffAlertDialog();
         }
 
         return super.onOptionsItemSelected(item);
@@ -94,12 +120,16 @@ public class NavDrawer extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_my_profile) {
-            startActivity(new Intent(NavDrawer.this, UserActivity.class));
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, userProfileFragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_listings) {
 
         } else if (id == R.id.nav_map) {
-            startActivity(new Intent(NavDrawer.this, MapsActivity.class));
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, mapFragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_payments) {
 
@@ -109,7 +139,7 @@ public class NavDrawer extends AppCompatActivity
 
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }

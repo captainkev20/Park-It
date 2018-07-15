@@ -3,7 +3,7 @@ package com.example.kevinwalker.parkit.maps;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.Context;
+import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,17 +11,18 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.Uri;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.notifications.LeaveAlertDialogFragment;
+import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -34,6 +35,9 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -42,20 +46,24 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
+import static android.content.Context.MODE_PRIVATE;
 
-public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
 
-    private static final String TAG = "MapActivity";
+public class MapsFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
+
+    private static final String TAG = MapsFragment.class.getName();
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private Boolean mLocationPermissionStatus = false;
@@ -84,18 +92,23 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
     private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
     private static String SHARED_PREFS_IS_PARKED_KEY = "is_parked";
+    private SupportMapFragment mapFragment;
+    private MapView mapView;
+    private View mView;
+    private static final String EPOCH_TIME = "fragment_timestamp";
+    private static final String SAVED_LOCATION = "saved_location";
+    private long epochTimeStamp;
+    private Boolean shouldRefreshMap = true;
+    private Location currentLocation;
+    private android.support.v4.app.FragmentManager fragmentManager;
+
+
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_maps);
-
-        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View contentView = inflater.inflate(R.layout.activity_maps, null, false);
-        drawer.addView(contentView, 0);
-        toolbar.setTitle("MAP");
 
         fetchCurrentLocation();
 
@@ -103,25 +116,74 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
 //        userSpot = new Spot(parkedLatLng);
 //        currentUser = new User(isUserParked, userSpot);
 
-        geocoder = new Geocoder(getApplicationContext());
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-
-        btn_park = findViewById(R.id.btn_park);
-        btn_park.setOnClickListener(this);
-        btn_leave = findViewById(R.id.btn_leave);
-        btn_leave.setOnClickListener(this);
-        btn_find_user_parked = findViewById(R.id.btn_find_user_parked);
-        btn_find_user_parked.setOnClickListener(this);
+        geocoder = new Geocoder(getActivity().getApplicationContext());
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
         if(isUserParked) {
             btn_find_user_parked.setEnabled(true);
         }
 
-        initMap();
+
 
         // TODO: Check for shared Pref key on first run. If value is first time running
 
     }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        mView = inflater.inflate(R.layout.activity_maps, container, false);
+        if(savedInstanceState!=null) {
+            currentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
+        }
+        return mView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        // TODO: Move to onCreateView so ready to maniulate there
+        btn_park = getView().findViewById(R.id.btn_park);
+        btn_park.setOnClickListener(this);
+        btn_leave = getView().findViewById(R.id.btn_leave);
+        btn_leave.setOnClickListener(this);
+        btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
+        btn_find_user_parked.setOnClickListener(this);
+        mapView = mView.findViewById(R.id.map);
+        getActivity().setTitle("Map");
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        if (mapView != null) {
+            initMap(mapView);
+            startLocationUpdates();
+            loadUserParkingData();
+        }
+
+        if (savedInstanceState!= null) {
+            epochTimeStamp = savedInstanceState.getLong(EPOCH_TIME);
+            Log.i(TAG, String.valueOf(epochTimeStamp));
+        }
+    }
+
+    private void saveEpochTimeToBundle(Bundle outState) {
+        long epochTime;
+        Date myDate = new Date();
+        epochTime = myDate.getTime();
+        Log.i(TAG, String.valueOf(epochTime));
+        outState.putLong(EPOCH_TIME, epochTime);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        saveEpochTimeToBundle(outState);
+        outState.putParcelable(SAVED_LOCATION, currentLocation);
+        Log.i(TAG, "supppp");
+    }
+
 
     @Override
     public void onClick(View v){
@@ -139,7 +201,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                     break;
 
                 } else {
-                    Toast.makeText(MapsActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Location not available", Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                     mLocationPermissionStatus = false;
                 }
@@ -147,13 +209,20 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                 break;
 
             case R.id.btn_leave:
-                isUserParked = false;
-                userMarker.remove();
-                btn_leave.setEnabled(false);
-                btn_park.setEnabled(true);
-                btn_find_user_parked.setEnabled(false);
-                clearParkedLatlngFromSharedPrefs();
-                break;
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                dialog.setTitle(getResources().getString(R.string.LEAVE_DIALOG_TITLE))
+                        .setMessage(getResources().getString(R.string.LEAVE_DIALOG_MESSAGE))
+                        .setNegativeButton(getResources().getString(R.string.LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialoginterface, int i) {
+                            dialoginterface.cancel();
+                                }})
+                        .setPositiveButton(getResources().getString(R.string.LEAVE_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialoginterface, int i) {
+                                // If user clicks yes, call to leaveSpace to clear data and marker
+                                leaveSpace();
+                            }
+                        }).show();
 
             case R.id.btn_find_user_parked:
                 loadUserParkingData();
@@ -164,13 +233,12 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
 
     private void saveUserParkingData(LatLng latLng, boolean isUserParked) {
 
-        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
         editor = sharedPreferences.edit();
 
         editor.putBoolean(SHARED_PREFS_IS_PARKED_KEY, isUserParked);
         editor.putString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(latLng.latitude)).apply();
         editor.putString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(latLng.longitude)).apply();
-
     }
 
     private void loadUserParkingData() {
@@ -180,12 +248,12 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     }
 
     private boolean isUserParked() {
-        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
         return sharedPreferences.getBoolean(SHARED_PREFS_IS_PARKED_KEY, false);
     }
 
     private LatLng getParkedLatlngFromSharedPrefs() {
-        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
 
         LatLng latLng = new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(parkedLatLng.latitude))), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(parkedLatLng.longitude))));
 
@@ -193,18 +261,18 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     }
 
     private void clearParkedLatlngFromSharedPrefs() {
-        sharedPreferences = this.getPreferences(MODE_PRIVATE);
+        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
         sharedPreferences.edit().clear().apply();
     }
 
 
-    private void initMap() {
+    private void initMap(MapView mapFragment) {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission(MapsActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Show user rationale BEFORE permission box
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new AlertDialog.Builder(MapsActivity.this)
+            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+                new AlertDialog.Builder(getContext())
                         .setTitle(getResources().getString(R.string.PERMISSION_DIALOG_TITLE))
                         .setMessage(getResources().getString(R.string.PERMISSION_DIALOG_MESSAGE))
                         .setPositiveButton(getResources().getString(R.string.PERMISSION_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
@@ -214,26 +282,26 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                                 // They said yes, so set to true
                                 mLocationPermissionStatus = true;
                                 fetchCurrentLocation();
-
                             }
                         })
                         .setNegativeButton(getResources().getString(R.string.PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(MapsActivity.this, "Location not available", Toast.LENGTH_SHORT).show();
-                                // UserActivity said no, set to false
+                                Toast.makeText(getActivity(), "Location not available", Toast.LENGTH_SHORT).show();
+                                // UserProfileFragment said no, set to false
                                 mLocationPermissionStatus = false;
                             }
                         }).show();
             } else {
                 // Request permission
-                ActivityCompat.requestPermissions(MapsActivity.this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             }
         } else {
             // Already have permission, so set up map
             mLocationPermissionStatus = true;
-            SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-            mapFragment.getMapAsync(MapsActivity.this);
+            mapFragment.onCreate(null);
+            mapFragment.onResume();
+            mapFragment.getMapAsync(this);     
         }
     }
 
@@ -252,7 +320,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
 
         // Check whether location settings are satisfied
         // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
-        SettingsClient settingsClient = LocationServices.getSettingsClient(this);
+        SettingsClient settingsClient = LocationServices.getSettingsClient(getContext());
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
         locationCallback = new LocationCallback() {
@@ -263,8 +331,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
             }
         };
 
-
-        if (ContextCompat.checkSelfPermission(this, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(getContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // new Google API SDK v11 uses getFusedLocationProviderClient(this)
             mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,
                     Looper.myLooper());
@@ -276,6 +343,39 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
     }
 
+    private boolean shouldRefreshMap() {
+        return true;
+    }
+
+    private boolean isLocationAccurate(FusedLocationProviderClient mFusedLocationProviderClient) {
+
+
+        try {
+            if (mLocationPermissionStatus) {
+                final Task determineLocationAccuracy = mFusedLocationProviderClient.getLastLocation();
+                determineLocationAccuracy.addOnCompleteListener(new OnCompleteListener() {
+                    @Override
+                    public void onComplete(@NonNull Task task) {
+                        if(task.isSuccessful()) {
+                            currentLocation = (Location) determineLocationAccuracy.getResult();
+                            if (mapFirstRun) {
+
+                                } else {
+
+                                }
+                            } else {
+                                Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
+            } catch (SecurityException e) {
+                Log.e(TAG, "Security issue");
+            }
+
+            return true;
+        }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
 
@@ -284,12 +384,12 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                 if(grantResults.length > 0) {
                     for(int i = 0; i < grantResults.length; i++) {
                         if(grantResults[i] != PackageManager.PERMISSION_GRANTED) {
-                            initMap();
-                            // TODO: Do not continue the MapsActivity, continue to request permission or force them out of the Activity
+                            initMap(mapView);
+                            // TODO: Do not continue the MapsFragment, continue to request permission or force them out of the Activity
                             return;
                         } else {
                             mLocationPermissionStatus = true;
-                            initMap();
+                            initMap(mapView);
                         }
                     }
                 }
@@ -304,7 +404,6 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                 .title(title)
                 .icon(bitmapDescriptor)
                 .visible(markerVisible));
-
     }
 
     private String getAddressFromGeocoder(LatLng latLng) {
@@ -353,6 +452,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
+                            currentLocation = (Location) location.getResult();
                             if (mapFirstRun) {
                                 currentLocationUpdated((Location) task.getResult());
                                 animateCamera(currentLatLng, DEFAULT_ZOOM, currentAddress);
@@ -360,7 +460,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
                                 currentLocationUpdated((Location) task.getResult());
                             }
                         } else {
-                            Toast.makeText(MapsActivity.this, "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -383,7 +483,10 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        MapsInitializer.initialize(getContext());
+
         map = googleMap;
+        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mapFirstRun = true;
 
 
@@ -393,11 +496,10 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
             animateCamera(currentLatLng, DEFAULT_ZOOM, currentAddress);
         }
 
-
         // Checks for permission
         if(mLocationPermissionStatus) {
 
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -458,17 +560,17 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     }
 
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
     }
 
     @Override
-    protected void onStop() {
+    public void onStop() {
         super.onStop();
     }
 
     @Override
-    protected void onPause() {
+    public void onPause() {
         super.onPause();
         mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
@@ -476,8 +578,7 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
     @Override
     public void onResume() {
         super.onResume();
-        startLocationUpdates();
-        loadUserParkingData();
+        Log.i(TAG, String.valueOf(epochTimeStamp));
 
         if (isUserParked) {
             loadUserParkingData();
@@ -488,5 +589,14 @@ public class MapsActivity extends NavDrawer implements OnMapReadyCallback, View.
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
         }
+    }
+
+    public void leaveSpace() {
+        isUserParked = false;
+        userMarker.remove();
+        btn_leave.setEnabled(false);
+        btn_park.setEnabled(true);
+        btn_find_user_parked.setEnabled(false);
+        clearParkedLatlngFromSharedPrefs();
     }
 }

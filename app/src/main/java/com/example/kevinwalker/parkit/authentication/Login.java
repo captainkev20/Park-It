@@ -15,8 +15,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.maps.MapsActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -73,7 +73,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Check if user is signed in redirect to NavDrawer if so.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(Login.this, MapsActivity.class));
+            startActivity(new Intent(Login.this, NavDrawer.class));
         }
 
     }
@@ -196,7 +196,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(getApplicationContext(), "Authentication succeed.",
                                     Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this, MapsActivity.class));
+                            startActivity(new Intent(Login.this, NavDrawer.class));
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());

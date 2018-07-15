@@ -24,9 +24,8 @@
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
 
-        <activity android:name=".users.UserActivity" />
+        <activity android:name=".users.UserProfileFragment" />
         <activity android:name=".spot.SpotActivity" />
-        <activity android:name=".maps.MapsActivity" />
         <activity
             android:name=".authentication.Login"
             android:label="@string/title_activity_login"
@@ -43,7 +42,7 @@
             android:name=".NavDrawer"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".profiles.ParentProfile" />
+        <activity android:name=".profiles.ParentProfileActivity" />
         <activity
             android:name=".vehicle.VehicleProfileActivity"
             android:label="@string/title_activity_vehicle_profile"
