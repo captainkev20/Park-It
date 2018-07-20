@@ -80,7 +80,7 @@
     <string name="PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT">No thanks! </string>
     <string name="title_activity_vehicle_profile">VehicleProfileActivity</string>
     <string name="LEAVE_DIALOG_TITLE">"HOLD UP!"</string>
-    <string name="LEAVE_DIALOG_MESSAGE">"Are you sure you want to vacate your space?</string>
+    <string name="LEAVE_DIALOG_MESSAGE">"This will vacate your space and let other users know it is avaliable."</string>
     <string name="LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT">"Not Yet!</string>
     <string name="LEAVE_DIALOG_POSITIVE_BUTTON_TEXT">"I'm outta here!</string>
 

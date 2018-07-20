@@ -3,7 +3,6 @@ package com.example.kevinwalker.parkit.maps;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -11,7 +10,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.net.Uri;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,8 +19,6 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.notifications.LeaveAlertDialogFragment;
-import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -35,7 +31,6 @@ import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,7 +45,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -224,6 +218,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                             }
                         }).show();
 
+                break;
+
             case R.id.btn_find_user_parked:
                 loadUserParkingData();
                 animateCamera(parkedLatLng, DEFAULT_ZOOM, currentAddress);
@@ -348,7 +344,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private boolean isLocationAccurate(FusedLocationProviderClient mFusedLocationProviderClient) {
-
 
         try {
             if (mLocationPermissionStatus) {

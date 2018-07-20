@@ -10,6 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
@@ -17,8 +18,15 @@ import android.widget.FrameLayout;
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
+import com.example.kevinwalker.parkit.payments.PaymentFragment;
+import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
-import com.google.firebase.auth.FirebaseAuth;;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener {
@@ -28,19 +36,25 @@ public class NavDrawer extends AppCompatActivity
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private FragmentTransaction userFragmentTransaction;
+    private FragmentTransaction paymentFragmentTransaction;
+    private FragmentTransaction spotFragmentTransaction;
     private MapsFragment mapFragment;
     private UserProfileFragment userProfileFragment;
+    private PaymentFragment paymentFragment;
+    private SpotFragment spotFragment;
     private FrameLayout container;
+    private static final String TAG = NavDrawer.class.getName();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -57,12 +71,46 @@ public class NavDrawer extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         userFragmentTransaction = fragmentManager.beginTransaction();
+        paymentFragmentTransaction = fragmentManager.beginTransaction();
+        spotFragmentTransaction = fragmentManager.beginTransaction();
         mapFragment = new MapsFragment();
 
         userProfileFragment = new UserProfileFragment();
+        paymentFragment = new PaymentFragment();
+        spotFragment = new SpotFragment();
         fragmentTransaction.replace(R.id.container, mapFragment);
         fragmentTransaction.commit();
+        userFragmentTransaction.commit();
+        paymentFragmentTransaction.commit();
+        spotFragmentTransaction.commit();
 
+        /*DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference myRef = database.child("testString").child("I0DSL2PvQIuafqv7r4O4").child("testString");*/
+
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        DatabaseReference myRef = database.getReference("location");
+        //DatabaseReference testRef = database.getReference("testString");
+
+        myRef.setValue("Kevin");
+
+
+        myRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String value = dataSnapshot.getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i(TAG, "Failed to write");
+            }
+        });
+
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
     }
 
     @Override
@@ -73,7 +121,6 @@ public class NavDrawer extends AppCompatActivity
     private void showLogOffAlertDialog() {
         LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
         newFragment.show(getSupportFragmentManager(), "AlertDiaLog");
-
     }
 
     @Override
@@ -125,6 +172,9 @@ public class NavDrawer extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_listings) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, spotFragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_map) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -132,6 +182,9 @@ public class NavDrawer extends AppCompatActivity
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_payments) {
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.container, paymentFragment);
+            fragmentTransaction.commit();
 
         } else if (id == R.id.nav_settings) {
 

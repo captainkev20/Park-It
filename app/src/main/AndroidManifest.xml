@@ -25,7 +25,7 @@
             android:value="@string/google_maps_key" />
 
         <activity android:name=".users.UserProfileFragment" />
-        <activity android:name=".spot.SpotActivity" />
+        <activity android:name=".spot.SpotFragment" />
         <activity
             android:name=".authentication.Login"
             android:label="@string/title_activity_login"
