@@ -13,6 +13,13 @@
     <string name="vehicle">Vehicle: </string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
+    <string name="username">Username</string>
+    <string name="et_enter_new_username">Enter New Username</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="et_confirm_password">Confirm Password</string>
+    <string name="password">Password</string>
+    <string name="et_enter_new_password">Enter New Password</string>
+
     <string name="score_placeholder">000099</string>
     <string name="badges">Badges: </string>
     <string name="btn_park_status">Park Status: </string>
@@ -59,7 +66,12 @@
     <string name="registration_user_collision">Your credentials are tied to another account</string>
     <string name="registration_password_short">Your password needs to be longer than 7 characters</string>
     <string name="registration_password_long">Your password needs to be less than 16 characters</string>
+    <string name="forgot_password_enter_reg_email">"Enter Registration Email:"</string>
+    <string name="forgot_password_button_send_reminder">SEND REMINDER</string>
     <string name="title_activity_nav_drawer">NavDrawer</string>
+    <string name="Park">Park</string>
+    <string name="Leave">Leave</string>
+    <string name="find_me">FIND ME</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
