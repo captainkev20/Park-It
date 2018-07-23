@@ -88,10 +88,12 @@ public class NavDrawer extends AppCompatActivity
         DatabaseReference myRef = database.child("testString").child("I0DSL2PvQIuafqv7r4O4").child("testString");*/
 
         FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("location");
+        DatabaseReference myRef = database.getReference("message");
         //DatabaseReference testRef = database.getReference("testString");
+        DatabaseReference locationReference = database.getReference("location");
+        locationReference.setValue(new Location(1234123, 1234323));
 
-        myRef.setValue("Kevin");
+        myRef.setValue("KevinWalker");
 
 
         myRef.addValueEventListener(new ValueEventListener() {
