@@ -3,6 +3,7 @@ package com.example.kevinwalker.parkit.maps;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -95,6 +96,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private Boolean shouldRefreshMap = true;
     private Location currentLocation;
     private android.support.v4.app.FragmentManager fragmentManager;
+    private MapsFragment.MapsCallBack mapsCallBack;
 
 
 
@@ -105,7 +107,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         super.onCreate(savedInstanceState);
 
         fetchCurrentLocation();
-
+        mapsCallBack = this.mapsCallBack;
 
 //        userSpot = new Spot(parkedLatLng);
 //        currentUser = new User(isUserParked, userSpot);
@@ -130,6 +132,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             currentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
         }
         return mView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof MapsFragment.MapsCallBack) {
+            mapsCallBack = (MapsFragment.MapsCallBack) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement MapsFragment.MapsCallBack");
+        }
     }
 
     @Override
@@ -437,6 +450,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private void currentLocationUpdated(Location location) {
         setCurrentLatLng(location);
         setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
+        mapsCallBack.locationUpdate(location);
     }
 
     private void fetchCurrentLocation() {
@@ -593,5 +607,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_park.setEnabled(true);
         btn_find_user_parked.setEnabled(false);
         clearParkedLatlngFromSharedPrefs();
+    }
+
+    public interface MapsCallBack {
+        void locationUpdate(Location location);
     }
 }

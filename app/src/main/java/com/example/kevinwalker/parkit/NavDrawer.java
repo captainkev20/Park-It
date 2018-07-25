@@ -1,7 +1,9 @@
 package com.example.kevinwalker.parkit;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -29,7 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -44,6 +46,8 @@ public class NavDrawer extends AppCompatActivity
     private SpotFragment spotFragment;
     private FrameLayout container;
     private static final String TAG = NavDrawer.class.getName();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference mDatabase = database.getReference();
 
 
     @Override
@@ -84,19 +88,14 @@ public class NavDrawer extends AppCompatActivity
         paymentFragmentTransaction.commit();
         spotFragmentTransaction.commit();
 
-        /*DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        DatabaseReference myRef = database.child("testString").child("I0DSL2PvQIuafqv7r4O4").child("testString");*/
 
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
-        DatabaseReference myRef = database.getReference("message");
-        //DatabaseReference testRef = database.getReference("testString");
-        DatabaseReference locationReference = database.getReference("location");
-        locationReference.setValue(new Location(1234123, 1234323));
+        DatabaseReference testString = database.getReference("message");
+        testString.setValue("kevinwalker1550005");
 
-        myRef.setValue("KevinWalker");
+        DatabaseReference location = database.getReference("location");
+        //location.setValue(saveCurrentUserLocation());
 
-
-        myRef.addValueEventListener(new ValueEventListener() {
+        testString.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String value = dataSnapshot.getValue(String.class);
@@ -129,6 +128,20 @@ public class NavDrawer extends AppCompatActivity
     public void logOff() {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(NavDrawer.this, Login.class));
+    }
+
+    public com.example.kevinwalker.parkit.maps.Location saveCurrentUserLocation(Location currentUserLocation){
+        com.example.kevinwalker.parkit.maps.Location locationPojo = new com.example.kevinwalker.parkit.maps.Location();
+        locationPojo.setLatitude(currentUserLocation.getLatitude());
+        locationPojo.setLongitude(currentUserLocation.getLongitude());
+        locationPojo.setSavedTime(currentUserLocation.getTime());
+
+        DatabaseReference location = database.getReference("location");
+        location.setValue(locationPojo);
+        mDatabase.child("location").child("kev001").setValue(locationPojo);
+
+
+        return locationPojo;
     }
 
     @Override
@@ -207,5 +220,10 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void onNegativeClick() {
 
+    }
+
+    @Override
+    public void locationUpdate(Location location) {
+        saveCurrentUserLocation(location);
     }
 }
