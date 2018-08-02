@@ -3,6 +3,8 @@ package com.example.kevinwalker.parkit.users;
 import android.widget.ImageView;
 
 import com.example.kevinwalker.parkit.badges.Badge;
+import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
+import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
 
@@ -14,9 +16,9 @@ import java.util.UUID;
 
 public class User {
 
-    private String firstName;
-    private String lastName;
-    private UUID userUUID;
+    private String firstName = "";
+    private String lastName = "";
+    private String userUUID = "";
     private Address[] address;
     private License license;
     private ImageView avatar;
@@ -25,8 +27,10 @@ public class User {
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
     private boolean isParked = false;
+    private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975,-79.7860938,0);
+    private UserCurrentLocation userCurrentLocation = new UserCurrentLocation(36.0656975,-79.7860938,0);
 
-    public User() {};
+    public User() {}
 
     public User(boolean isParked) {
         this.isParked = isParked;
@@ -48,11 +52,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public UUID getUserUUID() {
+    public String getUserUUID() {
         return userUUID;
     }
 
-    public void setUserUUID(UUID userUUID) {
+    public void setUserUUID(String userUUID) {
         this.userUUID = userUUID;
     }
 

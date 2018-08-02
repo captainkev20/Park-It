@@ -42,6 +42,6 @@ public class PaymentFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        getActivity().setTitle("Payments");
+        getActivity().setTitle(getResources().getString(R.string.payments_nav_title));
     }
 }

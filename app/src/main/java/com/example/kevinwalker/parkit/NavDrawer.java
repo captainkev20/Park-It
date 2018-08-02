@@ -1,9 +1,7 @@
 package com.example.kevinwalker.parkit;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -19,16 +17,22 @@ import android.widget.FrameLayout;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
+import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
+import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
+import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;;
+import com.google.firebase.database.ValueEventListener;
+
+import static com.example.kevinwalker.parkit.authentication.Login.EXTRA_USER;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack {
@@ -45,9 +49,11 @@ public class NavDrawer extends AppCompatActivity
     private PaymentFragment paymentFragment;
     private SpotFragment spotFragment;
     private FrameLayout container;
+    private User currentUser = new User();
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
+    DatabaseReference userDatabaseReference = database.getReference();
 
 
     @Override
@@ -70,6 +76,14 @@ public class NavDrawer extends AppCompatActivity
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
 
+        Intent intent = getIntent();
+        if (intent != null) {
+            currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
+        }
+
+        userDatabaseReference = database.getReference("users").child(currentUser.getUserUUID());
+
+
         // Set the default fragment to display
         container = findViewById(R.id.container);
         fragmentManager = getSupportFragmentManager();
@@ -89,16 +103,19 @@ public class NavDrawer extends AppCompatActivity
         spotFragmentTransaction.commit();
 
 
-        DatabaseReference testString = database.getReference("message");
-        testString.setValue("kevinwalker1550005");
-
-        DatabaseReference location = database.getReference("location");
-        //location.setValue(saveCurrentUserLocation());
-
-        testString.addValueEventListener(new ValueEventListener() {
+        userDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String value = dataSnapshot.getValue(String.class);
+
+                boolean currentUserExists = dataSnapshot.child("user").child(currentUser.getUserUUID()).exists();
+                if (currentUserExists) {
+                    currentUser = (User) dataSnapshot.child("user").child(currentUser.getUserUUID()).getValue();
+                } else {
+                    currentUser = new User();
+                    currentUser.setFirstName("TestUser233");
+                    userDatabaseReference.setValue(currentUser);
+                }
+
             }
 
             @Override
@@ -108,6 +125,7 @@ public class NavDrawer extends AppCompatActivity
         });
 
     }
+
 
     @Override
     protected void onStart() {
@@ -130,19 +148,18 @@ public class NavDrawer extends AppCompatActivity
         startActivity(new Intent(NavDrawer.this, Login.class));
     }
 
-    public com.example.kevinwalker.parkit.maps.Location saveCurrentUserLocation(Location currentUserLocation){
-        com.example.kevinwalker.parkit.maps.Location locationPojo = new com.example.kevinwalker.parkit.maps.Location();
-        locationPojo.setLatitude(currentUserLocation.getLatitude());
-        locationPojo.setLongitude(currentUserLocation.getLongitude());
-        locationPojo.setSavedTime(currentUserLocation.getTime());
-
-        DatabaseReference location = database.getReference("location");
-        location.setValue(locationPojo);
-        mDatabase.child("location").child("kev001").setValue(locationPojo);
-
-
-        return locationPojo;
+    public void saveCurrentUserLocation(UserCurrentLocation currentUserLocation){
+        DatabaseReference location = database.getReference("currentLocation");
+        location.setValue(currentUserLocation);
+        mDatabase.child("location").child("kev001").setValue(currentUserLocation);
     }
+
+    public void saveUserParkedLocation(UserParkedLocation userParkedLocation) {
+        DatabaseReference parkedLocation = database.getReference("parkedLocation");
+        parkedLocation.setValue(userParkedLocation);
+        mDatabase.child("parkedLocation").child("kev001").setValue(userParkedLocation);
+    }
+
 
     @Override
     public void onBackPressed() {
@@ -223,7 +240,20 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void locationUpdate(Location location) {
+    public void locationUpdate(UserCurrentLocation location) {
         saveCurrentUserLocation(location);
+    }
+
+    @Override
+    public void parkedLocation(UserParkedLocation userParkedLocation) {
+        saveUserParkedLocation(userParkedLocation);
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 }

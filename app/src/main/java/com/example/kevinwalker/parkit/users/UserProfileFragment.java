@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -30,10 +31,13 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UserProfileFragment extends ParentProfileActivity {
 
+    @BindView(R.id.txt_first_name) TextView txt_first_name;
+    @BindView(R.id.txt_last_name) TextView txt_last_name;
+    @BindView(R.id.txt_phone_number) TextView txt_phone_number;
+    @BindView(R.id.txt_email) TextView txt_email;
     @BindView(R.id.txt_name) TextView txt_name;
+    @BindView(R.id.et_enter_first_name) EditText et_enter_first_name;
     @BindView(R.id.txt_rating) TextView txt_rating;
-    @BindView(R.id.txt_badges) TextView txt_badges;
-    @BindView(R.id.txt_score) TextView txt_score;
     @BindView(R.id.image_logo) CircleImageView image_logo;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -59,7 +63,7 @@ public class UserProfileFragment extends ParentProfileActivity {
         ButterKnife.bind(this, view);
         txt_name.setText("Kevin");
 
-        getActivity().setTitle("Profile");
+        getActivity().setTitle(getResources().getString(R.string.profile_nav_title));
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_test_profile_pic);
 

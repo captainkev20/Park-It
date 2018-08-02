@@ -1,7 +1,5 @@
 package com.example.kevinwalker.parkit.authentication;
 
-// These are the Classes we're importing from their respective packages
-
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -22,13 +20,21 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.Observer;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
+import com.jakewharton.rxbinding2.view.RxView;
 
-// Class Login extends abstract class AppCompatActivity and implements interface View.OnClickListener
+import java.util.HashMap;
+
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG_LOGIN = "TAG_LOGIN";
+    public static final String EXTRA_USER = "EXTRA_USER_UUID";
 
-    // Define the fields for our Class - Class Variables aka Instance Variables
     private EditText et_email;
     private EditText et_password;
 
@@ -73,7 +79,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Check if user is signed in redirect to NavDrawer if so.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
-            startActivity(new Intent(Login.this, NavDrawer.class));
+            startNavDrawerActivity();
         }
 
     }
@@ -84,76 +90,76 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
 
-//        RxView.clicks(btn_login)
-//                .map(new Function<Object, HashMap<String, String>>() {
-//
-//                    @Override
-//                    public HashMap<String, String> apply(Object o) throws Exception {
-//                        HashMap<String, String> usernameAndPassword = new HashMap<>();
-//                        if (!isEditTextEmpty(et_email) && !isEditTextEmpty(et_password)) {
-//                            usernameAndPassword.put(et_email.getText().toString(), et_password.getText().toString());
-//                        } else if (isEditTextEmpty(et_email)) { // et_email is empty
-//                            throw new IllegalArgumentException("Your email field is blank");
-//                        } else if (isEditTextEmpty(et_password)) { // et_password is empty
-//                            throw new IllegalArgumentException("Your password field is blank");
-//                        }
-//                        return usernameAndPassword;
-//                    }
-//                })
-//        .doOnNext(new Consumer<HashMap<String, String>>() {
-//            @Override
-//            public void accept(HashMap<String, String> hashMap) throws Exception {
-//                mAuth.signInWithEmailAndPassword(et_email.getText().toString(), et_password.getText().toString())
-//                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-//                            @Override
-//                            public void onComplete(@NonNull Task<AuthResult> task) {
-//                                if (task.isSuccessful()) {
-//                                    // Sign in success, update UI with the signed-in user's information
-//                                    Log.d(TAG_LOGIN, "signInWithEmail:success");
-//                                    FirebaseUser user = mAuth.getCurrentUser();
-//                                    updateUI(user);
-//                                } else {
-//                                    // If sign in fails, display a message to the user.
-////                                    Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());
-////                                    Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
-////                                            Toast.LENGTH_SHORT).show();
-//                                    updateUI(null);
-//                                }
-//
-//                                // ...
-//                            }
-//                        });
-//            }
-//        })
-//        .doOnError(new Consumer<Throwable>() {
-//            @Override
-//            public void accept(Throwable throwable) throws Exception {
-//                Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        })
-//        .subscribe(
-//                new Observer<HashMap<String, String>>() {
-//                    @Override
-//                    public void onSubscribe(Disposable d) {
-//                        Log.i(TAG_LOGIN, "In Observer onSubscribe, value of Disposable d: " + d.toString());
-//                    }
-//
-//                    @Override
-//                    public void onNext(HashMap<String, String> hashMap) {
-//                        Log.i(TAG_LOGIN, "In Observer onNext, value of String s: ");
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//                        Log.i(TAG_LOGIN, "In Observer onError, value of e:" + e.getMessage());
-//                    }
-//
-//                    @Override
-//                    public void onComplete() {
-//                        Log.i(TAG_LOGIN, "In Observer onComplete");
-//                    }
-//                }
-//        );
+        /*RxView.clicks(btn_login)
+                .map(new Function<Object, HashMap<String, String>>() {
+
+                    @Override
+                    public HashMap<String, String> apply(Object o) throws Exception {
+                        HashMap<String, String> usernameAndPassword = new HashMap<>();
+                        if (!isEditTextEmpty(et_email) && !isEditTextEmpty(et_password)) {
+                            usernameAndPassword.put(et_email.getText().toString(), et_password.getText().toString());
+                        } else if (isEditTextEmpty(et_email)) { // et_email is empty
+                            throw new IllegalArgumentException("Your email field is blank");
+                        } else if (isEditTextEmpty(et_password)) { // et_password is empty
+                            throw new IllegalArgumentException("Your password field is blank");
+                        }
+                        return usernameAndPassword;
+                    }
+                })
+        .doOnNext(new Consumer<HashMap<String, String>>() {
+            @Override
+            public void accept(HashMap<String, String> hashMap) throws Exception {
+                mAuth.signInWithEmailAndPassword(et_email.getText().toString(), et_password.getText().toString())
+                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+                                    // Sign in success, update UI with the signed-in user's information
+                                    Log.d(TAG_LOGIN, "signInWithEmail:success");
+                                    FirebaseUser user = mAuth.getCurrentUser();
+                                    updateUI(user);
+                                } else {
+                                    // If sign in fails, display a message to the user.
+//                                    Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());
+//                                    Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
+//                                            Toast.LENGTH_SHORT).show();
+                                    updateUI(null);
+                                }
+
+                                // ...
+                            }
+                        });
+            }
+        })
+        .doOnError(new Consumer<Throwable>() {
+            @Override
+            public void accept(Throwable throwable) throws Exception {
+                Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        })
+        .subscribe(
+                new Observer<HashMap<String, String>>() {
+                    @Override
+                    public void onSubscribe(Disposable d) {
+                        Log.i(TAG_LOGIN, "In Observer onSubscribe, value of Disposable d: " + d.toString());
+                    }
+
+                    @Override
+                    public void onNext(HashMap<String, String> hashMap) {
+                        Log.i(TAG_LOGIN, "In Observer onNext, value of String s: ");
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        Log.i(TAG_LOGIN, "In Observer onError, value of e:" + e.getMessage());
+                    }
+
+                    @Override
+                    public void onComplete() {
+                        Log.i(TAG_LOGIN, "In Observer onComplete");
+                    }
+                }
+        );*/
 
     }
 
@@ -187,6 +193,12 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         return editText.getText().toString().isEmpty();
     }
 
+    private void startNavDrawerActivity() {
+        Intent navDrawer = new Intent(this, NavDrawer.class);
+        navDrawer.putExtra(EXTRA_USER, mAuth.getCurrentUser().getUid());
+        startActivity(navDrawer);
+    }
+
     private void signIn(String email, String password) {
         mAuth.signInWithEmailAndPassword(email, password)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -196,7 +208,14 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(getApplicationContext(), "Authentication succeed.",
                                     Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Login.this, NavDrawer.class));
+                            startNavDrawerActivity();
+                            /*//Intent navDrawer = new Intent(this, NavDrawer.class);
+                            //navDrawer.putExtra(EXTRA_USER, user.getUid());
+                            Bundle bundle = new Bundle();
+                            bundle.putString(EXTRA_USER, user.getUid());
+                            //navDrawer.putExtras(bundle);
+
+                            //startActivity(navDrawer);*/
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());

@@ -44,6 +44,6 @@ public class SpotFragment extends ParentProfileActivity {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        getActivity().setTitle("Spot Listing");
+        getActivity().setTitle(getResources().getString(R.string.listings_nav_title));
     }
 }

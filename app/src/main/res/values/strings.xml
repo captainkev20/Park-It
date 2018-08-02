@@ -9,7 +9,6 @@
     <string name="rating">Rating: </string>
     <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
-    <string name="score">Score: </string>
     <string name="vehicle">Vehicle: </string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
@@ -21,7 +20,12 @@
     <string name="et_enter_new_password">Enter New Password</string>
 
     <string name="score_placeholder">000099</string>
-    <string name="badges">Badges: </string>
+    <string name="first_name">First Name: </string>
+    <string name="last_name">Last Name: </string>
+    <string name="phone_number">Phone Number: </string>
+    <string name="email">E-mail: </string>
+    <string name="enter_first_Name">Enter First Name: </string>
+    <string name="enter_last_name">Enter Last Name: </string>
     <string name="btn_park_status">Park Status: </string>
 
 
@@ -30,6 +34,14 @@
     <string name="cvv">CVV: </string>
     <string name="expiration_date">Expiration Date: </string>
     <string name="zip">Zip: </string>
+
+    <string name="map_nav_title">Map </string>
+    <string name="profile_nav_title">Profile </string>
+    <string name="listings_nav_title">Listings </string>
+    <string name="payments_nav_title">Payments </string>
+    <string name="settings_nav_title">Settings </string>
+    <string name="about_nav_title">About Us </string>
+
 
     <string name="btn_save">SAVE </string>
     <string name="btn_cancel">CANCEL </string>

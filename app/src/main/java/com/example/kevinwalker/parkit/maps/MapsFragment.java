@@ -49,6 +49,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
@@ -94,8 +95,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final String SAVED_LOCATION = "saved_location";
     private long epochTimeStamp;
     private Boolean shouldRefreshMap = true;
-    private Location currentLocation;
-    private android.support.v4.app.FragmentManager fragmentManager;
+    private Location androidCurrentLocation = new Location("test");
+    private UserCurrentLocation pojoCurrentLocation = new UserCurrentLocation(36.0656975, -79.7860938,0);
     private MapsFragment.MapsCallBack mapsCallBack;
 
 
@@ -109,8 +110,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         fetchCurrentLocation();
         mapsCallBack = this.mapsCallBack;
 
-//        userSpot = new Spot(parkedLatLng);
-//        currentUser = new User(isUserParked, userSpot);
 
         geocoder = new Geocoder(getActivity().getApplicationContext());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
@@ -119,18 +118,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             btn_find_user_parked.setEnabled(true);
         }
 
-
-
-        // TODO: Check for shared Pref key on first run. If value is first time running
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
         if(savedInstanceState!=null) {
-            currentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
+            androidCurrentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
         }
+
+
+
         return mView;
     }
 
@@ -147,8 +145,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
-        // TODO: Move to onCreateView so ready to maniulate there
         btn_park = getView().findViewById(R.id.btn_park);
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
@@ -156,7 +152,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
-        getActivity().setTitle("Map");
+        getActivity().setTitle(getResources().getString(R.string.map_nav_title));
     }
 
     @Override
@@ -173,6 +169,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             epochTimeStamp = savedInstanceState.getLong(EPOCH_TIME);
             Log.i(TAG, String.valueOf(epochTimeStamp));
         }
+
+        UserCurrentLocation tempLocation = new UserCurrentLocation();
+        tempLocation.setLatitude(androidCurrentLocation.getLatitude());
+        tempLocation.setLongitude(androidCurrentLocation.getLongitude());
+        mapsCallBack.locationUpdate(tempLocation);
     }
 
     private void saveEpochTimeToBundle(Bundle outState) {
@@ -187,8 +188,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         saveEpochTimeToBundle(outState);
-        outState.putParcelable(SAVED_LOCATION, currentLocation);
-        Log.i(TAG, "supppp");
+        outState.putParcelable(SAVED_LOCATION, androidCurrentLocation);
+        Log.i(TAG, "onSaveInstanceState");
     }
 
 
@@ -199,16 +200,16 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 if (mLocationPermissionStatus) {
                     isUserParked = true;
-                    saveUserParkingData(currentLatLng, isUserParked);
-                    animateCamera(getCurrentLatLng(), DEFAULT_ZOOM, currentAddress);
-                    placeMarkerOnMap(currentLatLng, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
+                    saveUserCurrentLocation(pojoCurrentLocation);
+                    animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
+                    placeMarkerOnMap(pojoCurrentLocation, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
                     break;
 
                 } else {
-                    Toast.makeText(getActivity(), "Location not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "UserCurrentLocation not available", Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                     mLocationPermissionStatus = false;
                 }
@@ -235,12 +236,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             case R.id.btn_find_user_parked:
                 loadUserParkingData();
-                animateCamera(parkedLatLng, DEFAULT_ZOOM, currentAddress);
+                animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
                 break;
         }
     }
 
-    private void saveUserParkingData(LatLng latLng, boolean isUserParked) {
+    /*private void saveUserCurrentLocation(LatLng latLng, boolean isUserParked) {
 
         sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
         editor = sharedPreferences.edit();
@@ -248,6 +249,15 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         editor.putBoolean(SHARED_PREFS_IS_PARKED_KEY, isUserParked);
         editor.putString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(latLng.latitude)).apply();
         editor.putString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(latLng.longitude)).apply();
+    }*/
+
+    private void saveUserCurrentLocation(UserCurrentLocation currentUserLocation) {
+        mapsCallBack.locationUpdate(currentUserLocation);
+
+    }
+
+    private void saveUserParkedLocation(UserParkedLocation userParkedLocation) {
+        mapsCallBack.parkedLocation(userParkedLocation);
     }
 
     private void loadUserParkingData() {
@@ -296,7 +306,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         .setNegativeButton(getResources().getString(R.string.PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(getActivity(), "Location not available", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getActivity(), "UserCurrentLocation not available", Toast.LENGTH_SHORT).show();
                                 // UserProfileFragment said no, set to false
                                 mLocationPermissionStatus = false;
                             }
@@ -347,9 +357,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
     }
 
-    private void animateCamera(LatLng latLng, float zoom, String title) {
+    private void animateCamera(UserCurrentLocation currentUserLocation, float zoom, String title) {
         Log.d(TAG, "Moving camera to: ");
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, zoom));
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude()), zoom));
     }
 
     private boolean shouldRefreshMap() {
@@ -365,7 +375,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
-                            currentLocation = (Location) determineLocationAccuracy.getResult();
+                            androidCurrentLocation = (Location) determineLocationAccuracy.getResult();
                             if (mapFirstRun) {
 
                                 } else {
@@ -406,9 +416,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeMarkerOnMap(LatLng latLng, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
+    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
         userMarker = map.addMarker(new MarkerOptions()
-                .position(latLng)
+                .position(new LatLng(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude()))
                 .title(title)
                 .icon(bitmapDescriptor)
                 .visible(markerVisible));
@@ -442,15 +452,21 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
 
-    private void setCurrentLatLng(Location location) {
+    private void setCurrentLatLng(UserCurrentLocation location) {
         currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
     }
 
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
-    private void currentLocationUpdated(Location location) {
+    private void currentLocationUpdated(UserCurrentLocation location) {
         setCurrentLatLng(location);
         setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
         mapsCallBack.locationUpdate(location);
+    }
+
+    // Method to convert Android Location to custom POJO UserCurrentLocation object for use through program
+    private UserCurrentLocation convertAndroidLocationToPojo(Location androidLocation) {
+
+        return new UserCurrentLocation(androidLocation.getLatitude(), androidLocation.getLongitude(), 0);
     }
 
     private void fetchCurrentLocation() {
@@ -461,12 +477,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
-                            currentLocation = (Location) location.getResult();
+                            androidCurrentLocation = (Location) location.getResult();
+                            pojoCurrentLocation = convertAndroidLocationToPojo(androidCurrentLocation);
+
                             if (mapFirstRun) {
-                                currentLocationUpdated((Location) task.getResult());
-                                animateCamera(currentLatLng, DEFAULT_ZOOM, currentAddress);
+                                currentLocationUpdated(convertAndroidLocationToPojo((Location)task.getResult()));
+                                animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
                             } else {
-                                currentLocationUpdated((Location) task.getResult());
+                                currentLocationUpdated(convertAndroidLocationToPojo((Location)task.getResult()));
                             }
                         } else {
                             Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
@@ -500,9 +518,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
 
         if (isUserParked) {
-            placeMarkerOnMap(getParkedLatlngFromSharedPrefs(), currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
+            placeMarkerOnMap(pojoCurrentLocation, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
         } else {
-            animateCamera(currentLatLng, DEFAULT_ZOOM, currentAddress);
+            animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
         }
 
         // Checks for permission
@@ -526,7 +544,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-        currentLocationUpdated(location);
+        currentLocationUpdated(pojoCurrentLocation);
     }
 
     @Override
@@ -610,6 +628,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     public interface MapsCallBack {
-        void locationUpdate(Location location);
+        void locationUpdate(UserCurrentLocation location);
+
+        void parkedLocation(UserParkedLocation userParkedLocation);
     }
 }

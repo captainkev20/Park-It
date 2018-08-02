@@ -1,35 +1,27 @@
 {
   "project_info": {
-    "project_number": "1077606605299",
-    "firebase_url": "https://park-it-90607.firebaseio.com",
-    "project_id": "park-it-90607",
-    "storage_bucket": "park-it-90607.appspot.com"
+    "project_number": "96856603305",
+    "firebase_url": "https://park-it-1522607517807.firebaseio.com",
+    "project_id": "park-it-1522607517807",
+    "storage_bucket": "park-it-1522607517807.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1077606605299:android:8b3eb67e73216528",
+        "mobilesdk_app_id": "1:96856603305:android:8b3eb67e73216528",
         "android_client_info": {
           "package_name": "com.example.kevinwalker.parkit"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1077606605299-cl7bd7k518vchologclkno5gvp4v5p95.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.kevinwalker.parkit",
-            "certificate_hash": "9cb51481fd853832be2f730c35a2bc867369cd65"
-          }
-        },
-        {
-          "client_id": "1077606605299-29ohs5mtoi0i0uiiee91mmhcs95qjeni.apps.googleusercontent.com",
+          "client_id": "96856603305-doa894akupf1r4tv968t94527hco7nvi.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyA21e-aMOyYNFs03UwysrbSrepnEa3-hq0"
+          "current_key": "AIzaSyAnU4hbm1BjeNsr0O6ZH_9cugcZxuMjgw0"
         }
       ],
       "services": {
@@ -37,13 +29,8 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 2,
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1077606605299-29ohs5mtoi0i0uiiee91mmhcs95qjeni.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "status": 1,
+          "other_platform_oauth_client": []
         },
         "ads_service": {
           "status": 2
