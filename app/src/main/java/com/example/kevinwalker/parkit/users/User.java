@@ -19,6 +19,10 @@ public class User {
     private String firstName = "";
     private String lastName = "";
     private String userUUID = "";
+
+
+
+    private String userEmail = "";
     private Address[] address;
     private License license;
     private ImageView avatar;
@@ -36,6 +40,14 @@ public class User {
         this.isParked = isParked;
     }
 
+    public UserParkedLocation getUserParkedLocation() { return userParkedLocation; }
+
+    public void setUserParkedLocation(UserParkedLocation userParkedLocation) { this.userParkedLocation = userParkedLocation; }
+
+    public UserCurrentLocation getUserCurrentLocation() { return userCurrentLocation; }
+
+    public void setUserCurrentLocation(UserCurrentLocation userCurrentLocation) { this.userCurrentLocation = userCurrentLocation; }
+
     public String getFirstName() {
         return firstName;
     }
@@ -43,6 +55,10 @@ public class User {
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
+
+    public String getUserEmail() { return userEmail; }
+
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 
     public String getLastName() {
         return lastName;

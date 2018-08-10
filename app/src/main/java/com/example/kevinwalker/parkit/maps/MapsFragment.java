@@ -127,8 +127,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             androidCurrentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
         }
 
-
-
         return mView;
     }
 

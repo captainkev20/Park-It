@@ -12,11 +12,16 @@
     <string name="vehicle">Vehicle: </string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
-    <string name="username">Username</string>
-    <string name="et_enter_new_username">Enter New Username</string>
-    <string name="confirm_password">Confirm Password</string>
+    <string name="txt_enter_email">Email: </string>
+    <string name="et_enter_new_email">Enter Email</string>
+    <string name="login_enter_first_name">First Name</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="park_it_login_screen">Park It</string>
+    <string name="park_it_welcome_message">Making parking better one spot at a time...</string>
+    <string name="et_enter_first_name">Enter First Name</string>
+    <string name="confirm_password">Confirm Password: </string>
     <string name="et_confirm_password">Confirm Password</string>
-    <string name="password">Password</string>
+    <string name="password">Password: </string>
     <string name="et_enter_new_password">Enter New Password</string>
 
     <string name="score_placeholder">000099</string>
@@ -24,8 +29,10 @@
     <string name="last_name">Last Name: </string>
     <string name="phone_number">Phone Number: </string>
     <string name="email">E-mail: </string>
-    <string name="enter_first_Name">Enter First Name: </string>
-    <string name="enter_last_name">Enter Last Name: </string>
+    <string name="enter_first_Name">Enter First Name</string>
+    <string name="enter_last_name">Enter Last Name</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="enter_email">Enter Email</string>
     <string name="btn_park_status">Park Status: </string>
 
 
@@ -71,6 +78,7 @@
     <string name="registration_already_registered">You have already registered this email</string>
     <string name="registration_email_banned">The email you entered is banned from this app</string>
     <string name="registration_username_empty">Please enter your email as a username</string>
+    <string name="registration_first_name_empty">Please enter your first name</string>
     <string name="registration_password_empty">Please supply a password</string>
     <string name="registration_confirm_password_empty">Please confirm your password</string>
     <string name="registration_weak_password">Your password is weak</string>

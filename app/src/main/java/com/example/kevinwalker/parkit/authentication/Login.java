@@ -34,6 +34,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG_LOGIN = "TAG_LOGIN";
     public static final String EXTRA_USER = "EXTRA_USER_UUID";
+    public static final String EXTRA_USER_EMAIL = "EXTRA_USER_EMAIL";
+
 
     private EditText et_email;
     private EditText et_password;
@@ -196,6 +198,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private void startNavDrawerActivity() {
         Intent navDrawer = new Intent(this, NavDrawer.class);
         navDrawer.putExtra(EXTRA_USER, mAuth.getCurrentUser().getUid());
+        navDrawer.putExtra(EXTRA_USER_EMAIL, mAuth.getCurrentUser().getEmail());
         startActivity(navDrawer);
     }
 
@@ -209,13 +212,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                             Toast.makeText(getApplicationContext(), "Authentication succeed.",
                                     Toast.LENGTH_SHORT).show();
                             startNavDrawerActivity();
-                            /*//Intent navDrawer = new Intent(this, NavDrawer.class);
-                            //navDrawer.putExtra(EXTRA_USER, user.getUid());
-                            Bundle bundle = new Bundle();
-                            bundle.putString(EXTRA_USER, user.getUid());
-                            //navDrawer.putExtras(bundle);
-
-                            //startActivity(navDrawer);*/
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());

@@ -10,8 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.authentication.Login;
+import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -20,15 +22,24 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG_REGISTRATION = "TAG_REGISTRATION";
 
-    EditText username;
-    EditText password;
-    EditText confirmPassword;
-    Button register;
+    private EditText username;
+    private EditText password;
+    private EditText confirmPassword;
+    private EditText firstName;
+    private Button register;
+    private User currentUser = new User();
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private static final String TAG = Registration.class.getName();
 
     private FirebaseAuth mAuth;
 
@@ -120,6 +131,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                         if (checkPasswordLength(password) && checkPasswordLength(confirmPassword)) {
                             createAccount(username.getText().toString(), password.getText().toString());
                             // Return newly registered user back to Login
+
                             startActivity(new Intent(getApplicationContext(), Login.class));
                         }
                         // User's passwords do not match

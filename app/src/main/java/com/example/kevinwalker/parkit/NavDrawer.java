@@ -32,8 +32,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import static com.example.kevinwalker.parkit.authentication.Login.EXTRA_USER;
-
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack {
 
@@ -54,7 +52,7 @@ public class NavDrawer extends AppCompatActivity
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference mDatabase = database.getReference();
     DatabaseReference userDatabaseReference = database.getReference();
-
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +74,12 @@ public class NavDrawer extends AppCompatActivity
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
 
+        mAuth = FirebaseAuth.getInstance();
+
         Intent intent = getIntent();
         if (intent != null) {
             currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
+            currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
         }
 
         userDatabaseReference = database.getReference("users").child(currentUser.getUserUUID());
@@ -107,15 +108,14 @@ public class NavDrawer extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                boolean currentUserExists = dataSnapshot.child("user").child(currentUser.getUserUUID()).exists();
-                if (currentUserExists) {
-                    currentUser = (User) dataSnapshot.child("user").child(currentUser.getUserUUID()).getValue();
-                } else {
-                    currentUser = new User();
-                    currentUser.setFirstName("TestUser233");
-                    userDatabaseReference.setValue(currentUser);
-                }
+                 Log.i(TAG, dataSnapshot.getValue().toString());
 
+                    if (dataSnapshot.getValue(User.class) == null) {
+                        userDatabaseReference.setValue(currentUser);
+                    } else {
+                        currentUser = dataSnapshot.getValue(User.class);
+                    }
+                    Log.i(TAG, currentUser.getUserUUID());
             }
 
             @Override
@@ -125,7 +125,6 @@ public class NavDrawer extends AppCompatActivity
         });
 
     }
-
 
     @Override
     protected void onStart() {
@@ -149,15 +148,13 @@ public class NavDrawer extends AppCompatActivity
     }
 
     public void saveCurrentUserLocation(UserCurrentLocation currentUserLocation){
-        DatabaseReference location = database.getReference("currentLocation");
-        location.setValue(currentUserLocation);
-        mDatabase.child("location").child("kev001").setValue(currentUserLocation);
+        currentUser.setUserCurrentLocation(currentUserLocation);
+        userDatabaseReference.setValue(currentUser);
     }
 
     public void saveUserParkedLocation(UserParkedLocation userParkedLocation) {
-        DatabaseReference parkedLocation = database.getReference("parkedLocation");
-        parkedLocation.setValue(userParkedLocation);
-        mDatabase.child("parkedLocation").child("kev001").setValue(userParkedLocation);
+        currentUser.setUserParkedLocation(userParkedLocation);
+        userDatabaseReference.setValue(currentUser);
     }
 
 

@@ -36,6 +36,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
+                android:fontFamily="@font/roboto"
                 android:text="@string/first_name"
                 android:textColor="#02c39a"
                 android:textStyle="bold"
@@ -54,6 +55,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
                 android:text="@string/last_name"
                 android:textColor="#02c39a"
                 android:textStyle="bold"
@@ -62,7 +64,7 @@
                 app:layout_constraintHorizontal_bias="0.029"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.351" />
+                app:layout_constraintVertical_bias="0.282" />
 
             <TextView
                 android:id="@+id/txt_phone_number"
@@ -72,6 +74,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
                 android:text="@string/email"
                 android:textColor="#02c39a"
                 android:textStyle="bold"
@@ -80,7 +83,7 @@
                 app:layout_constraintHorizontal_bias="0.026"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.822" />
+                app:layout_constraintVertical_bias="0.738" />
 
             <TextView
                 android:id="@+id/txt_email"
@@ -90,6 +93,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
                 android:text="@string/phone_number"
                 android:textColor="#02c39a"
                 android:textStyle="bold"
@@ -98,14 +102,40 @@
                 app:layout_constraintHorizontal_bias="0.032"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.633" />
+                app:layout_constraintVertical_bias="0.501" />
+
+            <EditText
+                android:id="@+id/et_enter_phone_number"
+                android:layout_width="185dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
+                android:hint="@string/enter_phone_number"
+                android:ems="10"
+                android:backgroundTint="#02c39a"
+                android:inputType="phone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_email" />
+
+            <EditText
+                android:id="@+id/et_enter_email"
+                android:layout_width="156dp"
+                android:layout_height="38dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="160dp"
+                android:backgroundTint="#02c39a"
+                android:ems="10"
+                android:hint="@string/enter_email"
+                android:inputType="textPersonName"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txt_last_name" />
 
             <EditText
                 android:id="@+id/et_enter_last_naem"
                 android:layout_width="156dp"
                 android:layout_height="38dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#02c39a"
                 android:ems="10"
                 android:hint="@string/enter_last_name"
@@ -118,7 +148,7 @@
                 android:layout_width="156dp"
                 android:layout_height="38dp"
                 android:layout_marginStart="16dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="8dp"
                 android:backgroundTint="#02c39a"
                 android:ems="10"
                 android:hint="@string/enter_first_Name"
@@ -155,21 +185,13 @@
                 android:id="@+id/txt_name"
                 android:layout_width="88dp"
                 android:layout_height="28dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="sans-serif"
+                android:fontFamily="@font/roboto"
                 android:text="@string/name"
                 android:textColor="#02c39a"
                 android:textSize="24sp"
                 android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.093"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.145" />
+                tools:layout_editor_absoluteX="32dp"
+                tools:layout_editor_absoluteY="14dp" />
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/image_logo"
@@ -196,6 +218,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginStart="36dp"
                 android:layout_marginTop="8dp"
+                android:fontFamily="@font/roboto"
                 android:text="@string/rating"
                 android:textColor="#02c39a"
                 android:textStyle="bold"
