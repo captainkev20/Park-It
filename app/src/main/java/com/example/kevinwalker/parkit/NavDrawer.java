@@ -50,9 +50,7 @@ public class NavDrawer extends AppCompatActivity
     private User currentUser = new User();
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference mDatabase = database.getReference();
     DatabaseReference userDatabaseReference = database.getReference();
-    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,8 +71,6 @@ public class NavDrawer extends AppCompatActivity
 
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
-
-        mAuth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
         if (intent != null) {
@@ -139,6 +135,10 @@ public class NavDrawer extends AppCompatActivity
     private void showLogOffAlertDialog() {
         LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
         newFragment.show(getSupportFragmentManager(), "AlertDiaLog");
+    }
+
+    private void showGetUserInfoAlertDialog(){
+
     }
 
     @Override

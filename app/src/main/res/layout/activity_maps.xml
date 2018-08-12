@@ -22,8 +22,9 @@
         android:background="@drawable/park_button"
         android:elevation="1dp"
         android:enabled="false"
+        android:fontFamily="@font/roboto"
         android:text="@string/Park"
-        android:textColor="@color/common_google_signin_btn_text_light" />
+        android:textColor="@android:color/white" />
 
     <Button
         android:id="@+id/btn_leave"
@@ -37,8 +38,9 @@
         android:background="@drawable/leave_button"
         android:elevation="1dp"
         android:enabled="false"
+        android:fontFamily="@font/roboto"
         android:text="@string/Leave"
-        android:textColor="@color/common_google_signin_btn_text_light" />
+        android:textColor="@android:color/white" />
 
     <!--<fragment-->
         <!--android:layout_width="match_parent"-->
@@ -62,6 +64,7 @@
         android:layout_marginEnd="11dp"
         android:background="@drawable/find_user_button"
         android:elevation="1dp"
+        android:fontFamily="@font/roboto"
         android:text="@string/find_me"
         android:textColor="@android:color/white" />
 </RelativeLayout>
