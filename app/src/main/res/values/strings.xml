@@ -24,10 +24,18 @@
     <string name="password">Password: </string>
     <string name="et_enter_new_password">Enter New Password</string>
 
+
+    <!--// Icons //-->
+    <string name="ic_phone">\ue942</string>
+    <string name="ic_address_book">\ue944</string>
+    <string name="ic_email_envelope">\ue945</string>
+
     <string name="score_placeholder">000099</string>
     <string name="first_name">First Name: </string>
     <string name="last_name">Last Name: </string>
     <string name="phone_number">Phone Number: </string>
+    <string name="edit_profile">EDIT</string>
+    <string name="save_profile">SAVE</string>
     <string name="email">E-mail: </string>
     <string name="enter_first_Name">Enter First Name</string>
     <string name="enter_last_name">Enter Last Name</string>

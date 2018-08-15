@@ -1,6 +1,8 @@
 package com.example.kevinwalker.parkit.users;
 
+import android.provider.ContactsContract;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
@@ -19,10 +21,9 @@ public class User {
     private String firstName = "";
     private String lastName = "";
     private String userUUID = "";
-
-
-
     private String userEmail = "";
+    private String userPhone = "";
+    private float userRating = 0;
     private Address[] address;
     private License license;
     private ImageView avatar;
@@ -75,6 +76,14 @@ public class User {
     public void setUserUUID(String userUUID) {
         this.userUUID = userUUID;
     }
+
+    public String getUserPhone() { return userPhone; }
+
+    public void setUserPhone(String userPhone) { this.userPhone = userPhone; }
+
+    public float getUserRating() { return userRating; }
+
+    public void setUserRating(float userRating) { this.userRating = userRating; }
 
     public Address[] getAddress() {
         return address;

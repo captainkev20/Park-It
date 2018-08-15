@@ -47,7 +47,8 @@ public class NavDrawer extends AppCompatActivity
     private PaymentFragment paymentFragment;
     private SpotFragment spotFragment;
     private FrameLayout container;
-    private User currentUser = new User();
+    private User currentUser;
+    private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userDatabaseReference = database.getReference();
@@ -74,10 +75,11 @@ public class NavDrawer extends AppCompatActivity
 
         Intent intent = getIntent();
         if (intent != null) {
+            currentUser = new User();
             currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
             currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
         }
-
+        //currentUser = new User();
         userDatabaseReference = database.getReference("users").child(currentUser.getUserUUID());
 
 
@@ -104,14 +106,15 @@ public class NavDrawer extends AppCompatActivity
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                 Log.i(TAG, dataSnapshot.getValue().toString());
+                 //Log.i(TAG, dataSnapshot.getValue().toString());
 
                     if (dataSnapshot.getValue(User.class) == null) {
                         userDatabaseReference.setValue(currentUser);
                     } else {
+                        userExists = true;
                         currentUser = dataSnapshot.getValue(User.class);
                     }
-                    Log.i(TAG, currentUser.getUserUUID());
+                    //Log.i(TAG, currentUser.getUserUUID());
             }
 
             @Override
@@ -148,13 +151,19 @@ public class NavDrawer extends AppCompatActivity
     }
 
     public void saveCurrentUserLocation(UserCurrentLocation currentUserLocation){
-        currentUser.setUserCurrentLocation(currentUserLocation);
-        userDatabaseReference.setValue(currentUser);
+        // Check to verify a user exists. If there is no user, we don't want to do location updates
+        if(userExists) {
+            currentUser.setUserCurrentLocation(currentUserLocation);
+            userDatabaseReference.setValue(currentUser);
+        }
     }
 
     public void saveUserParkedLocation(UserParkedLocation userParkedLocation) {
-        currentUser.setUserParkedLocation(userParkedLocation);
-        userDatabaseReference.setValue(currentUser);
+        // Check to verify a user exists. If there is no user, we don't want to do location updates
+        if(userExists) {
+            currentUser.setUserParkedLocation(userParkedLocation);
+            userDatabaseReference.setValue(currentUser);
+        }
     }
 
 

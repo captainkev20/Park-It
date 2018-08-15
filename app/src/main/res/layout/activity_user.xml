@@ -2,239 +2,365 @@
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:customAttrs="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.kevinwalker.parkit.users.UserProfileFragment">
 
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="416dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardCornerRadius="10dp"
-        app:cardElevation="14dp"
-        app:cardUseCompatPadding="true"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cardView2">
-
-        <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <TextView
-                android:id="@+id/txt_first_name"
-                android:layout_width="wrap_content"
-                android:layout_height="25dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/first_name"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.029"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/txt_last_name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/last_name"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.029"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.282" />
-
-            <TextView
-                android:id="@+id/txt_phone_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/phone_number"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.026"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.738" />
-
-            <TextView
-                android:id="@+id/txt_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/email"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.032"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.501" />
-
-            <EditText
-                android:id="@+id/et_enter_phone_number"
-                android:layout_width="185dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/colorAccent"
-                android:ems="10"
-                android:fontFamily="@font/roboto"
-                android:hint="@string/enter_phone_number"
-                android:inputType="phone"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_phone_number" />
-
-            <EditText
-                android:id="@+id/et_enter_email"
-                android:layout_width="156dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="80dp"
-                android:backgroundTint="@color/colorAccent"
-                android:ems="10"
-                android:fontFamily="@font/lato"
-                android:hint="@string/enter_email"
-                android:inputType="textPersonName"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_last_name" />
-
-            <EditText
-                android:id="@+id/et_enter_last_naem"
-                android:layout_width="156dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/colorAccent"
-                android:ems="10"
-                android:fontFamily="@font/roboto"
-                android:hint="@string/enter_last_name"
-                android:inputType="textPersonName"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_last_name" />
-
-            <EditText
-                android:id="@+id/et_enter_first_name"
-                android:layout_width="156dp"
-                android:layout_height="38dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:backgroundTint="@color/colorAccent"
-                android:ems="10"
-                android:fontFamily="@font/roboto"
-                android:hint="@string/enter_first_Name"
-                android:inputType="textPersonName"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/txt_first_name" />
-        </android.support.constraint.ConstraintLayout>
-    </android.support.v7.widget.CardView>
-
-    <android.support.v7.widget.CardView
-        android:id="@+id/cardView2"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        app:cardUseCompatPadding="true"
-        app:cardBackgroundColor="@android:color/white"
-        app:cardElevation="14dp"
-        app:cardCornerRadius="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
+    <ViewSwitcher
+        android:id="@+id/profile_view_switcher"
+        android:layout_width="wrap_content"
+        android:layout_height="628dp"
+        android:layout_marginTop="60dp"
+        android:inAnimation="@android:anim/slide_in_left"
+        android:outAnimation="@android:anim/slide_out_right"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.112">
+        tools:layout_editor_absoluteX="6dp">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v7.widget.CardView
+            android:id="@+id/edit_profile_card_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="619dp"
+            android:layout_marginBottom="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="14dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                android:id="@+id/txt_name"
-                android:layout_width="88dp"
-                android:layout_height="34dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/name"
-                android:textColor="@color/colorPrimary"
-                android:textSize="24sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/image_logo"
-                app:layout_constraintHorizontal_bias="0.185"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="348dp"
+                android:layout_height="592dp">
 
-            <de.hdodenhof.circleimageview.CircleImageView
-                android:id="@+id/image_logo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="32dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:src="@mipmap/ic_launcher"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.992"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:civ_border_width="2dp"
-                app:civ_border_color="@color/colorPrimary"/>
-            app:layout_constraintVertical_bias="0.0" />
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/edit_image_logo"
+                    android:layout_width="128dp"
+                    android:layout_height="140dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.55"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.043" />
 
-            <TextView
-                android:id="@+id/txt_rating"
-                android:layout_width="wrap_content"
-                android:layout_height="17dp"
-                android:layout_marginBottom="8dp"
-                android:layout_marginStart="36dp"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/roboto"
-                android:text="@string/rating"
-                android:textColor="@color/colorPrimary"
-                android:textStyle="bold"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.85" />
+                <TextView
+                    android:id="@+id/edit_first_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="25dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="208dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/first_name"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.11"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
-        </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/edit_last_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="21dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/last_name"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.109"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_first_name2" />
 
-    </android.support.v7.widget.CardView>
+                <TextView
+                    android:id="@+id/edit_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="108dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/phone_number"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.114"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_email" />
+
+                <TextView
+                    android:id="@+id/edit_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="188dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/email"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.097"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/et_last_name2" />
+
+                <EditText
+                    android:id="@+id/et_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:ems="10"
+                    android:hint="@string/enter_phone_number"
+                    android:inputType="phone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.22"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_phone_number" />
+
+                <EditText
+                    android:id="@+id/et_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:ems="10"
+                    android:hint="@string/enter_email"
+                    android:inputType="textPersonName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.237"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_email" />
+
+                <EditText
+                    android:id="@+id/et_last_name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:ems="10"
+                    android:hint="@string/enter_last_name"
+                    android:inputType="textPersonName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.237"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_last_name" />
+
+                <EditText
+                    android:id="@+id/et_first_name2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:ems="10"
+                    android:hint="@string/enter_first_Name"
+                    android:inputType="textPersonName"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.237"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/edit_first_name" />
+
+                <TextView
+                    android:id="@+id/txt_save_profile"
+                    android:layout_width="58dp"
+                    android:layout_height="28dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="180dp"
+                    android:text="@string/save_profile"
+                    android:textColor="@android:color/holo_blue_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.677"
+                    app:layout_constraintStart_toEndOf="@+id/edit_image_logo"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:id="@+id/main_profile_card_view"
+            android:layout_width="match_parent"
+            android:layout_height="619dp"
+            android:layout_marginBottom="48dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            app:cardBackgroundColor="@android:color/white"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="14dp"
+            app:cardUseCompatPadding="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="348dp"
+                android:layout_height="592dp">
+
+                <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/image_logo"
+                    android:layout_width="128dp"
+                    android:layout_height="140dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="32dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:src="@mipmap/ic_launcher"
+                    app:civ_border_color="@color/colorPrimary"
+                    app:civ_border_width="2dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.55"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.043" />
+
+                <com.example.kevinwalker.parkit.utils.CustomTextView
+                    android:id="@+id/ic_phone"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/ic_phone"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.167"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ic_email"
+                    customAttrs:customFont="PARK_IT_ICON_FONT" />
+
+                <com.example.kevinwalker.parkit.utils.CustomTextView
+                    android:id="@+id/ic_email"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
+                    android:layout_marginEnd="240dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="24dp"
+                    android:text="@string/ic_email_envelope"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="36sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.979"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/rating_bar"
+                    customAttrs:customFont="PARK_IT_ICON_FONT" />
+
+
+                <TextView
+                    android:id="@+id/txt_first_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="39dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="192dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/first_name"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/txt_phone_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/phone_number"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.057"
+                    app:layout_constraintStart_toEndOf="@+id/ic_phone"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.696" />
+
+                <TextView
+                    android:id="@+id/txt_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/email"
+                    android:textColor="@color/colorPrimary"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.039"
+                    app:layout_constraintStart_toEndOf="@+id/ic_email"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintVertical_bias="0.574" />
+
+                <RatingBar
+                    android:id="@+id/rating_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="16dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_first_name" />
+
+                <TextView
+                    android:id="@+id/txt_edit_user_profile"
+                    android:layout_width="49dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="48dp"
+                    android:layout_marginTop="56dp"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/edit_profile"
+                    android:textColor="@android:color/holo_red_light"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/ic_phone" />
+
+            </android.support.constraint.ConstraintLayout>
+        </android.support.v7.widget.CardView>
+
+    </ViewSwitcher>
+
+
 
 </android.support.constraint.ConstraintLayout>

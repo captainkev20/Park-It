@@ -1,6 +1,5 @@
 package com.example.kevinwalker.parkit.authentication;
 
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,7 +27,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        et_email = findViewById(R.id.et_email);
+        et_email = findViewById(R.id.et_phone_number);
         btn_send_password = findViewById(R.id.btn_send_password);
 
         btn_send_password.setOnClickListener(this);

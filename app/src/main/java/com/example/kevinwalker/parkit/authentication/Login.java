@@ -20,21 +20,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
-import io.reactivex.Observer;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
-import com.jakewharton.rxbinding2.view.RxView;
-
-import java.util.HashMap;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG_LOGIN = "TAG_LOGIN";
     public static final String EXTRA_USER = "EXTRA_USER_UUID";
     public static final String EXTRA_USER_EMAIL = "EXTRA_USER_EMAIL";
+    public static final String EXTRA_USER_FIRST_NAME = "EXTRA_USER_FIRST_NAME";
 
 
     private EditText et_email;
@@ -57,7 +49,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         mAuth = FirebaseAuth.getInstance();
 
         // Find our Views so the corresponding objects we've declared can be inflated
-        et_email = findViewById(R.id.et_email);
+        et_email = findViewById(R.id.et_phone_number);
         et_password = findViewById(R.id.et_password);
         btn_login = findViewById(R.id.btn_login);
         txt_forgot_password = findViewById(R.id.txt_forgot_password);
@@ -254,7 +246,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // We can't switch on the type "View" directly because it is not an acceptable argument for switch()
         switch (view.getId()) {
             // Since we're not doing anything when these views are clicked, we have them here simply to show they can be accessed
-            case R.id.et_email:
+            case R.id.et_phone_number:
                 // Do nothing
                 break; // ends the case
             case R.id.et_password:
