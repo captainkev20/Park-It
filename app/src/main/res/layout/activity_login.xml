@@ -126,6 +126,7 @@
         android:fontFamily="@font/roboto_thin_italic"
         android:text="@string/park_it_welcome_message"
         android:textAlignment="center"
+        android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/et_phone_number"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"

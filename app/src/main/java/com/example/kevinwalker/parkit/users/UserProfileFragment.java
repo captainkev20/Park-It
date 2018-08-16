@@ -42,10 +42,6 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
     @BindView(R.id.rating_bar) RatingBar rating_bar;
 
     @BindView(R.id.edit_image_logo) CircleImageView edit_image_logo;
-    @BindView(R.id.edit_first_name) TextView edit_first_name;
-    @BindView(R.id.edit_last_name) TextView edit_last_name;
-    @BindView(R.id.edit_phone_number) TextView edit_phone_number;
-    @BindView(R.id.edit_email) TextView edit_email;
     @BindView(R.id.et_phone_number) EditText et_phone_number;
     @BindView(R.id.et_email) EditText et_email;
     @BindView(R.id.et_last_name2) EditText et_last_name2;
@@ -75,7 +71,6 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         super.onCreate(savedInstanceState);
 
         userDatabaseReference = userDatabaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        //currentUser = userDatabaseReference
     }
 
     @Override
@@ -168,7 +163,10 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         txt_first_name.setText(currentUser.getFirstName());
         txt_email.setText(currentUser.getUserEmail());
         txt_phone_number.setText(currentUser.getUserPhone());
+        et_phone_number.setText(currentUser.getUserPhone());
+        et_email.setText(currentUser.getUserEmail());
+        et_last_name2.setText(currentUser.getLastName());
+        et_first_name2.setText(currentUser.getFirstName());
+
     }
-
-
 }

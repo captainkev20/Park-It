@@ -79,7 +79,7 @@ public class NavDrawer extends AppCompatActivity
             currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
             currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
         }
-        //currentUser = new User();
+
         userDatabaseReference = database.getReference("users").child(currentUser.getUserUUID());
 
 
