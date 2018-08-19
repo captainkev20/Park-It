@@ -51,6 +51,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Geocoder geocoder;
-    private List<Address> addressList;
+    private List<Address> addressList = new ArrayList<>();
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Boolean isUserParked = false;
@@ -83,7 +84,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
     private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
     private User currentUser;
     private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
     private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
@@ -239,16 +239,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
     }
 
-    /*private void saveUserCurrentLocation(LatLng latLng, boolean isUserParked) {
-
-        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-
-        editor.putBoolean(SHARED_PREFS_IS_PARKED_KEY, isUserParked);
-        editor.putString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(latLng.latitude)).apply();
-        editor.putString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(latLng.longitude)).apply();
-    }*/
-
     private void saveUserCurrentLocation(UserCurrentLocation currentUserLocation) {
         mapsCallBack.locationUpdate(currentUserLocation);
 
@@ -377,7 +367,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                             if (mapFirstRun) {
 
                                 } else {
-
                                 }
                             } else {
                                 Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
@@ -388,7 +377,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             } catch (SecurityException e) {
                 Log.e(TAG, "Security issue");
             }
-
             return true;
         }
 

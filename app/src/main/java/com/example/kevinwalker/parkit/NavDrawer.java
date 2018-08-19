@@ -1,6 +1,7 @@
 package com.example.kevinwalker.parkit;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -72,6 +73,8 @@ public class NavDrawer extends AppCompatActivity
 
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
+
+        getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
 
         Intent intent = getIntent();
         if (intent != null) {

@@ -1,7 +1,11 @@
 package com.example.kevinwalker.parkit.users;
 
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -15,12 +19,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileActivity;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +40,14 @@ import com.google.firebase.database.ValueEventListener;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
+
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 
 public class UserProfileFragment extends ParentProfileActivity implements View.OnClickListener {
 
@@ -53,6 +71,7 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
     @BindView(R.id.main_profile_card_view) CardView main_profile_card_view;
 
     private static final String TAG = UserProfileFragment.class.getName();
+    static final int REQUEST_IMAGE_CAPTURE = 1;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private View mView;
@@ -99,8 +118,6 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
             }
         });
 
-
-
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
 
@@ -122,6 +139,7 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
                 String userEmail = et_email.getText().toString();
                 String phoneNum = et_phone_number.getText().toString();
 
+                // TODO: Data input validation
                 userDatabaseReference.child(FIRST_NAME_KEY).setValue(firstNameString);
                 userDatabaseReference.child(LAST_NAME_KEY).setValue(lastNameString);
                 userDatabaseReference.child(USER_EMAIL_KEY).setValue(userEmail);
@@ -137,20 +155,6 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
 
         ButterKnife.bind(this, view);
 
-        /*userDatabaseReference = userDatabaseReference.child(mAuth.getUid());
-        userDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                User currentUser = dataSnapshot.getValue(User.class);
-                txt_email.setText(currentUser.getUserEmail());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });*/
-
         getActivity().setTitle(getResources().getString(R.string.profile_nav_title));
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_test_profile_pic);
@@ -158,6 +162,51 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         setPrimaryPhoto(bm);
         image_logo.setImageBitmap(getPrimaryPhoto());
     }
+
+    private FirebaseUser getFirebaseUser() {
+        return FirebaseAuth.getInstance().getCurrentUser();
+    }
+
+    private void updateUserPhoto(File file, FirebaseUser firebaseUser) {
+        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                .setPhotoUri(Uri.parse(file.getName()))
+                .build();
+
+        firebaseUser.updateProfile(profileUpdates)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "User profile updated.");
+                            Toast.makeText(getActivity(), "Saved new profile photo", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Log.d(TAG, "Failed to updated FirebaseUser Profile Picture");
+                            Toast.makeText(getActivity(), "Update failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+    }
+
+    private void refreshProfilePicture(Bitmap bitmap) {
+        edit_image_logo.setImageBitmap(bitmap);
+    }
+
+    private File getProfilePictureFile(Bitmap bitmap) {
+        String filename = getActivity().getFilesDir().getAbsolutePath() + "/" + getFirebaseUser().getUid() + "_profile_picture.png";
+        File dest = new File(filename);
+
+        try {
+            FileOutputStream out = new FileOutputStream(dest);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dest;
+    }
+
 
     private void updateUI() {
         txt_first_name.setText(currentUser.getFirstName());
@@ -167,6 +216,13 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         et_email.setText(currentUser.getUserEmail());
         et_last_name2.setText(currentUser.getLastName());
         et_first_name2.setText(currentUser.getFirstName());
-
     }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
 }
