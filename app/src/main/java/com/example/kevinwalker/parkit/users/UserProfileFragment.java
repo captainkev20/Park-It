@@ -15,16 +15,14 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.profiles.ParentProfileActivity;
+import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -41,15 +39,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
 
-public class UserProfileFragment extends ParentProfileActivity implements View.OnClickListener {
+public class UserProfileFragment extends ParentProfileFragment implements View.OnClickListener {
 
     @BindView(R.id.image_logo) CircleImageView image_logo;
     @BindView(R.id.ic_phone) CustomTextView ic_phone;

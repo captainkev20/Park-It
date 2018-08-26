@@ -1,18 +1,14 @@
 package com.example.kevinwalker.parkit.vehicle;
 
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.profiles.ParentProfileActivity;
+import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 
-public class VehicleProfileActivity extends ParentProfileActivity {
+public class VehicleProfileFragment extends ParentProfileFragment {
 
     private View mView;
 
