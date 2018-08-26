@@ -7,13 +7,21 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.drawable.Drawable;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.os.Build;
+import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -41,21 +49,23 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import static android.content.Context.MODE_PRIVATE;
 
 
 public class MapsFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
@@ -70,25 +80,29 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final float DEFAULT_ZOOM = 19f;
     private Button btn_park;
     private Button btn_leave;
-    private Button btn_find_user_parked;
+    private FloatingActionButton btn_find_user_parked;
     private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938); // Initialized to City View
     private LatLng parkedLatLng = new LatLng(0,0); // Initialized to middle of map
+    private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975, -79.7860938, 0);
     private String currentAddress = "";
     private Boolean markerVisible = false;
     private Geocoder geocoder;
     private List<Address> addressList = new ArrayList<>();
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
-    private Boolean isUserParked = false;
+    private Boolean isUserParked = true;
     private Marker userMarker;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 2000; /* 2 sec */
     private SharedPreferences sharedPreferences;
-    private User currentUser;
     private static String SHARED_PREFS_PARKED_LATITUDE_KEY = "parked_latitude";
     private static String SHARED_PREFS_PARKED_LONGITUDE_KEY = "parked_longitude";
     private static String SHARED_PREFS_IS_PARKED_KEY = "is_parked";
+    private static String USER_PARKED_LOCATION_KEY = "parked_location";
     private SupportMapFragment mapFragment;
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference userDatabaseReference = database.getReference("users");
+    private User currentUser = new User();
     private MapView mapView;
     private View mView;
     private static final String EPOCH_TIME = "fragment_timestamp";
@@ -98,8 +112,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private Location androidCurrentLocation = new Location("test");
     private UserCurrentLocation pojoCurrentLocation = new UserCurrentLocation(36.0656975, -79.7860938,0);
     private MapsFragment.MapsCallBack mapsCallBack;
-
-
+    private Context mContext;
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -110,14 +123,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         fetchCurrentLocation();
         mapsCallBack = this.mapsCallBack;
 
+        userDatabaseReference = userDatabaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         geocoder = new Geocoder(getActivity().getApplicationContext());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-        if(isUserParked) {
-            btn_find_user_parked.setEnabled(true);
-        }
-
+        mContext = getContext();
     }
 
     @Override
@@ -143,6 +154,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+
+        // Create views here. Best to do here as by this point view will be properly created and inflated
         btn_park = getView().findViewById(R.id.btn_park);
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
@@ -151,6 +164,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
+
+        if(isUserParked) {
+            btn_find_user_parked.setEnabled(true);
+            loadUserParkingDataFromFirebase();
+        } else {
+            Log.i(TAG, "fromOnCreate");
+        }
     }
 
     @Override
@@ -160,7 +180,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (mapView != null) {
             initMap(mapView);
             startLocationUpdates();
-            loadUserParkingData();
+            //loadUserParkingDataFromFirebase();
         }
 
         if (savedInstanceState!= null) {
@@ -198,9 +218,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 if (mLocationPermissionStatus) {
                     isUserParked = true;
-                    saveUserCurrentLocation(pojoCurrentLocation);
+                    Log.i(TAG, String.valueOf(isUserParked));
+                    saveUserParkedLocation(new UserParkedLocation(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude(), 0));
                     animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
-                    placeMarkerOnMap(pojoCurrentLocation, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
+
+                    Resources res = getResources();
+                    Drawable drawable = res.getDrawable(R.drawable.ic_marker);
+
+                    placeMarkerOnMap(pojoCurrentLocation, currentAddress, drawable, true);
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
@@ -233,7 +258,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 break;
 
             case R.id.btn_find_user_parked:
-                loadUserParkingData();
+                loadUserParkingDataFromFirebase();
                 animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
                 break;
         }
@@ -248,30 +273,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         mapsCallBack.parkedLocation(userParkedLocation);
     }
 
-    private void loadUserParkingData() {
-        isUserParked = isUserParked();
+    private void loadUserParkingDataFromFirebase() {
 
-        parkedLatLng = getParkedLatlngFromSharedPrefs();
+        if (isUserParked) {
+            userParkedLocation = currentUser.getUserParkedLocation();
+        }
+
     }
-
-    private boolean isUserParked() {
-        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
-        return sharedPreferences.getBoolean(SHARED_PREFS_IS_PARKED_KEY, false);
-    }
-
-    private LatLng getParkedLatlngFromSharedPrefs() {
-        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
-
-        LatLng latLng = new LatLng(Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LATITUDE_KEY, String.valueOf(parkedLatLng.latitude))), Double.parseDouble(sharedPreferences.getString(SHARED_PREFS_PARKED_LONGITUDE_KEY, String.valueOf(parkedLatLng.longitude))));
-
-        return latLng;
-    }
-
-    private void clearParkedLatlngFromSharedPrefs() {
-        sharedPreferences = this.getActivity().getPreferences(MODE_PRIVATE);
-        sharedPreferences.edit().clear().apply();
-    }
-
 
     private void initMap(MapView mapFragment) {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -402,12 +410,43 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, BitmapDescriptor bitmapDescriptor, boolean markerVisible) {
+    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, Drawable drawable, boolean markerVisible) {
         userMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude()))
                 .title(title)
-                .icon(bitmapDescriptor)
+                .icon(bitmapDescriptorFromVector(getActivity(), R.drawable.ic_marker))
                 .visible(markerVisible));
+
+        setMarkerBounce(userMarker);
+    }
+
+    private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
+        Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
+        vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
+        Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        vectorDrawable.draw(canvas);
+        return BitmapDescriptorFactory.fromBitmap(bitmap);
+    }
+
+
+    private void setMarkerBounce(final Marker marker) {
+        final Handler handler = new Handler();
+        final long startTime = SystemClock.uptimeMillis();
+        final long duration = 2000;
+        final Interpolator interpolator = new BounceInterpolator();
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                long elapsed = SystemClock.uptimeMillis() - startTime;
+                float t = Math.max(1 - interpolator.getInterpolation((float) elapsed/duration), 0);
+                marker.setAnchor(0.5f, 1.0f +  t);
+
+                if (t > 0.0) {
+                    handler.postDelayed(this, 16);
+                }
+            }
+        });
     }
 
     private String getAddressFromGeocoder(LatLng latLng) {
@@ -496,7 +535,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
-        MapsInitializer.initialize(getContext());
+        MapsInitializer.initialize(mContext);
 
         map = googleMap;
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
@@ -504,15 +543,19 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
 
         if (isUserParked) {
-            placeMarkerOnMap(pojoCurrentLocation, currentAddress, BitmapDescriptorFactory.fromResource(R.drawable.park), true);
+
+            Resources res = getResources();
+            Drawable drawable = res.getDrawable(R.drawable.ic_marker);
+            placeMarkerOnMap(pojoCurrentLocation, currentAddress, drawable, true);
         } else {
             animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
+            Log.i(TAG, String.valueOf(isUserParked));
         }
 
         // Checks for permission
         if(mLocationPermissionStatus) {
 
-            if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)
+            if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
                 return;
             }
@@ -594,7 +637,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         Log.i(TAG, String.valueOf(epochTimeStamp));
 
         if (isUserParked) {
-            loadUserParkingData();
+            Log.i(TAG, String.valueOf(isUserParked));
+            loadUserParkingDataFromFirebase();
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_parked.setEnabled(true);
@@ -610,7 +654,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
         btn_find_user_parked.setEnabled(false);
-        clearParkedLatlngFromSharedPrefs();
     }
 
     public interface MapsCallBack {

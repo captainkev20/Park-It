@@ -31,19 +31,23 @@ public class User {
     private Long userScore;
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
-    private boolean isParked = false;
+    private boolean isUserParked = false;
     private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975,-79.7860938,0);
     private UserCurrentLocation userCurrentLocation = new UserCurrentLocation(36.0656975,-79.7860938,0);
 
     public User() {}
 
-    public User(boolean isParked) {
-        this.isParked = isParked;
+    public User(boolean isUserParked) {
+        this.isUserParked = isUserParked;
     }
 
     public UserParkedLocation getUserParkedLocation() { return userParkedLocation; }
 
     public void setUserParkedLocation(UserParkedLocation userParkedLocation) { this.userParkedLocation = userParkedLocation; }
+
+    public boolean isUserParked() { return isUserParked; }
+
+    public void setUserParked(boolean userParked) { isUserParked = userParked; }
 
     public UserCurrentLocation getUserCurrentLocation() { return userCurrentLocation; }
 
