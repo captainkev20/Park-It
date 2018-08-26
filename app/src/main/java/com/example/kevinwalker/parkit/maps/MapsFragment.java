@@ -491,7 +491,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // Method to convert Android Location to custom POJO UserCurrentLocation object for use through program
     private UserCurrentLocation convertAndroidLocationToPojo(Location androidLocation) {
 
-        return new UserCurrentLocation(androidLocation.getLatitude(), androidLocation.getLongitude(), 0);
+        if (androidLocation != null) {
+            return new UserCurrentLocation(androidLocation.getLatitude(), androidLocation.getLongitude(), 0);
+        } else {
+            return new UserCurrentLocation();
+        }
     }
 
     private void fetchCurrentLocation() {
@@ -503,6 +507,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     public void onComplete(@NonNull Task task) {
                         if(task.isSuccessful()) {
                             androidCurrentLocation = (Location) location.getResult();
+
+
                             pojoCurrentLocation = convertAndroidLocationToPojo(androidCurrentLocation);
 
                             if (mapFirstRun) {
