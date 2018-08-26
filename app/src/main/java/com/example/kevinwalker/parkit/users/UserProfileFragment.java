@@ -77,12 +77,9 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
     private View mView;
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference userDatabaseReference = database.getReference("users");
+    private ValueEventListener valueEventListener;
     private FirebaseAuth mAuth;
     private User currentUser;
-    public static final String FIRST_NAME_KEY = "firstName";
-    public static final String LAST_NAME_KEY = "lastName";
-    public static final String USER_EMAIL_KEY = "userEmail";
-    public static final String PHONE_NUM_KEY = "userPhone";
 
 
     @Override
@@ -90,6 +87,23 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         super.onCreate(savedInstanceState);
 
         userDatabaseReference = userDatabaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                //Log.i(TAG, dataSnapshot.getValue().toString());
+
+                if (dataSnapshot.getValue(User.class) != null) {
+                    currentUser = dataSnapshot.getValue(User.class);
+                    updateUI();
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.i(TAG, "Failed to write");
+            }
+        };
     }
 
     @Override
@@ -97,26 +111,9 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         mView = inflater.inflate(R.layout.activity_user, container, false);
         ButterKnife.bind(this, mView);
 
-        userDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+        updateUI();
 
-                //Log.i(TAG, dataSnapshot.getValue().toString());
-
-                if (dataSnapshot.getValue(User.class) == null) {
-                    userDatabaseReference.setValue(currentUser);
-                } else {
-                    currentUser = dataSnapshot.getValue(User.class);
-                    updateUI();
-                }
-                //Log.i(TAG, currentUser.getUserUUID());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.i(TAG, "Failed to write");
-            }
-        });
+        userDatabaseReference.addValueEventListener(valueEventListener);
 
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
@@ -140,10 +137,12 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
                 String phoneNum = et_phone_number.getText().toString();
 
                 // TODO: Data input validation
-                userDatabaseReference.child(FIRST_NAME_KEY).setValue(firstNameString);
-                userDatabaseReference.child(LAST_NAME_KEY).setValue(lastNameString);
-                userDatabaseReference.child(USER_EMAIL_KEY).setValue(userEmail);
-                userDatabaseReference.child(PHONE_NUM_KEY).setValue(phoneNum);
+                currentUser.setFirstName(firstNameString);
+                currentUser.setLastName(lastNameString);
+                currentUser.setUserEmail(userEmail);
+                currentUser.setUserPhone(phoneNum);
+
+                userDatabaseReference.setValue(currentUser);
 
                 profile_view_switcher.showPrevious();
                 break;
@@ -209,13 +208,15 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
 
 
     private void updateUI() {
-        txt_first_name.setText(currentUser.getFirstName());
-        txt_email.setText(currentUser.getUserEmail());
-        txt_phone_number.setText(currentUser.getUserPhone());
-        et_phone_number.setText(currentUser.getUserPhone());
-        et_email.setText(currentUser.getUserEmail());
-        et_last_name2.setText(currentUser.getLastName());
-        et_first_name2.setText(currentUser.getFirstName());
+        if (currentUser != null) {
+            txt_first_name.setText(currentUser.getFirstName());
+            txt_email.setText(currentUser.getUserEmail());
+            txt_phone_number.setText(currentUser.getUserPhone());
+            et_phone_number.setText(currentUser.getUserPhone());
+            et_email.setText(currentUser.getUserEmail());
+            et_last_name2.setText(currentUser.getLastName());
+            et_first_name2.setText(currentUser.getFirstName());
+        }
     }
 
     private void dispatchTakePictureIntent() {
@@ -223,6 +224,12 @@ public class UserProfileFragment extends ParentProfileActivity implements View.O
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
         }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        userDatabaseReference.removeEventListener(valueEventListener);
     }
 
 }

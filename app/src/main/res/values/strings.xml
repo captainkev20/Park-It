@@ -122,5 +122,6 @@
     <string name="LEAVE_DIALOG_MESSAGE">"This will vacate your space and let other users know it is avaliable."</string>
     <string name="LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT">"Not Yet!</string>
     <string name="LEAVE_DIALOG_POSITIVE_BUTTON_TEXT">"I'm outta here!</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

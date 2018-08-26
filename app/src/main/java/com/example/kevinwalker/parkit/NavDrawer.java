@@ -22,7 +22,9 @@ import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
 import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
+import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
+import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +36,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack {
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -46,9 +48,12 @@ public class NavDrawer extends AppCompatActivity
     private MapsFragment mapFragment;
     private UserProfileFragment userProfileFragment;
     private PaymentFragment paymentFragment;
-    private SpotFragment spotFragment;
+    private SpotListings spotFragment;
     private FrameLayout container;
     private User currentUser;
+
+
+
     private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -97,7 +102,7 @@ public class NavDrawer extends AppCompatActivity
 
         userProfileFragment = new UserProfileFragment();
         paymentFragment = new PaymentFragment();
-        spotFragment = new SpotFragment();
+        spotFragment = new SpotListings();
         fragmentTransaction.replace(R.id.container, mapFragment);
         fragmentTransaction.commit();
         userFragmentTransaction.commit();
@@ -264,5 +269,14 @@ public class NavDrawer extends AppCompatActivity
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+    }
+
+    @Override
+    public void onSpotListingInteraction(Spot item) {
+
+    }
+
+    public boolean isUserExists() {
+        return userExists;
     }
 }

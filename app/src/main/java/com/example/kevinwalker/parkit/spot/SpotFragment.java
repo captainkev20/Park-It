@@ -24,7 +24,7 @@ public class SpotFragment extends ParentProfileActivity {
     @BindView(R.id.txt_last_updated) TextView txt_last_updated;
     @BindView(R.id.txt_payment_type) TextView txt_payment_type;
     @BindView(R.id.txt_surface) TextView txt_surface;
-
+    Spot spot = new Spot();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,15 +35,21 @@ public class SpotFragment extends ParentProfileActivity {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_spot2, container, false);
-
         ButterKnife.bind(this, mView);
+
+        updateUI();
 
         return mView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
         getActivity().setTitle(getResources().getString(R.string.listings_nav_title));
+    }
+
+    private void updateUI() {
+        txt_cost.setText(String.valueOf(spot.getDailyRate()));
+        txt_last_updated.setText(String.valueOf(spot.getDateLastEdit()));
+        txt_surface.setText(String.valueOf(spot.getSurface()));
     }
 }
