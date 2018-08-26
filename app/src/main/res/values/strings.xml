@@ -30,6 +30,10 @@
     <string name="ic_address_book">\ue944</string>
     <string name="ic_email_envelope">\ue945</string>
 
+    <!--// Save Profile Pic //-->
+    <string name="change_profile_pic">Are you sure you want to change your profile picture?</string>
+    <string name="positive_change_profile_pic">YES</string>
+
     <string name="score_placeholder">000099</string>
     <string name="first_name">First Name: </string>
     <string name="last_name">Last Name: </string>

@@ -1,7 +1,9 @@
 package com.example.kevinwalker.parkit;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
@@ -20,7 +22,9 @@ import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
 import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
 import com.example.kevinwalker.parkit.maps.UserParkedLocation;
+import com.example.kevinwalker.parkit.notifications.LeaveAlertDialogFragment;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
+import com.example.kevinwalker.parkit.notifications.TakePictureAlertDiaglogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
@@ -35,8 +39,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction {
+public class NavDrawer extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, LeaveAlertDialogFragment.LeaveSpotInteractionListener, TakePictureAlertDiaglogFragment.TakePictureInteractionListener, MapsFragment.MapsCallBack
+        ,SpotListings.SpotListingsInteraction {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -51,9 +55,6 @@ public class NavDrawer extends AppCompatActivity
     private SpotListings spotFragment;
     private FrameLayout container;
     private User currentUser;
-
-
-
     private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -254,6 +255,27 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
+    public void userStayInSpace() {
+
+    }
+
+    @Override
+    public void leaveSpace(){
+
+    }
+
+    @Override
+    public void startCameraIntent() {
+
+    }
+
+
+    @Override
+    public void onFragmentInteraction(Uri uri){
+
+    }
+
+    @Override
     public void locationUpdate(UserCurrentLocation location) {
         saveCurrentUserLocation(location);
     }
@@ -261,6 +283,21 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void parkedLocation(UserParkedLocation userParkedLocation) {
         saveUserParkedLocation(userParkedLocation);
+    }
+
+    @Override
+    public void cancelChangeProfilePicture() {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void changeProfilePicture(Bitmap imageBitMap) {
+
     }
 
     public User getCurrentUser() {

@@ -1,55 +1,50 @@
 package com.example.kevinwalker.parkit.notifications;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kevinwalker.parkit.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LeaveSpotInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LeaveAlertDialogFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
-public class LeaveAlertDialogFragment extends DialogFragment {
+import java.io.File;
+
+import static android.app.Activity.RESULT_OK;
+
+public class TakePictureAlertDiaglogFragment extends DialogFragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    static final int REQUEST_IMAGE_CAPTURE = 1515;
+    private static final String TAG = TakePictureAlertDiaglogFragment.class.getName();
 
-    // TODO: Rename and change types of parame1ters
+
+    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private LeaveSpotInteractionListener mListener;
+    private TakePictureInteractionListener mListener;
 
-    public LeaveAlertDialogFragment() {
+    public TakePictureAlertDiaglogFragment() {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LeaveAlertDialogFragment.
-     */
     // TODO: Rename and change types and number of parameters
-    public static LeaveAlertDialogFragment newInstance(String param1, String param2) {
-        LeaveAlertDialogFragment fragment = new LeaveAlertDialogFragment();
+    public static TakePictureAlertDiaglogFragment newInstance() {
+        TakePictureAlertDiaglogFragment fragment = new TakePictureAlertDiaglogFragment();
 
         return fragment;
     }
@@ -66,20 +61,20 @@ public class LeaveAlertDialogFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getResources().getString(R.string.LEAVE_DIALOG_TITLE))
+        builder.setTitle("Confirmation")
                 // Set Dialog Message
-                .setMessage(getResources().getString(R.string.LEAVE_DIALOG_MESSAGE))
+                .setMessage(R.string.change_profile_pic)
 
                 // positive button
-                .setPositiveButton(getResources().getString(R.string.LEAVE_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                .setPositiveButton(R.string.positive_change_profile_pic, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.leaveSpace();
+                        mListener.startCameraIntent();
                     }
                 })
                 // negative button
-                .setNegativeButton(getResources().getString(R.string.LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        mListener.userStayInSpace();
+                        mListener.cancelChangeProfilePicture();
                     }
                 });
         return builder.create();
@@ -94,18 +89,12 @@ public class LeaveAlertDialogFragment extends DialogFragment {
         return inflater.inflate(R.layout.fragment_leave_alert_dialog, container, false);
     }
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        if (context instanceof LeaveSpotInteractionListener) {
-            mListener = (LeaveSpotInteractionListener) context;
+        if (context instanceof LeaveAlertDialogFragment.LeaveSpotInteractionListener) {
+            mListener = (TakePictureAlertDiaglogFragment.TakePictureInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement LeaveSpotInteractionListener");
@@ -118,6 +107,20 @@ public class LeaveAlertDialogFragment extends DialogFragment {
         mListener = null;
     }
 
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Activity.RESULT_OK) {
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            mListener.changeProfilePicture(imageBitmap);
+        } else {
+            Log.e(TAG, "onActivityResult");
+        }
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -128,12 +131,17 @@ public class LeaveAlertDialogFragment extends DialogFragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
-    public interface LeaveSpotInteractionListener {
+    public interface TakePictureInteractionListener {
         // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
 
-        void userStayInSpace();
+        void changeProfilePicture(Bitmap imageBitmap);
 
-        void leaveSpace();
+        void cancelChangeProfilePicture();
+
+        void startCameraIntent();
+
+
+
     }
 }
+

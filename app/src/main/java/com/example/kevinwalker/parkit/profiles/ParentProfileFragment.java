@@ -12,7 +12,7 @@ import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.google.android.gms.maps.model.LatLng;
 
-public class ParentProfileActivity extends android.support.v4.app.Fragment {
+public class ParentProfileFragment extends android.support.v4.app.Fragment {
 
 
     private Bitmap primaryPhoto;
