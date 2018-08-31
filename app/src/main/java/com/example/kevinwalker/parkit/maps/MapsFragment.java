@@ -224,6 +224,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     isUserParked = true;
                     Log.i(TAG, String.valueOf(isUserParked));
                     saveUserParkedLocation(new UserParkedLocation(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude(), 0));
+                    fetchCurrentLocation();
                     animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
 
                     Resources res = getResources();
@@ -663,7 +664,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_parked.setEnabled(false);
+        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
     }
 
     public interface MapsCallBack {

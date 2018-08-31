@@ -136,6 +136,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
             }
         };
 
+
         // Added listener to DB reference
         userDatabaseReference.addValueEventListener(valueEventListener);
 
@@ -144,6 +145,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         return mView;
 
     }
+
 
     @Override
     public void onClick(View view) {
