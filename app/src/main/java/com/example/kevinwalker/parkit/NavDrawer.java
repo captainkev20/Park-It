@@ -104,8 +104,8 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
         userProfileFragment = new UserProfileFragment();
         paymentFragment = new PaymentFragment();
         spotFragment = new SpotListings();
-        fragmentTransaction.replace(R.id.container, mapFragment);
-        fragmentTransaction.commit();
+        fragmentTransaction.replace(R.id.container, mapFragment).commit();
+        //fragmentTransaction.commit();
         userFragmentTransaction.commit();
         paymentFragmentTransaction.commit();
         spotFragmentTransaction.commit();

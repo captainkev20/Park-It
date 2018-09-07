@@ -85,7 +85,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     DatabaseReference userDatabaseReference = database.getReference("users");
     private ValueEventListener valueEventListener;
     private FirebaseAuth mAuth;
-    private User currentUser;
+    private User currentUser = new User(); // Added initial value. Fixed Profile from now showing DB values
 
 
     @Override
@@ -94,7 +94,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
         userDatabaseReference = userDatabaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-
     }
 
 
@@ -102,6 +101,9 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_user, container, false);
         ButterKnife.bind(this, mView);
+
+        updateUI();
+
 
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
@@ -120,11 +122,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                //Log.i(TAG, dataSnapshot.getValue().toString());
-
                 if (dataSnapshot.getValue(User.class) != null) {
                     currentUser = dataSnapshot.getValue(User.class);
                     updateUI();
+                } else {
+
                 }
             }
 
@@ -134,11 +136,16 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
             }
         };
 
+
+        // Added listener to DB reference
+        userDatabaseReference.addValueEventListener(valueEventListener);
+
         mAuth = FirebaseAuth.getInstance();
 
         return mView;
 
     }
+
 
     @Override
     public void onClick(View view) {
@@ -154,6 +161,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 String phoneNum = et_phone_number.getText().toString();
 
                 // TODO: Data input validation
+                currentUser = new User();
                 currentUser.setFirstName(firstNameString);
                 currentUser.setLastName(lastNameString);
                 currentUser.setUserEmail(userEmail);
@@ -222,7 +230,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
         return dest;
     }
-
 
 
     @Override
@@ -427,11 +434,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         }
     }
 
-
-
     @Override
     public void onStop() {
         super.onStop();
+        Log.d(TAG, String.valueOf(userDatabaseReference));
         userDatabaseReference.removeEventListener(valueEventListener);
     }
 
