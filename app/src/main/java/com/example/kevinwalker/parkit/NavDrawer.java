@@ -1,10 +1,9 @@
 package com.example.kevinwalker.parkit;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,15 +21,15 @@ import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
 import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
 import com.example.kevinwalker.parkit.maps.UserParkedLocation;
-import com.example.kevinwalker.parkit.notifications.LeaveAlertDialogFragment;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
-import com.example.kevinwalker.parkit.notifications.TakePictureAlertDiaglogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -38,9 +37,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 
-public class NavDrawer extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, LeaveAlertDialogFragment.LeaveSpotInteractionListener, TakePictureAlertDiaglogFragment.TakePictureInteractionListener, MapsFragment.MapsCallBack
-        ,SpotListings.SpotListingsInteraction {
+public class NavDrawer extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, UserProfileFragment.UserProfileCallback {
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -54,11 +57,13 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
     private PaymentFragment paymentFragment;
     private SpotListings spotFragment;
     private FrameLayout container;
-    private User currentUser;
+    private static User currentUser = new User();
+
     private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
     FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference userDatabaseReference = database.getReference();
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    DocumentReference userDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,15 +87,23 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
 
+        // Get base user information from Login Intent
         Intent intent = getIntent();
         if (intent != null) {
-            currentUser = new User();
             currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
             currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
         }
 
-        userDatabaseReference = database.getReference("users").child(currentUser.getUserUUID());
+        // Initialize our User DocumentReference
+        userDocument = firebaseFirestore.collection("users").document(currentUser.getUserUUID());
 
+        userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists())
+                currentUser = documentSnapshot.toObject(User.class);
+            }
+        });
 
         // Set the default fragment to display
         container = findViewById(R.id.container);
@@ -104,35 +117,30 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
         userProfileFragment = new UserProfileFragment();
         paymentFragment = new PaymentFragment();
         spotFragment = new SpotListings();
-        fragmentTransaction.replace(R.id.container, mapFragment).commit();
-        //fragmentTransaction.commit();
+        fragmentTransaction.replace(R.id.container, mapFragment);
+        fragmentTransaction.commit();
         userFragmentTransaction.commit();
         paymentFragmentTransaction.commit();
         spotFragmentTransaction.commit();
-
-
-        userDatabaseReference.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                 //Log.i(TAG, dataSnapshot.getValue().toString());
-
-                    if (dataSnapshot.getValue(User.class) == null) {
-                        userDatabaseReference.setValue(currentUser);
-                    } else {
-                        userExists = true;
-                        currentUser = dataSnapshot.getValue(User.class);
-                    }
-                    //Log.i(TAG, currentUser.getUserUUID());
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.i(TAG, "Failed to write");
-            }
-        });
-
     }
+
+    private void mergeCurrentUserWithFirestore(User currentUser) {
+        userDocument.set(currentUser, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "DocumentSnapshot successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Error writing document", e);
+                    }
+                });
+    }
+
+
 
     @Override
     protected void onStart() {
@@ -163,7 +171,7 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
         // Check to verify a user exists. If there is no user, we don't want to do location updates
         if(userExists) {
             currentUser.setUserCurrentLocation(currentUserLocation);
-            userDatabaseReference.setValue(currentUser);
+            mergeCurrentUserWithFirestore(currentUser);
         }
     }
 
@@ -171,7 +179,7 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
         // Check to verify a user exists. If there is no user, we don't want to do location updates
         if(userExists) {
             currentUser.setUserParkedLocation(userParkedLocation);
-            userDatabaseReference.setValue(currentUser);
+            mergeCurrentUserWithFirestore(currentUser);
         }
     }
 
@@ -255,27 +263,6 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
     }
 
     @Override
-    public void userStayInSpace() {
-
-    }
-
-    @Override
-    public void leaveSpace(){
-
-    }
-
-    @Override
-    public void startCameraIntent() {
-
-    }
-
-
-    @Override
-    public void onFragmentInteraction(Uri uri){
-
-    }
-
-    @Override
     public void locationUpdate(UserCurrentLocation location) {
         saveCurrentUserLocation(location);
     }
@@ -285,27 +272,13 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
         saveUserParkedLocation(userParkedLocation);
     }
 
-    @Override
-    public void cancelChangeProfilePicture() {
-
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-    }
-
-    @Override
-    public void changeProfilePicture(Bitmap imageBitMap) {
-
-    }
-
     public User getCurrentUser() {
         return currentUser;
     }
 
     public void setCurrentUser(User currentUser) {
         this.currentUser = currentUser;
+        mergeCurrentUserWithFirestore(currentUser);
     }
 
     @Override
@@ -315,5 +288,10 @@ public class NavDrawer extends AppCompatActivity implements NavigationView.OnNav
 
     public boolean isUserExists() {
         return userExists;
+    }
+
+    @Override
+    public void userUpdated(User user) {
+        setCurrentUser(user);
     }
 }
