@@ -90,7 +90,7 @@ public class NavDrawer extends AppCompatActivity
         // Change
 
         // Get base user information from Login Intent
-        Intent intent = getIntent();
+        final Intent intent = getIntent();
         if (intent != null) {
             currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
             currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
@@ -104,6 +104,9 @@ public class NavDrawer extends AppCompatActivity
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists())
                 currentUser = documentSnapshot.toObject(User.class);
+                if (currentUser.getUserUUID().trim().isEmpty()) {
+                    currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
+                }
             }
         });
 
