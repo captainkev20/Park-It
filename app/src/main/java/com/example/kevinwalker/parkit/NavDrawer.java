@@ -87,6 +87,8 @@ public class NavDrawer extends AppCompatActivity
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
 
+        // Change
+
         // Get base user information from Login Intent
         Intent intent = getIntent();
         if (intent != null) {
