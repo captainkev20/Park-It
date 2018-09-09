@@ -128,7 +128,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         geocoder = new Geocoder(getActivity().getApplicationContext());
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
 
-        mContext = getContext();
+        //mContext = getContext();
     }
 
     @Override
@@ -146,6 +146,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         super.onAttach(context);
         if (context instanceof MapsFragment.MapsCallBack) {
             mapsCallBack = (MapsFragment.MapsCallBack) context;
+            mContext = context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement MapsFragment.MapsCallBack");
@@ -156,6 +157,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         // Create views here. Best to do here as by this point view will be properly created and inflated
+
         btn_park = getView().findViewById(R.id.btn_park);
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
@@ -163,6 +165,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
+        initMap(mapView);
+
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
 
         if(isUserParked) {
@@ -220,12 +224,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     isUserParked = true;
                     Log.i(TAG, String.valueOf(isUserParked));
                     saveUserParkedLocation(new UserParkedLocation(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude(), 0));
+                    fetchCurrentLocation();
                     animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
 
                     Resources res = getResources();
                     Drawable drawable = res.getDrawable(R.drawable.ic_marker);
 
-                    placeMarkerOnMap(pojoCurrentLocation, currentAddress, drawable, true);
+                    placeMarkerOnMap(pojoCurrentLocation, currentAddress, true);
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
@@ -410,7 +415,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, Drawable drawable, boolean markerVisible) {
+    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, boolean markerVisible) {
         userMarker = map.addMarker(new MarkerOptions()
                 .position(new LatLng(pojoCurrentLocation.getLatitude(), pojoCurrentLocation.getLongitude()))
                 .title(title)
@@ -552,7 +557,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             Resources res = getResources();
             Drawable drawable = res.getDrawable(R.drawable.ic_marker);
-            placeMarkerOnMap(pojoCurrentLocation, currentAddress, drawable, true);
+            placeMarkerOnMap(pojoCurrentLocation, currentAddress, true);
         } else {
             animateCamera(pojoCurrentLocation, DEFAULT_ZOOM, currentAddress);
             Log.i(TAG, String.valueOf(isUserParked));
@@ -659,7 +664,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_parked.setEnabled(false);
+        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
     }
 
     public interface MapsCallBack {

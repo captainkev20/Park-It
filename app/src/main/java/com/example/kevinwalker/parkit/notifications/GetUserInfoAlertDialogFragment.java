@@ -17,7 +17,7 @@ import com.example.kevinwalker.parkit.R;
 /**
  * A simple {@link Fragment} subclass.
  * Activities that contain this fragment must implement the
- * {@link LeaveAlertDialogFragment.OnFragmentInteractionListener} interface
+ * {@link LeaveAlertDialogFragment.LeaveSpotInteractionListener} interface
  * to handle interaction events.
  * Use the {@link LeaveAlertDialogFragment#newInstance} factory method to
  * create an instance of this fragment.
@@ -108,7 +108,7 @@ public class GetUserInfoAlertDialogFragment extends DialogFragment {
             mListener = (OnFragmentInteractionListener) context;
         } else {
             throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
+                    + " must implement LeaveSpotInteractionListener");
         }
     }
 

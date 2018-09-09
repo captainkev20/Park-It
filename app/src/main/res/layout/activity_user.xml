@@ -43,6 +43,18 @@
                 android:layout_width="348dp"
                 android:layout_height="592dp">
 
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@android:style/Widget.ProgressBar.Horizontal"
+                    android:layout_width="57dp"
+                    android:layout_height="41dp"
+                    android:visibility="gone"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.501"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
                 <de.hdodenhof.circleimageview.CircleImageView
                     android:id="@+id/image_logo"
                     android:layout_width="128dp"
