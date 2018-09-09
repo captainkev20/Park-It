@@ -102,14 +102,17 @@ public class NavDrawer extends AppCompatActivity
         userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists())
-                currentUser = documentSnapshot.toObject(User.class);
-                if (currentUser.getUserUUID().trim().isEmpty()) {
-                    currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
-                    mergeCurrentUserWithFirestore(currentUser);
-                }
-                if (currentUser.getUserEmail().trim().isEmpty()) {
-                    currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
+                if (documentSnapshot.exists()) {
+                    currentUser = documentSnapshot.toObject(User.class);
+                    if (currentUser.getUserUUID().trim().isEmpty()) {
+                        currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
+                        mergeCurrentUserWithFirestore(currentUser);
+                    }
+                    if (currentUser.getUserEmail().trim().isEmpty()) {
+                        currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
+                        mergeCurrentUserWithFirestore(currentUser);
+                    }
+                } else {
                     mergeCurrentUserWithFirestore(currentUser);
                 }
             }
