@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.common.ConnectionResult;

@@ -1,5 +1,6 @@
 package com.example.kevinwalker.parkit.users;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
@@ -29,11 +31,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.ListenerRegistration;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -68,35 +72,31 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private View mView;
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
-    DatabaseReference userDatabaseReference = database.getReference("users");
-    private ValueEventListener valueEventListener;
-    private FirebaseAuth mAuth;
-    private User currentUser;
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    DocumentReference documentReference;
+    private UserProfileCallback callback;
+    private NavDrawer navDrawer;
+    private User currentUser = new User();
+    private ListenerRegistration listenerRegistration;
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof UserProfileFragment.UserProfileCallback) {
+            callback = (UserProfileFragment.UserProfileCallback) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement UserProfileFragment.UserProfileCallback");
+        }
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        
+        navDrawer = (NavDrawer) getActivity();
 
-        userDatabaseReference = userDatabaseReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        valueEventListener = new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                //Log.i(TAG, dataSnapshot.getValue().toString());
-
-                if (dataSnapshot.getValue(User.class) != null) {
-                    currentUser = dataSnapshot.getValue(User.class);
-                    updateUI();
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.i(TAG, "Failed to write");
-            }
-        };
+        documentReference = firebaseFirestore.document("users/" + navDrawer.getCurrentUser().getUserUUID());
     }
 
     @Override
@@ -104,14 +104,26 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         mView = inflater.inflate(R.layout.activity_user, container, false);
         ButterKnife.bind(this, mView);
 
-        updateUI();
+        listenerRegistration = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot snapshot,
+                                @Nullable FirebaseFirestoreException e) {
+                if (e != null) {
+                    Log.w(TAG, "Listen failed.", e);
+                    return;
+                }
 
-        userDatabaseReference.addValueEventListener(valueEventListener);
+                if (snapshot != null && snapshot.exists()) {
+                    currentUser = snapshot.toObject(User.class);
+                    updateUI();
+                } else {
+                    Log.d(TAG, "Current data: null");
+                }
+            }
+        });
 
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
-
-        mAuth = FirebaseAuth.getInstance();
 
         return mView;
     }
@@ -135,7 +147,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 currentUser.setUserEmail(userEmail);
                 currentUser.setUserPhone(phoneNum);
 
-                userDatabaseReference.setValue(currentUser);
+                callback.userUpdated(currentUser);
 
                 profile_view_switcher.showPrevious();
                 break;
@@ -202,13 +214,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
     private void updateUI() {
         if (currentUser != null) {
-            txt_first_name.setText(currentUser.getFirstName());
-            txt_email.setText(currentUser.getUserEmail());
-            txt_phone_number.setText(currentUser.getUserPhone());
-            et_phone_number.setText(currentUser.getUserPhone());
-            et_email.setText(currentUser.getUserEmail());
-            et_last_name2.setText(currentUser.getLastName());
-            et_first_name2.setText(currentUser.getFirstName());
+            txt_first_name.setText(navDrawer.getCurrentUser().getFirstName());
+            txt_email.setText(navDrawer.getCurrentUser().getUserEmail());
+            txt_phone_number.setText(navDrawer.getCurrentUser().getUserPhone());
+            et_phone_number.setText(navDrawer.getCurrentUser().getUserPhone());
+            et_email.setText(navDrawer.getCurrentUser().getUserEmail());
+            et_last_name2.setText(navDrawer.getCurrentUser().getLastName());
+            et_first_name2.setText(navDrawer.getCurrentUser().getFirstName());
         }
     }
 
@@ -222,7 +234,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onStop() {
         super.onStop();
-        userDatabaseReference.removeEventListener(valueEventListener);
+        listenerRegistration.remove();
+    }
+    
+    public interface UserProfileCallback {
+        void userUpdated(User user);
     }
 
 }

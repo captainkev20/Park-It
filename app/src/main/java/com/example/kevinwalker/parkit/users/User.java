@@ -1,5 +1,9 @@
 package com.example.kevinwalker.parkit.users;
 
+import android.provider.ContactsContract;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
 import com.example.kevinwalker.parkit.maps.UserParkedLocation;
@@ -22,6 +26,7 @@ public class User {
     private float userRating = 0;
     private Address[] address;
     private License license;
+//    private ImageView avatar;
     private Badge[] badges;
     private Long userScore;
     private Vehicle[] vehicles;
@@ -29,8 +34,6 @@ public class User {
     private boolean isUserParked = false;
     private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975,-79.7860938,0);
     private UserCurrentLocation userCurrentLocation = new UserCurrentLocation(36.0656975,-79.7860938,0);
-
-    // TODO: Change to be link to image and remove ImageView android class
 
     public User() {}
 
@@ -101,6 +104,14 @@ public class User {
     public void setLicense(License license) {
         this.license = license;
     }
+
+//    public ImageView getAvatar() {
+//        return avatar;
+//    }
+//
+//    public void setAvatar(ImageView avatar) {
+//        this.avatar = avatar;
+//    }
 
     public Badge[] getBadges() {
         return badges;
