@@ -106,6 +106,7 @@ public class NavDrawer extends AppCompatActivity
                 currentUser = documentSnapshot.toObject(User.class);
                 if (currentUser.getUserUUID().trim().isEmpty()) {
                     currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
+                    mergeCurrentUserWithFirestore(currentUser);
                 }
             }
         });

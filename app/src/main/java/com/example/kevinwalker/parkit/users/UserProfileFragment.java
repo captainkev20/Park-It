@@ -76,7 +76,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     DocumentReference documentReference;
     private UserProfileCallback callback;
     private NavDrawer navDrawer;
-    private User currentUser = new User();
+    private User currentUser;
     private ListenerRegistration listenerRegistration;
 
     @Override
@@ -95,7 +95,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         super.onCreate(savedInstanceState);
         
         navDrawer = (NavDrawer) getActivity();
-
+        currentUser = navDrawer.getCurrentUser();
         documentReference = firebaseFirestore.document("users/" + navDrawer.getCurrentUser().getUserUUID());
     }
 
