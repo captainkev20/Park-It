@@ -5,7 +5,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
@@ -29,7 +28,6 @@ import android.util.Log;
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.users.User;
-import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -44,7 +42,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
@@ -59,6 +56,7 @@ import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.common.collect.Maps;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
@@ -84,17 +82,15 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final String SAVED_LOCATION = "saved_location";
 
     private Boolean mLocationPermissionStatus = false;
-    private Boolean isUserParked = true;
+    private Boolean isUserParked = false;
     private Boolean mapFirstRun;
 
     private long epochTimeStamp;
 
-    private User currentUser;
+    //private User navDrawer.getCurrentUser();
     private Location androidCurrentLocation = new Location("test");
-    private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975, -79.7860938, 0);
-    private UserCurrentLocation userCurrentLocation = new UserCurrentLocation(36.0656975, -79.7860938,0);
-    private LatLng currentLatLng = new LatLng(36.0656975,-79.7860938); // Initialized to City View
-    private LatLng parkedLatLng = new LatLng(0,0); // Initialized to middle of map
+    //private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975, -79.7860938, 0);
+    //private CustomLocation userCurrentLocation = new CustomLocation(36.0656975, -79.7860938,0);
     private String currentAddress = "";
     private Geocoder geocoder;
     private List<Address> addressList = new ArrayList<>();
@@ -118,6 +114,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private MapsFragment.MapsCallBack mapsCallBack;
     private Context mContext;
     private NavDrawer navDrawer;
+    private User currentUser;
 
     // TODO: Add boolean for current GPS connection status - update using the overidden methods at the bottom of the class
 
@@ -139,7 +136,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         navDrawer = (NavDrawer) getActivity();
         currentUser = navDrawer.getCurrentUser();
-        userDocument = firebaseFirestore.collection("users").document(currentUser.getUserUUID());
+        userDocument = firebaseFirestore.collection("users").document(navDrawer.getCurrentUser().getUserUUID());
 
         listenerRegistration = userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
@@ -149,9 +146,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     Log.w(TAG, "Listen failed.", e);
                     return;
                 }
-
                 if (snapshot != null && snapshot.exists()) {
-                    currentUser = snapshot.toObject(User.class);
+                    //navDrawer.getCurrentUser() = snapshot.toObject(User.class);
                 } else {
                     Log.d(TAG, "Current data: null");
                 }
@@ -160,8 +156,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         fetchCurrentLocation();
 
-        geocoder = new Geocoder(getActivity().getApplicationContext());
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getContext());
+        geocoder = new Geocoder(mContext);
+        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
     }
 
     @Override
@@ -213,7 +209,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             Log.i(TAG, String.valueOf(epochTimeStamp));
         }
 
-        UserCurrentLocation tempLocation = new UserCurrentLocation();
+        CustomLocation tempLocation = new CustomLocation(new Location("onActivityCreated"));
         tempLocation.setLatitude(androidCurrentLocation.getLatitude());
         tempLocation.setLongitude(androidCurrentLocation.getLongitude());
         mapsCallBack.locationUpdate(tempLocation);
@@ -244,21 +240,21 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 if (mLocationPermissionStatus) {
                     isUserParked = true;
                     Log.i(TAG, String.valueOf(isUserParked));
-                    saveUserParkedLocation(new UserParkedLocation(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude(), 0));
+                    saveUserParkedLocation(navDrawer.getCurrentUser().getUserCurrentLocation());
                     fetchCurrentLocation();
-                    animateCamera(userCurrentLocation, DEFAULT_ZOOM, currentAddress);
+                    animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
                     Resources res = getResources();
                     Drawable drawable = res.getDrawable(R.drawable.ic_marker);
 
-                    placeMarkerOnMap(userCurrentLocation, currentAddress, true);
+                    placeMarkerOnMap(navDrawer.getCurrentUser().getUserCurrentLocation(), currentAddress, true);
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
                     break;
 
                 } else {
-                    Toast.makeText(getActivity(), "UserCurrentLocation not available", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, "CustomLocation not available", Toast.LENGTH_SHORT).show();
                     requestPermissions(new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
                     mLocationPermissionStatus = false;
                 }
@@ -267,7 +263,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             case R.id.btn_leave:
 
-                AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
+                AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
                 dialog.setTitle(getResources().getString(R.string.LEAVE_DIALOG_TITLE))
                         .setMessage(getResources().getString(R.string.LEAVE_DIALOG_MESSAGE))
                         .setNegativeButton(getResources().getString(R.string.LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
@@ -285,34 +281,37 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             case R.id.btn_find_user_parked:
                 loadUserParkingDataFromFirebase();
-                animateCamera(userCurrentLocation, DEFAULT_ZOOM, currentAddress);
+                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }
     }
 
-    private void saveUserCurrentLocation(UserCurrentLocation currentUserLocation) {
+    private void saveUserCurrentLocation(CustomLocation currentUserLocation) {
         mapsCallBack.locationUpdate(currentUserLocation);
 
     }
 
-    private void saveUserParkedLocation(UserParkedLocation userParkedLocation) {
+    private void saveUserParkedLocation(CustomLocation userParkedLocation) {
         mapsCallBack.parkedLocation(userParkedLocation);
     }
 
     private void loadUserParkingDataFromFirebase() {
 
-        if (isUserParked) {
-            userParkedLocation = currentUser.getUserParkedLocation();
-        }
+        /*if (isUserParked) {
+            navDrawer.getCurrentUser().setUserParkedLocation(navDrawer.getCurrentUser().getUserParkedLocation());
+        }*/
+
+        navDrawer.getCurrentUser().setUserParkedLocation(navDrawer.getCurrentUser().getUserParkedLocation());
+
 
     }
 
     private void initMap(MapView mapFragment) {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // Show user rationale BEFORE permission box
-            if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale((NavDrawer) mContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
                 new AlertDialog.Builder(getContext())
                         .setTitle(getResources().getString(R.string.PERMISSION_DIALOG_TITLE))
                         .setMessage(getResources().getString(R.string.PERMISSION_DIALOG_MESSAGE))
@@ -328,14 +327,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         .setNegativeButton(getResources().getString(R.string.PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(getActivity(), "UserCurrentLocation not available", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(mContext, "CustomLocation not available", Toast.LENGTH_SHORT).show();
                                 // UserProfileFragment said no, set to false
                                 mLocationPermissionStatus = false;
                             }
                         }).show();
             } else {
                 // Request permission
-                ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                ActivityCompat.requestPermissions((NavDrawer) mContext, new String[] {Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
             }
         } else {
             // Already have permission, so set up map
@@ -361,7 +360,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         // Check whether location settings are satisfied
         // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
-        SettingsClient settingsClient = LocationServices.getSettingsClient(getContext());
+        SettingsClient settingsClient = LocationServices.getSettingsClient(mContext);
         settingsClient.checkLocationSettings(locationSettingsRequest);
 
         locationCallback = new LocationCallback() {
@@ -372,16 +371,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             }
         };
 
-        if (ContextCompat.checkSelfPermission(getContext(), FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(mContext, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             // new Google API SDK v11 uses getFusedLocationProviderClient(this)
             mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,
                     Looper.myLooper());
         }
     }
 
-    private void animateCamera(UserCurrentLocation currentUserLocation, float zoom, String title) {
+    private void animateCamera(CustomLocation currentUserLocation, float zoom, String title) {
         Log.d(TAG, "Moving camera to: ");
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(userCurrentLocation.getLatitude(), userCurrentLocation.getLongitude()), zoom));
+
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(navDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), navDrawer.getCurrentUser().getUserCurrentLocation().getLatitude()), zoom));
     }
 
     private boolean shouldRefreshMap() {
@@ -403,7 +403,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                                 } else {
                                 }
                             } else {
-                                Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                                Toast.makeText((NavDrawer) mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                             }
                         }
                     });
@@ -436,11 +436,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeMarkerOnMap(UserCurrentLocation userCurrentLocation, String title, boolean markerVisible) {
+    protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         userMarker = map.addMarker(new MarkerOptions()
-                .position(new LatLng(this.userCurrentLocation.getLatitude(), this.userCurrentLocation.getLongitude()))
+                .position(new LatLng(navDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), navDrawer.getCurrentUser().getUserCurrentLocation().getLatitude()))
                 .title(title)
-                .icon(bitmapDescriptorFromVector(getActivity(), R.drawable.ic_marker))
+                .icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker))
                 .visible(markerVisible));
 
         setMarkerBounce(userMarker);
@@ -499,28 +499,30 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private LatLng getCurrentLatLng() {
-        return this.currentLatLng;
+
+        return new LatLng(navDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), navDrawer.getCurrentUser().getUserCurrentLocation().getLatitude());
     }
 
 
-    private void setCurrentLatLng(UserCurrentLocation location) {
-        currentLatLng = new LatLng(location.getLatitude(), location.getLongitude());
-    }
+    /*private void setCurrentLatLng(CustomLocation location) {
+
+        navDrawer.getCurrentUser().setUserCurrentLocation(location);
+    }*/
 
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
-    private void currentLocationUpdated(UserCurrentLocation location) {
-        setCurrentLatLng(location);
+    private void currentLocationUpdated(CustomLocation location) {
+        //setCurrentLatLng(location);
         setCurrentAddress(getAddressFromGeocoder(getCurrentLatLng()));
         mapsCallBack.locationUpdate(location);
     }
 
-    // Method to convert Android Location to custom POJO UserCurrentLocation object for use through program
-    private UserCurrentLocation convertAndroidLocationToPojo(Location androidLocation) {
+    // Method to convert Android Location to custom POJO CustomLocation object for use through program
+    private CustomLocation convertAndroidLocationToPojo(Location androidLocation) {
 
         if (androidLocation != null) {
-            return new UserCurrentLocation(androidLocation.getLatitude(), androidLocation.getLongitude(), 0);
+            return new CustomLocation(androidLocation);
         } else {
-            return new UserCurrentLocation();
+            return new CustomLocation(new Location("convertAndroidLocationToPOJO"));
         }
     }
 
@@ -534,17 +536,21 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         if(task.isSuccessful()) {
                             androidCurrentLocation = (Location) location.getResult();
 
+                            CustomLocation customLocation = new CustomLocation(androidCurrentLocation);
+                            navDrawer.getCurrentUser().setUserCurrentLocation(customLocation);
+                            mapsCallBack.locationUpdate(customLocation);
 
-                            userCurrentLocation = convertAndroidLocationToPojo(androidCurrentLocation);
+                            currentLocationUpdated(new CustomLocation((Location)task.getResult()));
+                            //animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
-                            if (mapFirstRun) {
-                                currentLocationUpdated(convertAndroidLocationToPojo((Location)task.getResult()));
-                                animateCamera(userCurrentLocation, DEFAULT_ZOOM, currentAddress);
+                            /*if (mapFirstRun) {
+                                currentLocationUpdated(new CustomLocation((Location)task.getResult()));
+                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                             } else {
-                                currentLocationUpdated(convertAndroidLocationToPojo((Location)task.getResult()));
-                            }
+                                currentLocationUpdated(new CustomLocation((Location)task.getResult()));
+                            }*/
                         } else {
-                            Toast.makeText(getActivity(), "Current location unavailable...", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -567,22 +573,29 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public void onMapReady(GoogleMap googleMap) {
 
+        fetchCurrentLocation();
+
         MapsInitializer.initialize(mContext);
 
         map = googleMap;
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
         mapFirstRun = true;
 
+        //animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
-        if (isUserParked) {
+        Resources res = getResources();
+        Drawable drawable = res.getDrawable(R.drawable.ic_marker);
+
+
+        /*if (isUserParked) {
 
             Resources res = getResources();
             Drawable drawable = res.getDrawable(R.drawable.ic_marker);
-            placeMarkerOnMap(userCurrentLocation, currentAddress, true);
+            placeMarkerOnMap(navDrawer.getCurrentUser().getUserCurrentLocation(), currentAddress, true);
         } else {
-            animateCamera(userCurrentLocation, DEFAULT_ZOOM, currentAddress);
+            animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
             Log.i(TAG, String.valueOf(isUserParked));
-        }
+        }*/
 
         // Checks for permission
         if(mLocationPermissionStatus) {
@@ -605,7 +618,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-        currentLocationUpdated(userCurrentLocation);
+        currentLocationUpdated(new CustomLocation(location));
     }
 
     @Override
@@ -689,8 +702,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     public interface MapsCallBack {
-        void locationUpdate(UserCurrentLocation location);
+        void locationUpdate(CustomLocation location);
 
-        void parkedLocation(UserParkedLocation userParkedLocation);
+        void parkedLocation(CustomLocation userParkedLocation);
     }
 }
