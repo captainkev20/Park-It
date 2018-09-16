@@ -26,6 +26,7 @@ import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
+import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
@@ -264,21 +265,25 @@ public class NavDrawer extends AppCompatActivity
 
         if (id == R.id.nav_my_profile) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            userProfileFragment = new UserProfileFragment();
             fragmentTransaction.replace(R.id.container, userProfileFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_listings) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            spotFragment = new SpotListings();
             fragmentTransaction.replace(R.id.container, spotFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_map) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            mapFragment = new MapsFragment();
             fragmentTransaction.replace(R.id.container, mapFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_payments) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            paymentFragment = new PaymentFragment();
             fragmentTransaction.replace(R.id.container, paymentFragment);
             fragmentTransaction.commit();
 
