@@ -455,7 +455,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             markerOptions.position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude())).title(title).icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker)).visible(true);
             userMarker = map.addMarker(markerOptions);
 
-//            animateCamera(customLocation, DEFAULT_ZOOM);
+            animateCamera(customLocation, DEFAULT_ZOOM);
 
             setMarkerBounce(userMarker);
         }
@@ -619,9 +619,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             map.setMyLocationEnabled(true);
 
             if (navDrawer.getCurrentUser().isUserParked()) {
-//            Resources res = getResources();
-//            Drawable drawable = res.getDrawable(R.drawable.ic_marker);
-//            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
             } else {
                 setUserCurrentLocation();
             }

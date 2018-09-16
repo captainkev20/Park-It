@@ -121,16 +121,19 @@ public class NavDrawer extends AppCompatActivity
                 } else {
                     mergeCurrentUserWithFirestore(currentUser);
                 }
+                initMapFragmentTransaction();
             }
         });
+    }
 
+    private void initMapFragmentTransaction() {
         // Set the default fragment to display
         container = findViewById(R.id.container);
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-        userFragmentTransaction = fragmentManager.beginTransaction();
-        paymentFragmentTransaction = fragmentManager.beginTransaction();
-        spotFragmentTransaction = fragmentManager.beginTransaction();
+//        userFragmentTransaction = fragmentManager.beginTransaction();
+//        paymentFragmentTransaction = fragmentManager.beginTransaction();
+//        spotFragmentTransaction = fragmentManager.beginTransaction();
         mapFragment = new MapsFragment();
 
         userProfileFragment = new UserProfileFragment();
@@ -138,9 +141,9 @@ public class NavDrawer extends AppCompatActivity
         spotFragment = new SpotListings();
         fragmentTransaction.replace(R.id.container, mapFragment);
         fragmentTransaction.commit();
-        userFragmentTransaction.commit();
-        paymentFragmentTransaction.commit();
-        spotFragmentTransaction.commit();
+//        userFragmentTransaction.commit();
+//        paymentFragmentTransaction.commit();
+//        spotFragmentTransaction.commit();
     }
 
     private void mergeCurrentUserWithFirestore(User currentUser) {
