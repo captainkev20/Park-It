@@ -96,6 +96,8 @@ public class NavDrawer extends AppCompatActivity
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
 
+        setTitle(getResources().getString(R.string.map_nav_title));
+
         // Get base user information from Login Intent
         final Intent intent = getIntent();
         if (intent != null) {
@@ -122,6 +124,7 @@ public class NavDrawer extends AppCompatActivity
                 } else {
                     mergeCurrentUserWithFirestore(currentUser);
                 }
+                // Initialize map after getting back status of User in database. Values will be up to date at this point
                 initMapFragmentTransaction();
             }
         });

@@ -146,11 +146,15 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userDocument = firebaseFirestore.collection("users").document(navDrawer.getCurrentUser().getUserUUID());
         geocoder = new Geocoder(mContext);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
+
+        getActivity().setTitle(getResources().getString(R.string.map_nav_title));
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
+
         return mView;
     }
 
@@ -165,8 +169,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
-
-        getActivity().setTitle(getResources().getString(R.string.map_nav_title));
 
         if (navDrawer.getCurrentUser().isUserParked()) {
             btn_find_user_parked.setEnabled(true);
