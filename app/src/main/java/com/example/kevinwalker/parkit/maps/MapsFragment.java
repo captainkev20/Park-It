@@ -82,7 +82,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     private boolean mLocationPermissionStatus = false;
     private boolean mapFirstRun;
-    private boolean isUserParked = false;
     private boolean isCameraAnimationFinished = true;
 
     private long epochTimeStamp;
@@ -118,16 +117,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (mapView != null) {
             initMap(mapView);
             startLocationUpdates();
-            loadUserParkingDataFromFirebase();
+//            loadUserParkingDataFromFirebase();
         }
 
         if (savedInstanceState != null) {
             epochTimeStamp = savedInstanceState.getLong(EPOCH_TIME);
             Log.i(TAG, String.valueOf(epochTimeStamp));
         }
-
-        CustomLocation tempLocation = new CustomLocation(new Location("onActivityCreated"));
-        mapsCallBack.locationUpdate(tempLocation);
     }
 
     @Override
@@ -150,19 +146,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userDocument = firebaseFirestore.collection("users").document(navDrawer.getCurrentUser().getUserUUID());
         geocoder = new Geocoder(mContext);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
-
-//        registerUserDocListener();
-
-//        setUserCurrentLocation();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
-        if (savedInstanceState != null) {
-//            androidCurrentLocation = (Location) savedInstanceState.get(SAVED_LOCATION);
-        }
-
         return mView;
     }
 
@@ -177,13 +165,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
-//        initMap(mapView);
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
 
-        if (isUserParked) {
+        if (navDrawer.getCurrentUser().isUserParked()) {
             btn_find_user_parked.setEnabled(true);
-            loadUserParkingDataFromFirebase();
         } else {
             Log.i(TAG, "fromOnCreate");
         }
@@ -193,7 +179,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         saveEpochTimeToBundle(outState);
-//        outState.putParcelable(SAVED_LOCATION, androidCurrentLocation);
         Log.i(TAG, "onSaveInstanceState");
     }
 
@@ -210,10 +195,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
         isCameraAnimationFinished = true;
-//        setUserCurrentLocation();
 
-        if (isUserParked) {
-            loadUserParkingDataFromFirebase();
+        if (navDrawer.getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_parked.setEnabled(true);
@@ -268,18 +251,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 break;
 
             case R.id.btn_find_user_parked:
-                loadUserParkingDataFromFirebase();
+//                loadUserParkingDataFromFirebase();
                 animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }
-    }
-
-    private void saveUserCurrentLocation(CustomLocation currentUserLocation) {
-        mapsCallBack.locationUpdate(currentUserLocation);
-    }
-
-    private void saveUserParkedLocation(CustomLocation userParkedLocation) {
-        mapsCallBack.parkedLocation(userParkedLocation);
     }
 
     private void loadUserParkingDataFromFirebase() {
@@ -475,13 +450,15 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
-        userMarker = map.addMarker(new MarkerOptions()
-                .position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()))
-                .title(title)
-                .icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker))
-                .visible(markerVisible));
+        if (map != null) {
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude())).title(title).icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker)).visible(true);
+            userMarker = map.addMarker(markerOptions);
 
-        setMarkerBounce(userMarker);
+//            animateCamera(customLocation, DEFAULT_ZOOM);
+
+            setMarkerBounce(userMarker);
+        }
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
@@ -545,7 +522,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private void userCurrentLocationUpdated(CustomLocation customLocation) {
         animateCamera(customLocation, DEFAULT_ZOOM);
         setCurrentAddress(getAddressFromGeocoder(customLocation));
-        mapsCallBack.locationUpdate(customLocation);
+        mapsCallBack.userLocationUpdate(customLocation);
+    }
+
+    private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
+        placeMarkerOnMap(customLocation, currentAddress, true);
+//        animateCamera(customLocation, DEFAULT_ZOOM);
+        setCurrentAddress(getAddressFromGeocoder(customLocation));
+        mapsCallBack.parkedLocationUpdate(customLocation, isParked);
     }
 
     private void setUserCurrentLocation() {
@@ -586,12 +570,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             CustomLocation customLocation = new CustomLocation((Location) task.getResult());
-                            mapsCallBack.locationUpdate(customLocation);
-
-                            userCurrentLocationUpdated(customLocation);
-                            animateCamera(customLocation, DEFAULT_ZOOM);
-
-                            placeMarkerOnMap(navDrawer.getCurrentUser().getUserCurrentLocation(), currentAddress, true);
+                            userParkedLocationUpdated(customLocation, true);
 
                             /*if (mapFirstRun) {
                                 userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
@@ -639,7 +618,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             // Adds blue dot to current location once map is centered on it
             map.setMyLocationEnabled(true);
 
-            if (isUserParked) {
+            if (navDrawer.getCurrentUser().isUserParked()) {
 //            Resources res = getResources();
 //            Drawable drawable = res.getDrawable(R.drawable.ic_marker);
 //            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
@@ -728,16 +707,16 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     public void leaveSpace() {
-        isUserParked = false;
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
         btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
+        mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 
     public interface MapsCallBack {
-        void locationUpdate(CustomLocation location);
+        void userLocationUpdate(CustomLocation location);
 
-        void parkedLocation(CustomLocation userParkedLocation);
+        void parkedLocationUpdate(CustomLocation userParkedLocation, boolean isParked);
     }
 }

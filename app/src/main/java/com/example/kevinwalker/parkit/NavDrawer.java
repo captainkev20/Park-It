@@ -191,8 +191,9 @@ public class NavDrawer extends AppCompatActivity
         mergeCurrentUserWithFirestore(currentUser);
     }
 
-    public void saveUserParkedLocation(CustomLocation userParkedLocation) {
+    public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
         currentUser.setUserParkedLocation(userParkedLocation);
+        currentUser.setUserParked(isParked);
         mergeCurrentUserWithFirestore(currentUser);
     }
 
@@ -208,7 +209,7 @@ public class NavDrawer extends AppCompatActivity
 
                             CustomLocation customLocation = new CustomLocation(androidCurrentLocation);
                             currentUser.setUserCurrentLocation(customLocation);
-                            //mapsCallBack.locationUpdate(customLocation);
+                            //mapsCallBack.userLocationUpdate(customLocation);
 
                             //currentLocationUpdated(new CustomLocation((Location)task.getResult()));
                             //animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
@@ -310,13 +311,13 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void locationUpdate(CustomLocation location) {
+    public void userLocationUpdate(CustomLocation location) {
         saveCurrentUserLocation(location);
     }
 
     @Override
-    public void parkedLocation(CustomLocation userParkedLocation) {
-        saveUserParkedLocation(userParkedLocation);
+    public void parkedLocationUpdate(CustomLocation userParkedLocation, boolean isParked) {
+        saveUserParkedLocation(userParkedLocation, isParked);
     }
 
     public User getCurrentUser() {
