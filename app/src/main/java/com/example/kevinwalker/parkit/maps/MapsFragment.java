@@ -75,7 +75,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 2000; /* 2 sec */
+    private long FASTEST_INTERVAL = 5000; /* 5 sec */
     private static final float DEFAULT_ZOOM = 19f;
     private static final String EPOCH_TIME = "fragment_timestamp";
     private static final String SAVED_LOCATION = "saved_location";
@@ -353,7 +353,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 //            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom));
 //            map.getCameraPosition();
 
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
+            map.clear();
+
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
@@ -361,7 +363,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), mapsCancellableCallback);
         }
     }
 
@@ -381,11 +383,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 }
             };
 
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom), mapsCancellableCallback);
-//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom));
-//            map.getCameraPosition();
+            map.clear();
 
-            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
+//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
 
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
@@ -393,7 +393,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     .bearing(0)                // Sets the orientation of the camera to east
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
-            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+            map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), mapsCancellableCallback);
         }
     }
 
@@ -451,8 +451,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
+            map.clear();
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude())).title(title).icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker)).visible(true);
+            markerOptions.position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude())).title(title).icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker)).visible(markerVisible);
             userMarker = map.addMarker(markerOptions);
 
             animateCamera(customLocation, DEFAULT_ZOOM);
@@ -526,9 +527,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
-        placeMarkerOnMap(customLocation, currentAddress, true);
-//        animateCamera(customLocation, DEFAULT_ZOOM);
         setCurrentAddress(getAddressFromGeocoder(customLocation));
+        placeMarkerOnMap(customLocation, currentAddress, true);
         mapsCallBack.parkedLocationUpdate(customLocation, isParked);
     }
 
@@ -603,10 +603,24 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         MapsInitializer.initialize(mContext);
 
-        map = googleMap;
-        map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        mapFirstRun = true;
+        if (map == null) {
+            map = googleMap;
+            map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+            mapFirstRun = true;
+            setMyLocationEnabled();
+        }
 
+            if (navDrawer.getCurrentUser().isUserParked()) {
+            userParkedLocationUpdated(navDrawer.getCurrentUser().getUserParkedLocation(), true);
+            } else {
+                setUserCurrentLocation();
+            }
+
+            // Set the button to be enabled when the map is ready
+            btn_park.setEnabled(true);
+    }
+
+    private void setMyLocationEnabled() {
         // Checks for permission
         if (mLocationPermissionStatus) {
 
@@ -617,15 +631,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             // Adds blue dot to current location once map is centered on it
             map.setMyLocationEnabled(true);
-
-            if (navDrawer.getCurrentUser().isUserParked()) {
-            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
-            } else {
-                setUserCurrentLocation();
-            }
-
-            // Set the button to be enabled when the map is ready
-            btn_park.setEnabled(true);
         }
     }
 
