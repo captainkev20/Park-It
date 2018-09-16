@@ -27,10 +27,19 @@ public class User {
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
     private boolean isUserParked = false;
-    private CustomLocation userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
-    private CustomLocation userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+//    private CustomLocation userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
+//    private CustomLocation userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+    private CustomLocation userParkedLocation;
+    private CustomLocation userCurrentLocation;
 
-    public User() {}
+    public User() {
+        userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
+        userParkedLocation.setLongitude(-79.889510);
+        userParkedLocation.setLatitude(36.047091);
+        userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+        userCurrentLocation.setLongitude(-79.889510);
+        userCurrentLocation.setLatitude(36.047091);
+    }
 
     public User(boolean isUserParked) {
         this.isUserParked = isUserParked;
