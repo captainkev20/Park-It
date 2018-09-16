@@ -131,19 +131,9 @@ public class NavDrawer extends AppCompatActivity
         container = findViewById(R.id.container);
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
-//        userFragmentTransaction = fragmentManager.beginTransaction();
-//        paymentFragmentTransaction = fragmentManager.beginTransaction();
-//        spotFragmentTransaction = fragmentManager.beginTransaction();
         mapFragment = new MapsFragment();
-
-        userProfileFragment = new UserProfileFragment();
-        paymentFragment = new PaymentFragment();
-        spotFragment = new SpotListings();
         fragmentTransaction.replace(R.id.container, mapFragment);
         fragmentTransaction.commit();
-//        userFragmentTransaction.commit();
-//        paymentFragmentTransaction.commit();
-//        spotFragmentTransaction.commit();
     }
 
     private void mergeCurrentUserWithFirestore(User currentUser) {
