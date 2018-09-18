@@ -76,12 +76,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
     private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
     private long FASTEST_INTERVAL = 5000; /* 5 sec */
-    private static final float DEFAULT_ZOOM = 19f;
+    private static final float DEFAULT_ZOOM = 9f;
     private static final String EPOCH_TIME = "fragment_timestamp";
     private static final String SAVED_LOCATION = "saved_location";
 
     private boolean mLocationPermissionStatus = false;
-    private boolean mapFirstRun;
     private boolean isCameraAnimationFinished = true;
 
     private long epochTimeStamp;
@@ -453,15 +452,69 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
     protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
-            map.clear();
             MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(new LatLng(customLocation.getLongitude(), customLocation.getLatitude())).title(title).icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker)).visible(markerVisible);
-            userMarker = map.addMarker(markerOptions);
+//            LatLng latLng = new LatLng(customLocation.getLongitude(), customLocation.getLatitude());
+//            LatLng latLng = new LatLng(36.047, -79.889);
+            markerOptions.position(convertCustomLocationToLatLng(customLocation));
+            markerOptions.title(title);
+//            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
+            markerOptions.visible(markerVisible);
+            map.clear();
 
             animateCamera(customLocation, DEFAULT_ZOOM);
 
+            userMarker = map.addMarker(markerOptions);
+
             setMarkerBounce(userMarker);
         }
+    }
+
+    private LatLng convertCustomLocationToLatLng(CustomLocation customLocation) {
+        byte decimalPlaces = 5;
+        boolean foundDecimal = false;
+        String decimal = ".";
+        String stringLatitude = Double.toString(customLocation.getLatitude());
+        String latitudeConversion = "";
+        String longitudeConversion = "";
+        String stringLongitude = Double.toString(customLocation.getLongitude());
+
+        for (int i = 0; i < stringLatitude.length(); i++) {
+            if (decimalPlaces > 0) {
+                if (foundDecimal == true) {
+                    --decimalPlaces;
+                    latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
+                } else {
+                    if (!decimal.equals(String.valueOf(stringLatitude.charAt(i)))) {
+                        latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
+                    } else {
+                        foundDecimal = true;
+                        latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
+                    }
+                }
+            }
+        }
+
+        decimalPlaces = 4;
+        foundDecimal = false;
+
+        for (int i = 0; i < stringLongitude.length(); i++) {
+            if (decimalPlaces > 0) {
+                if (foundDecimal == true) {
+                    --decimalPlaces;
+                    longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
+                } else {
+                    if (!decimal.equals(String.valueOf(stringLatitude.charAt(i)))) {
+                        longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
+                    } else {
+                        foundDecimal = true;
+                        longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
+                    }
+                }
+            }
+        }
+
+        return new LatLng(Double.valueOf(latitudeConversion), Double.valueOf(longitudeConversion));
+
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
@@ -523,13 +576,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
     private void userCurrentLocationUpdated(CustomLocation customLocation) {
-        animateCamera(customLocation, DEFAULT_ZOOM);
         setCurrentAddress(getAddressFromGeocoder(customLocation));
+        animateCamera(customLocation, DEFAULT_ZOOM);
         mapsCallBack.userLocationUpdate(customLocation);
     }
 
     private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
         setCurrentAddress(getAddressFromGeocoder(customLocation));
+//        animateCamera(customLocation, DEFAULT_ZOOM);
         placeMarkerOnMap(customLocation, currentAddress, true);
         mapsCallBack.parkedLocationUpdate(customLocation, isParked);
     }
@@ -608,18 +662,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (map == null) {
             map = googleMap;
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-            mapFirstRun = true;
             setMyLocationEnabled();
         }
 
-            if (navDrawer.getCurrentUser().isUserParked()) {
-            userParkedLocationUpdated(navDrawer.getCurrentUser().getUserParkedLocation(), true);
-            } else {
-                setUserCurrentLocation();
-            }
+        if (navDrawer.getCurrentUser().isUserParked()) {
+            setUserParkedLocation();
+        } else {
+            setUserCurrentLocation();
+        }
 
-            // Set the button to be enabled when the map is ready
-            btn_park.setEnabled(true);
+        // Set the button to be enabled when the map is ready
+        btn_park.setEnabled(true);
     }
 
     private void setMyLocationEnabled() {
