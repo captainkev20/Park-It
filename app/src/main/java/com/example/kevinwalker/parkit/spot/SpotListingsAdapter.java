@@ -10,12 +10,12 @@ import com.example.kevinwalker.parkit.R;
 
 import java.util.List;
 
-public class MySpotRecyclerViewAdapter extends RecyclerView.Adapter<MySpotRecyclerViewAdapter.ViewHolder> {
+public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapter.ViewHolder> {
 
     private final List<Spot> mValues;
     private final SpotListings.SpotListingsInteraction mListener;
 
-    public MySpotRecyclerViewAdapter(List<Spot> items, SpotListings.SpotListingsInteraction listener) {
+    public SpotListingsAdapter(List<Spot> items, SpotListings.SpotListingsInteraction listener) {
         mValues = items;
         mListener = listener;
     }

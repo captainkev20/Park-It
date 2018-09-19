@@ -20,7 +20,6 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!-- <meta-data android:name="com.google.android.geo.API_KEY" android:value="AIzaSyBwa3wtP3D0QOpX36GMWQexdGRB8v1bwR0"/> -->
         <meta-data
             android:name="https://www.googleapis.com/geolocation/v1/geolocate"
             android:value="@string/google_maps_key" />
@@ -47,9 +46,6 @@
             android:name=".NavDrawer"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps"></activity>
     </application>
 
 </manifest>

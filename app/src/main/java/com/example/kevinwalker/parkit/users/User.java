@@ -1,12 +1,12 @@
 package com.example.kevinwalker.parkit.users;
 
+import android.location.Location;
+
 import com.example.kevinwalker.parkit.badges.Badge;
-import com.example.kevinwalker.parkit.maps.UserCurrentLocation;
+import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
-
-import java.util.UUID;
 
 /**
  * Created by hollis on 4/19/18.
@@ -27,28 +27,43 @@ public class User {
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
     private boolean isUserParked = false;
-    private UserParkedLocation userParkedLocation = new UserParkedLocation(36.0656975,-79.7860938,0);
-    private UserCurrentLocation userCurrentLocation = new UserCurrentLocation(36.0656975,-79.7860938,0);
+//    private CustomLocation userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
+//    private CustomLocation userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+    private CustomLocation userParkedLocation;
+    private CustomLocation userCurrentLocation;
 
-    // TODO: Change to be link to image and remove ImageView android class
-
-    public User() {}
+    public User() {
+        userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
+        userParkedLocation.setLongitude(-79.889510);
+        userParkedLocation.setLatitude(36.047091);
+        userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+        userCurrentLocation.setLongitude(-79.889510);
+        userCurrentLocation.setLatitude(36.047091);
+    }
 
     public User(boolean isUserParked) {
         this.isUserParked = isUserParked;
     }
 
-    public UserParkedLocation getUserParkedLocation() { return userParkedLocation; }
-
-    public void setUserParkedLocation(UserParkedLocation userParkedLocation) { this.userParkedLocation = userParkedLocation; }
-
     public boolean isUserParked() { return isUserParked; }
 
+    public CustomLocation getUserParkedLocation() {
+        return userParkedLocation;
+    }
+
+    public void setUserParkedLocation(CustomLocation userParkedLocation) {
+        this.userParkedLocation = userParkedLocation;
+    }
+
+    public CustomLocation getUserCurrentLocation() {
+        return userCurrentLocation;
+    }
+
+    public void setUserCurrentLocation(CustomLocation userCurrentLocation) {
+        this.userCurrentLocation = userCurrentLocation;
+    }
+
     public void setUserParked(boolean userParked) { isUserParked = userParked; }
-
-    public UserCurrentLocation getUserCurrentLocation() { return userCurrentLocation; }
-
-    public void setUserCurrentLocation(UserCurrentLocation userCurrentLocation) { this.userCurrentLocation = userCurrentLocation; }
 
     public String getFirstName() {
         return firstName;

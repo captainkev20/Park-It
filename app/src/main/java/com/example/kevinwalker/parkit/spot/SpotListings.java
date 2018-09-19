@@ -75,7 +75,7 @@ public class SpotListings extends Fragment {
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new MySpotRecyclerViewAdapter(spots, mListener));
+            recyclerView.setAdapter(new SpotListingsAdapter(spots, mListener));
         }
         return view;
     }
