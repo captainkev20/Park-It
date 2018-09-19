@@ -49,6 +49,17 @@ public class SpotListings extends Fragment {
     }
 
     @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof SpotListingsInteraction) {
+            mListener = (SpotListingsInteraction) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement SpotListingsInteraction");
+        }
+    }
+
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -86,14 +97,15 @@ public class SpotListings extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof SpotListingsInteraction) {
-            mListener = (SpotListingsInteraction) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement SpotListingsInteraction");
-        }
+    public void onResume(){
+        super.onResume();
+        mListener.setFabVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mListener.setFabVisibility(View.GONE);
     }
 
     @Override
@@ -148,5 +160,6 @@ public class SpotListings extends Fragment {
      */
     public interface SpotListingsInteraction {
         void onSpotListingInteraction(Spot item);
+        void setFabVisibility(int viewVisibilityConstant);
     }
 }

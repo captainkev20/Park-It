@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.Toast;
 
@@ -45,6 +47,7 @@ import com.google.firebase.firestore.SetOptions;
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, UserProfileFragment.UserProfileCallback {
 
+    private FloatingActionButton fab;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FragmentManager fragmentManager;
@@ -85,6 +88,16 @@ public class NavDrawer extends AppCompatActivity
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(NavDrawer.this, "YOLO", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        fab.setVisibility(View.GONE);
 
         //fetchCurrentLocation();
 
@@ -274,7 +287,7 @@ public class NavDrawer extends AppCompatActivity
 
         } else if (id == R.id.nav_listings) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            spotFragment = new SpotListings();
+            spotFragment = SpotListings.newInstance(1);
             fragmentTransaction.replace(R.id.container, spotFragment);
             fragmentTransaction.commit();
 
@@ -333,6 +346,11 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void onSpotListingInteraction(Spot item) {
 
+    }
+
+    @Override
+    public void setFabVisibility(int viewVisibilityConstant) {
+        fab.setVisibility(viewVisibilityConstant);
     }
 
     public boolean isUserExists() {
