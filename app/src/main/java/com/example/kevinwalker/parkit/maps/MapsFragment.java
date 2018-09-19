@@ -94,6 +94,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private Marker userMarker;
+    private Location androidCurrentLocation = new Location("test");
 
     private Button btn_park;
     private Button btn_leave;
@@ -201,6 +202,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_parked.setEnabled(true);
+            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
@@ -354,7 +356,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 //            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom));
 //            map.getCameraPosition();
 
-            map.clear();
+            //map.clear();
 
 //            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
 
@@ -455,17 +457,43 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             MarkerOptions markerOptions = new MarkerOptions();
 //            LatLng latLng = new LatLng(customLocation.getLongitude(), customLocation.getLatitude());
 //            LatLng latLng = new LatLng(36.047, -79.889);
-            markerOptions.position(convertCustomLocationToLatLng(customLocation));
-            markerOptions.title(title);
+
+            if (navDrawer.getCurrentUser().isUserParked()) {
+                markerOptions.position(new LatLng(navDrawer.getCurrentUser().getUserParkedLocation().getLatitude(), navDrawer.getCurrentUser().getUserParkedLocation().getLongitude()));
+                markerOptions.title(title);
+                markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
+                markerOptions.visible(markerVisible);
+                map.clear();
+
+                animateCamera(customLocation, DEFAULT_ZOOM);
+
+                userMarker = map.addMarker(markerOptions);
+
+                setMarkerBounce(userMarker);
+            } else {
+                markerOptions.position(new LatLng(androidCurrentLocation.getLatitude(), androidCurrentLocation.getLongitude()));
+                markerOptions.title(title);
+                markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
+                markerOptions.visible(markerVisible);
+                map.clear();
+
+                animateCamera(customLocation, DEFAULT_ZOOM);
+
+                userMarker = map.addMarker(markerOptions);
+
+                setMarkerBounce(userMarker);
+            }
+            //markerOptions.position(new LatLng(androidCurrentLocation.getLatitude(), androidCurrentLocation.getLongitude()));
+            //markerOptions.title(title);
 //            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
-            markerOptions.visible(markerVisible);
-            map.clear();
+            //markerOptions.visible(markerVisible);
+            //map.clear();
 
-            animateCamera(customLocation, DEFAULT_ZOOM);
+            //animateCamera(customLocation, DEFAULT_ZOOM);
 
-            userMarker = map.addMarker(markerOptions);
+            //userMarker = map.addMarker(markerOptions);
 
-            setMarkerBounce(userMarker);
+            //setMarkerBounce(userMarker);
         }
     }
 
@@ -577,7 +605,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // Update objects and perform actions as necessary once fetchCurrentLocation task completes
     private void userCurrentLocationUpdated(CustomLocation customLocation) {
         setCurrentAddress(getAddressFromGeocoder(customLocation));
-        animateCamera(customLocation, DEFAULT_ZOOM);
+
+        // Caused marker ti disappear
+        //animateCamera(customLocation, DEFAULT_ZOOM);
         mapsCallBack.userLocationUpdate(customLocation);
     }
 
@@ -598,6 +628,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         if (task.isSuccessful()) {
                             CustomLocation customLocation = new CustomLocation((Location) task.getResult());
                             userCurrentLocationUpdated(customLocation);
+                            androidCurrentLocation = (Location) location.getResult();
 
 
                             /*if (mapFirstRun) {
@@ -627,6 +658,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         if (task.isSuccessful()) {
                             CustomLocation customLocation = new CustomLocation((Location) task.getResult());
                             userParkedLocationUpdated(customLocation, true);
+                            animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
                             /*if (mapFirstRun) {
                                 userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));

@@ -86,7 +86,7 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        fetchCurrentLocation();
+        //fetchCurrentLocation();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -194,7 +194,7 @@ public class NavDrawer extends AppCompatActivity
         mergeCurrentUserWithFirestore(currentUser);
     }
 
-    private void fetchCurrentLocation() {
+    /*private void fetchCurrentLocation() {
         try {
             if (mLocationPermissionStatus) {
                 final Task location = mFusedLocationProviderClient.getLastLocation();
@@ -211,12 +211,12 @@ public class NavDrawer extends AppCompatActivity
                             //currentLocationUpdated(new CustomLocation((Location)task.getResult()));
                             //animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
-                            /*if (mapFirstRun) {
+                            *//*if (mapFirstRun) {
                                 currentLocationUpdated(new CustomLocation((Location)task.getResult()));
                                 animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                             } else {
                                 currentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*/
+                            }*//*
                         } else {
                             Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
@@ -226,7 +226,7 @@ public class NavDrawer extends AppCompatActivity
         } catch (SecurityException e) {
             Log.e(TAG, "Security issue");
         }
-    }
+    }*/
 
 
     @Override
