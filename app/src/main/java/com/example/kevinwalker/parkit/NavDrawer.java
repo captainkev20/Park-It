@@ -19,12 +19,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
-import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
@@ -33,12 +31,9 @@ import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,7 +53,8 @@ public class NavDrawer extends AppCompatActivity
     private MapsFragment mapFragment;
     private UserProfileFragment userProfileFragment;
     private PaymentFragment paymentFragment;
-    private SpotListings spotFragment;
+    private SpotListings spotListingFragment;
+    private SpotFragment spotFragment;
     private FrameLayout container;
     private static User currentUser = new User();
 
@@ -89,17 +85,21 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        fab = (FloatingActionButton) findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(NavDrawer.this, "YOLO", Toast.LENGTH_SHORT).show();
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                spotFragment = new SpotFragment();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.replace(R.id.container, spotFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
             }
         });
 
         fab.setVisibility(View.GONE);
-
-        //fetchCurrentLocation();
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -287,8 +287,8 @@ public class NavDrawer extends AppCompatActivity
 
         } else if (id == R.id.nav_listings) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            spotFragment = SpotListings.newInstance(1);
-            fragmentTransaction.replace(R.id.container, spotFragment);
+            spotListingFragment = SpotListings.newInstance(1);
+            fragmentTransaction.replace(R.id.container, spotListingFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_map) {

@@ -44,6 +44,7 @@ public class SpotFragment extends ParentProfileFragment {
         getActivity().setTitle(getResources().getString(R.string.listings_nav_title));
     }
 
+
     private void updateUI() {
         txt_cost.setText(String.valueOf(spot.getDailyRate()));
         txt_last_updated.setText(String.valueOf(spot.getDateLastEdit()));
