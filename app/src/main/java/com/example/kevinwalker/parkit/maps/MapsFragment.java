@@ -200,7 +200,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_parked.setEnabled(true);
-            placeParkedMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            placeParkedMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), navDrawer.getCurrentUser().getUserParkedLocation().getParkedAddress(), true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
@@ -651,6 +651,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
                             CustomLocation customLocation = new CustomLocation((Location) task.getResult());
+                            currentAddress = getAddressFromGeocoder(customLocation);
+                            customLocation.setParkedAddress(currentAddress);
                             userParkedLocationUpdated(customLocation, true);
                             animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
 
@@ -692,7 +694,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
 
         if (navDrawer.getCurrentUser().isUserParked()) {
-            placeParkedMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            placeParkedMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), navDrawer.getCurrentUser().getUserParkedLocation().getParkedAddress(), true);
             animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(),DEFAULT_ZOOM, currentAddress);
         } else {
             setUserCurrentLocation();
