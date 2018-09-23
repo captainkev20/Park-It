@@ -115,7 +115,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (mapView != null) {
             initMap(mapView);
             startLocationUpdates();
-//            loadUserParkingDataFromFirebase();
         }
 
         if (savedInstanceState != null) {
@@ -146,7 +145,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
-
     }
 
     @Override
@@ -258,10 +256,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
     }
 
-    private void loadUserParkingDataFromFirebase() {
-        navDrawer.getCurrentUser().setUserParkedLocation(navDrawer.getCurrentUser().getUserParkedLocation());
-    }
-
     // Potential to put in RxJava with Progress dialog box to show map is rendering
     private void initMap(MapView mapFragment) {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
@@ -351,15 +345,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 }
             };
 
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom), mapsCancellableCallback);
-//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom));
-//            map.getCameraPosition();
-
-            //map.clear();
-
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
-
-            CameraPosition cameraPosition = new CameraPosition.Builder()
+         CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
                     .bearing(0)                // Sets the orientation of the camera to east
@@ -387,8 +373,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             map.clear();
 
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
-
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -402,32 +386,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private void cameraAnimationFinished() {
         isCameraAnimationFinished = true;
     }
-
-//    private boolean isLocationAccurate(FusedLocationProviderClient mFusedLocationProviderClient) {
-//
-//        try {
-//            if (mLocationPermissionStatus) {
-//                final Task determineLocationAccuracy = mFusedLocationProviderClient.getLastLocation();
-//                determineLocationAccuracy.addOnCompleteListener(new OnCompleteListener() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if(task.isSuccessful()) {
-//                            androidCurrentLocation = (Location) determineLocationAccuracy.getResult();
-//                            if (mapFirstRun) {
-//
-//                                } else {
-//                                }
-//                            } else {
-//                                Toast.makeText((NavDrawer) mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                }
-//            } catch (SecurityException e) {
-//                Log.e(TAG, "Security issue");
-//            }
-//            return true;
-//        }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -461,8 +419,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
                 markerOptions.visible(markerVisible);
                 map.clear();
-
-                //animateCamera(customLocation, DEFAULT_ZOOM);
 
                 userMarker = map.addMarker(markerOptions);
 
@@ -600,14 +556,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private void userCurrentLocationUpdated(CustomLocation customLocation) {
         setCurrentAddress(getAddressFromGeocoder(customLocation));
 
-        // Caused marker ti disappear
-        //animateCamera(customLocation, DEFAULT_ZOOM);
         mapsCallBack.userLocationUpdate(customLocation);
     }
 
     private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
         setCurrentAddress(getAddressFromGeocoder(customLocation));
-//        animateCamera(customLocation, DEFAULT_ZOOM);
         placeCurrentLocationMarkerOnMap(customLocation, currentAddress, true);
         mapsCallBack.parkedLocationUpdate(customLocation, isParked);
     }
@@ -623,14 +576,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                             CustomLocation customLocation = new CustomLocation((Location) task.getResult());
                             userCurrentLocationUpdated(customLocation);
                             androidCurrentLocation = (Location) location.getResult();
-
-
-                            /*if (mapFirstRun) {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-                            } else {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*/
                         } else {
                             Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
@@ -655,13 +600,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                             customLocation.setParkedAddress(currentAddress);
                             userParkedLocationUpdated(customLocation, true);
                             animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-
-                            /*if (mapFirstRun) {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-                            } else {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*/
                         } else {
                             Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
                         }
@@ -721,7 +659,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-//        userCurrentLocationUpdated(new CustomLocation(location));
         setUserCurrentLocation();
     }
 
