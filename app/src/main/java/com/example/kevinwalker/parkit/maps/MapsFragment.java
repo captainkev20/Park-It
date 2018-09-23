@@ -264,6 +264,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         navDrawer.getCurrentUser().setUserParkedLocation(navDrawer.getCurrentUser().getUserParkedLocation());
     }
 
+    // Potential to put in RxJava with Progress dialog box to show map is rendering
     private void initMap(MapView mapFragment) {
         String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
 
@@ -471,7 +472,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 setMarkerBounce(userMarker);
             } else {
-                markerOptions.position(new LatLng(androidCurrentLocation.getLatitude(), androidCurrentLocation.getLongitude()));
+
+                markerOptions.position(new LatLng(navDrawer.getCurrentUser().getUserCurrentLocation().getLatitude(), navDrawer.getCurrentUser().getUserCurrentLocation().getLongitude()));
                 markerOptions.title(title);
                 markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
                 markerOptions.visible(markerVisible);
@@ -698,7 +700,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
 
         if (navDrawer.getCurrentUser().isUserParked()) {
-            setUserParkedLocation();
+            //setUserParkedLocation();
+            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             setUserCurrentLocation();
         }
