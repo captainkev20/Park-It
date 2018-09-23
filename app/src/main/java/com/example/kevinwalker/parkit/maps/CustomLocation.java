@@ -9,6 +9,7 @@ import android.location.Location;
 public class CustomLocation extends Location {
 
     private long timeStamp = 0;
+    private String parkedAddress = "";
 
     public CustomLocation() {
         super(new Location("customLocation"));
@@ -19,10 +20,10 @@ public class CustomLocation extends Location {
 
     }
 
-    public CustomLocation(Location customLocation, long timeStamp) {
+    public CustomLocation(Location customLocation, long timeStamp, String parkedAddress) {
         super(customLocation);
         this.timeStamp = timeStamp;
-
+        this.parkedAddress = parkedAddress;
     }
 
     public long getTimeStamp() {
