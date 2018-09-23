@@ -34,4 +34,11 @@ public class CustomLocation extends Location {
         this.timeStamp = timeStamp;
     }
 
+    public String getParkedAddress() {
+        return parkedAddress;
+    }
+
+    public void setParkedAddress(String parkedAddress) {
+        this.parkedAddress = parkedAddress;
+    }
 }
