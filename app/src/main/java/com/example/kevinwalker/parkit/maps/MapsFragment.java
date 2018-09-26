@@ -98,7 +98,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private Button btn_leave;
     private MapView mapView;
     private View mView;
-    private FloatingActionButton btn_find_user_parked;
+    private FloatingActionButton btn_current_location;
 
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DocumentReference userDocument;
@@ -162,12 +162,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
         btn_leave.setOnClickListener(this);
-        btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
-        btn_find_user_parked.setOnClickListener(this);
+        btn_current_location = getView().findViewById(R.id.btn_current_location);
+        btn_current_location.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
 
         if (navDrawer.getCurrentUser().isUserParked()) {
-            btn_find_user_parked.setEnabled(true);
+            btn_current_location.setEnabled(true);
         } else {
             Log.i(TAG, "fromOnCreate");
         }
@@ -197,7 +197,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (navDrawer.getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
-            btn_find_user_parked.setEnabled(true);
+            btn_current_location.setEnabled(true);
             placeParkedMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), navDrawer.getCurrentUser().getUserParkedLocation().getParkedAddress(), true);
         } else {
             btn_park.setEnabled(true);
@@ -222,7 +222,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
-                    btn_find_user_parked.setEnabled(true);
+                    btn_current_location.setEnabled(true);
                     break;
 
                 } else {
@@ -250,7 +250,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 break;
 
             case R.id.btn_find_user_parked:
-//                loadUserParkingDataFromFirebase();
                 animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }
@@ -705,7 +704,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
+        btn_current_location.setEnabled(true); // TODO: Change to a "current location" button
         mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 
