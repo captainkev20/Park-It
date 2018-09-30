@@ -24,6 +24,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
+import org.w3c.dom.Text;
+
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -70,9 +72,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         txt_register.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
 
-        /*io.reactivex.Observable<String> loginObservable = RxTextView.textChanges(et_email.getText().toString().trim());
+        io.reactivex.Observable<CharSequence> loginObservable = RxTextView.textChanges(et_email);
         io.reactivex.Observable<CharSequence> passwordObservable = RxTextView.textChanges(et_password);
-        io.reactivex.Observable<Boolean> combinedObservables = io.reactivex.Observable.combineLatest(loginObservable, passwordObservable, (o1, o2) -> validateEmail(o1) && validatePassword(o2));*/
+        io.reactivex.Observable<Boolean> combinedObservables = io.reactivex.Observable.combineLatest(loginObservable, passwordObservable, (o1, o2) -> validateEmail(o1) && validatePassword(o2));
     }
 
     // Called after directly after onCreate() or after onRestart() (In the event that the Activity was stopped and is restarting)
@@ -243,9 +245,9 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }*/
 
-    private boolean validateEmail(EditText email) {
+    private boolean validateEmail(CharSequence email) {
 
-        if (Patterns.EMAIL_ADDRESS.matcher(email.getText().toString().trim()).matches()) {
+        if (Patterns.EMAIL_ADDRESS.matcher(email.toString()).matches()) {
             return true;
         } else {
             return false;
@@ -253,14 +255,13 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-    private boolean validatePassword(EditText password) {
+    private boolean validatePassword(CharSequence password) {
 
         Pattern pattern;
         Matcher matcher;
         final String PASSWORD_PATTERN = "^.{8,}$";
-        String textPassword = password.getText().toString().trim();
         pattern = Pattern.compile(PASSWORD_PATTERN);
-        matcher = pattern.matcher(textPassword);
+        matcher = pattern.matcher(password.toString());
 
         return matcher.matches();
     }
@@ -288,8 +289,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 break;
             // Navigate to Homepage only if both et_email and et_password are non-blank (they contain text)
             case R.id.btn_login:
-                if (validateEmail(et_email)) {
-                    if (validatePassword(et_password)) {
+                if (validateEmail(et_email.getText().toString())) {
+                    if (validatePassword(et_password.getText().toString())) {
                         signIn(et_email.getText().toString(), et_password.getText().toString());
                     }
                 }
