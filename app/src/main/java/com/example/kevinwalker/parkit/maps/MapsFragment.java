@@ -249,7 +249,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         }).show();
                 break;
 
-            case R.id.btn_find_user_parked:
+            case R.id.btn_current_location:
                 animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }

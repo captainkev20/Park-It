@@ -6,12 +6,14 @@ import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.Patterns;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+import io.reactivex.*;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
@@ -20,6 +22,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+
+import java.util.Observable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Login extends AppCompatActivity implements View.OnClickListener {
 
@@ -62,6 +69,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         txt_forgot_password.setOnClickListener(this);
         txt_register.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
+
+        /*io.reactivex.Observable<String> loginObservable = RxTextView.textChanges(et_email.getText().toString().trim());
+        io.reactivex.Observable<CharSequence> passwordObservable = RxTextView.textChanges(et_password);
+        io.reactivex.Observable<Boolean> combinedObservables = io.reactivex.Observable.combineLatest(loginObservable, passwordObservable, (o1, o2) -> validateEmail(o1) && validatePassword(o2));*/
     }
 
     // Called after directly after onCreate() or after onRestart() (In the event that the Activity was stopped and is restarting)
@@ -214,10 +225,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 });
     }
 
-    private boolean validateInput(EditText email, EditText password) {
+    /*private boolean validateInput(EditText email, EditText password) {
 
         boolean emailEmpty = isEditTextEmpty(email);
         boolean passwordEmpty = isEditTextEmpty(password);
+        String enteredEmail = String.valueOf(email);
 
         // Validate user input
         if (emailEmpty) { // et_email is empty
@@ -229,6 +241,28 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         } else { // both fields have user input
             return true;
         }
+    }*/
+
+    private boolean validateEmail(EditText email) {
+
+        if (Patterns.EMAIL_ADDRESS.matcher(email.getText().toString().trim()).matches()) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+    private boolean validatePassword(EditText password) {
+
+        Pattern pattern;
+        Matcher matcher;
+        final String PASSWORD_PATTERN = "^.{8,}$";
+        String textPassword = password.getText().toString().trim();
+        pattern = Pattern.compile(PASSWORD_PATTERN);
+        matcher = pattern.matcher(textPassword);
+
+        return matcher.matches();
     }
 
     private void hideSoftKeyBoard() {
@@ -254,8 +288,10 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 break;
             // Navigate to Homepage only if both et_email and et_password are non-blank (they contain text)
             case R.id.btn_login:
-                if (validateInput(et_email, et_password)) {
-                    signIn(et_email.getText().toString(), et_password.getText().toString());
+                if (validateEmail(et_email)) {
+                    if (validatePassword(et_password)) {
+                        signIn(et_email.getText().toString(), et_password.getText().toString());
+                    }
                 }
                 hideSoftKeyBoard();
                 break;
