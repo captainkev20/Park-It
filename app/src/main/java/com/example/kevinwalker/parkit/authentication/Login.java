@@ -24,8 +24,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
-import org.w3c.dom.Text;
-
 import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +55,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
         mAuth = FirebaseAuth.getInstance();
 
+
         // Find our Views so the corresponding objects we've declared can be inflated
         et_email = findViewById(R.id.et_phone_number);
         et_password = findViewById(R.id.et_password);
@@ -72,9 +71,23 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         txt_register.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
 
+        btn_login.setEnabled(false);
+
         io.reactivex.Observable<CharSequence> loginObservable = RxTextView.textChanges(et_email);
+        loginObservable
+                .map(this::validateEmail)
+                .subscribe(isValidEmail -> btn_login.setEnabled(isValidEmail ? true : false));
+
+
         io.reactivex.Observable<CharSequence> passwordObservable = RxTextView.textChanges(et_password);
+        passwordObservable
+                .map(this::validatePassword)
+                .subscribe(isValidPass -> btn_login.setEnabled(isValidPass ? true : false));
+
+
+
         io.reactivex.Observable<Boolean> combinedObservables = io.reactivex.Observable.combineLatest(loginObservable, passwordObservable, (o1, o2) -> validateEmail(o1) && validatePassword(o2));
+        combinedObservables.subscribe(isVisible -> btn_login.setEnabled(isVisible ? true : false));
     }
 
     // Called after directly after onCreate() or after onRestart() (In the event that the Activity was stopped and is restarting)
