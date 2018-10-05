@@ -39,7 +39,7 @@
     <string name="last_name">Last Name: </string>
     <string name="phone_number">Phone Number: </string>
     <string name="edit_profile">EDIT</string>
-    <string name="save_profile">SAVE</string>
+    <string name="save">SAVE</string>
     <string name="email">E-mail: </string>
     <string name="enter_first_Name">Enter First Name</string>
     <string name="enter_last_name">Enter Last Name</string>
@@ -53,6 +53,11 @@
     <string name="cvv">CVV: </string>
     <string name="expiration_date">Expiration Date: </string>
     <string name="zip">Zip: </string>
+
+    <string name="spot_name">Spot Name: </string>
+    <string name="hourly_rate">Hourly Rate: </string>
+    <string name="add_new_spot">Add New Spot</string>
+
 
     <string name="map_nav_title">Map </string>
     <string name="profile_nav_title">Profile </string>

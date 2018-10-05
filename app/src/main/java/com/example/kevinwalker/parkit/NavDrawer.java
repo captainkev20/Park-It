@@ -3,6 +3,7 @@ package com.example.kevinwalker.parkit;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
+import com.example.kevinwalker.parkit.spot.NewSpotFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
@@ -40,7 +42,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, UserProfileFragment.UserProfileCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, NewSpotFragment.NewSpotCallback, UserProfileFragment.UserProfileCallback {
 
     private FloatingActionButton fab;
     protected DrawerLayout drawer;
@@ -55,6 +57,7 @@ public class NavDrawer extends AppCompatActivity
     private PaymentFragment paymentFragment;
     private SpotListings spotListingFragment;
     private SpotFragment spotFragment;
+    private NewSpotFragment newSpotFragment;
     private FrameLayout container;
     private static User currentUser = new User();
 
@@ -90,9 +93,9 @@ public class NavDrawer extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                spotFragment = new SpotFragment();
+                newSpotFragment = new NewSpotFragment();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                fragmentTransaction.replace(R.id.container, spotFragment);
+                fragmentTransaction.replace(R.id.container, newSpotFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
 
@@ -352,6 +355,12 @@ public class NavDrawer extends AppCompatActivity
     public void setFabVisibility(int viewVisibilityConstant) {
         fab.setVisibility(viewVisibilityConstant);
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
+    }
+
 
     public boolean isUserExists() {
         return userExists;

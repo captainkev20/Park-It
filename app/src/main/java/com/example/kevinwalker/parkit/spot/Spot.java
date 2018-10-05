@@ -11,6 +11,7 @@ public class Spot {
     private double longitude = 0;
     private String name = "";
     private String ownerUUID = "";
+    private String spotUUID = "";
     private boolean occupied = false;
     private SpotSize spotSize = SpotSize.STANDARD;
     private Surface surface = Surface.ASPHALT;
@@ -42,6 +43,10 @@ public class Spot {
     public void setOwnerUUID(String ownerUUID) {
         this.ownerUUID = ownerUUID;
     }
+
+    public String getSpotUUID() { return spotUUID; }
+
+    public void setSpotUUID(String spotUUID) { this.spotUUID = spotUUID; }
 
     public SpotSize getSpotSize() {
         return spotSize;
