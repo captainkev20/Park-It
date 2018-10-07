@@ -23,8 +23,8 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_width="348dp"
+            android:layout_height="592dp">
 
 
             <android.support.design.widget.TextInputLayout
@@ -82,7 +82,6 @@
                     android:backgroundTint="@color/colorPrimary"
                     android:ems="10"
                     android:hint="@string/hourly_rate"
-                    android:inputType="number"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.237"
                     app:layout_constraintStart_toStartOf="parent"

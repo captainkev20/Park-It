@@ -48,7 +48,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     DocumentReference spotDocumentReference;
 
     private NewSpotCallback newSpotCallback;
-    private Spot userSpot;
+    private Spot userSpot = new Spot();
 
     private static final String TAG = NewSpotFragment.class.getName();
 
@@ -129,7 +129,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
         txt_save_spot.setOnClickListener(this);
 
-        return inflater.inflate(R.layout.fragment_new_spot, container, false);
+        return mView;
     }
 
     @Override
@@ -138,9 +138,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             case R.id.txt_save_spot:
 
                 String spotNameString = et_spot_name.getText().toString();
-                int spotHourlyRate = Integer.parseInt(et_hourly_rate.getText().toString());
+                double spotHourlyRate = Double.parseDouble(et_hourly_rate.getText().toString());
 
-                userSpot.setDailyRate(BigDecimal.valueOf(spotHourlyRate));
+                userSpot.setHourlyRate(spotHourlyRate);
                 userSpot.setName(spotNameString);
 
                 mergeSpotWithFirebase(userSpot);
@@ -154,11 +154,13 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
+                Toast.makeText(getActivity(), "Spot Saved!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Failed to write");
+                Toast.makeText(getActivity(), "Spot Not Saved!", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -16,9 +16,9 @@ public class Spot {
     private SpotSize spotSize = SpotSize.STANDARD;
     private Surface surface = Surface.ASPHALT;
     private Ownership ownership = Ownership.SELF;
-    private BigDecimal hourlyRate = BigDecimal.valueOf(0.00);
-    private BigDecimal dailyRate = BigDecimal.valueOf(0.00);
-    private BigDecimal monthlyRate = BigDecimal.valueOf(0.00);
+    private double hourlyRate = 0.00;
+    private double dailyRate = 0.00;
+    private double monthlyRate = 0.00;
     private long dateCreated = 0;
     private long dateClockIn = 0;
     private long dateClockOut = 0;
@@ -136,27 +136,27 @@ public class Spot {
         this.occupied = occupied;
     }
 
-    public BigDecimal getHourlyRate() {
+    public double getHourlyRate() {
         return hourlyRate;
     }
 
-    public void setHourlyRate(BigDecimal hourlyRate) {
+    public void setHourlyRate(double hourlyRate) {
         this.hourlyRate = hourlyRate;
     }
 
-    public BigDecimal getDailyRate() {
+    public double getDailyRate() {
         return dailyRate;
     }
 
-    public void setDailyRate(BigDecimal dailyRate) {
+    public void setDailyRate(double dailyRate) {
         this.dailyRate = dailyRate;
     }
 
-    public BigDecimal getMonthlyRate() {
+    public double getMonthlyRate() {
         return monthlyRate;
     }
 
-    public void setMonthlyRate(BigDecimal monthlyRate) {
+    public void setMonthlyRate(double monthlyRate) {
         this.monthlyRate = monthlyRate;
     }
 }
