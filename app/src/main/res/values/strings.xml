@@ -57,6 +57,9 @@
     <string name="spot_name">Spot Name: </string>
     <string name="hourly_rate">Hourly Rate: </string>
     <string name="add_new_spot">Add New Spot</string>
+    <string name="btn_spot_location">Spot Location</string>
+    <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
+    press button below.</string>
 
 
     <string name="map_nav_title">Map </string>

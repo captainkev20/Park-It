@@ -28,6 +28,7 @@ import android.util.Log;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -80,7 +81,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private static final String EPOCH_TIME = "fragment_timestamp";
     private static final String SAVED_LOCATION = "saved_location";
 
-    private boolean mLocationPermissionStatus = false;
     private boolean isCameraAnimationFinished = true;
 
     private long epochTimeStamp;
@@ -95,6 +95,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private LocationCallback locationCallback;
     private Marker userMarker;
     private Location androidCurrentLocation = new Location("test");
+    private LocationHelper locationHelper;
 
     private Button btn_park;
     private Button btn_leave;
@@ -146,6 +147,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userDocument = firebaseFirestore.collection("users").document(navDrawer.getCurrentUser().getUserUUID());
         geocoder = new Geocoder(mContext);
         mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
+        locationHelper = new LocationHelper(this.getContext());
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
 
@@ -221,19 +223,14 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_park:
-                if (mLocationPermissionStatus) {
+                if (locationHelper.hasLocationPermission()) {
                     setUserParkedLocation();
 
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
-                    break;
-
-                } else {
-                    Toast.makeText(mContext, "CustomLocation not available", Toast.LENGTH_SHORT).show();
-                    requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                    mLocationPermissionStatus = false;
                 }
+
                 break;
 
             case R.id.btn_leave:
@@ -265,42 +262,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private void initMap(MapView mapFragment) {
-        String[] permissions = {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION};
-
-        if (ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // Show user rationale BEFORE permission box
-            if (ActivityCompat.shouldShowRequestPermissionRationale((NavDrawer) mContext, Manifest.permission.ACCESS_FINE_LOCATION)) {
-                new AlertDialog.Builder(getContext())
-                        .setTitle(getResources().getString(R.string.PERMISSION_DIALOG_TITLE))
-                        .setMessage(getResources().getString(R.string.PERMISSION_DIALOG_MESSAGE))
-                        .setPositiveButton(getResources().getString(R.string.PERMISSION_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-                                // They said yes, so set to true
-                                mLocationPermissionStatus = true;
-                                setUserCurrentLocation();
-                            }
-                        })
-                        .setNegativeButton(getResources().getString(R.string.PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(mContext, "CustomLocation not available", Toast.LENGTH_SHORT).show();
-                                // UserProfileFragment said no, set to false
-                                mLocationPermissionStatus = false;
-                            }
-                        }).show();
-            } else {
-                // Request permission
-                ActivityCompat.requestPermissions((NavDrawer) mContext, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
-            }
-        } else {
             // Already have permission, so set up map
-            mLocationPermissionStatus = true;
             mapFragment.onCreate(null);
             mapFragment.onResume();
             mapFragment.getMapAsync(this);
-        }
     }
 
     protected void startLocationUpdates() {
@@ -442,7 +407,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                             // TODO: Do not continue the MapsFragment, continue to request permission or force them out of the Activity
                             return;
                         } else {
-                            mLocationPermissionStatus = true;
                             initMap(mapView);
                         }
                     }
@@ -619,38 +583,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private void setUserCurrentLocation() {
-        try {
-            if (mLocationPermissionStatus) {
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            CustomLocation customLocation = new CustomLocation((Location) task.getResult());
-                            userCurrentLocationUpdated(customLocation);
-                            androidCurrentLocation = (Location) location.getResult();
 
-
-                            /*if (mapFirstRun) {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-                            } else {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*/
-                        } else {
-                            Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        } catch (SecurityException e) {
-            Log.e(TAG, "Security issue");
-        }
     }
 
     private void setUserParkedLocation() {
         try {
-            if (mLocationPermissionStatus) {
+            if (locationHelper.hasLocationPermission()) {
                 final Task location = mFusedLocationProviderClient.getLastLocation();
                 location.addOnCompleteListener(new OnCompleteListener() {
                     @Override
@@ -709,7 +647,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     private void setMyLocationEnabled() {
         // Checks for permission
-        if (mLocationPermissionStatus) {
+        if (locationHelper.hasLocationPermission()) {
 
             if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {

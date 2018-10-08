@@ -3,6 +3,7 @@ package com.example.kevinwalker.parkit.spot;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,9 +22,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
@@ -49,6 +53,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
+
+    private Context mContext;
+
 
     private static final String TAG = NewSpotFragment.class.getName();
 

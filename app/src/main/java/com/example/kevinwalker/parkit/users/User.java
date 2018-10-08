@@ -33,10 +33,10 @@ public class User {
     private CustomLocation userCurrentLocation;
 
     public User() {
-        userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
+        userParkedLocation = new CustomLocation();
         userParkedLocation.setLongitude(-79.889510);
         userParkedLocation.setLatitude(36.047091);
-        userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
+        userCurrentLocation = new CustomLocation();
         userCurrentLocation.setLongitude(-79.889510);
         userCurrentLocation.setLatitude(36.047091);
     }
