@@ -58,28 +58,21 @@ import android.view.animation.Interpolator;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.ListenerRegistration;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+
 
 public class MapsFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
 
     private static final String TAG = MapsFragment.class.getName();
-    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
-    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
-    private long UPDATE_INTERVAL = 10 * 1000;  /* 10 secs */
-    private long FASTEST_INTERVAL = 5000; /* 5 sec */
     private static final float DEFAULT_ZOOM = 9f;
     private static final String EPOCH_TIME = "fragment_timestamp";
-    private static final String SAVED_LOCATION = "saved_location";
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
 
     private boolean isCameraAnimationFinished = true;
 
@@ -90,26 +83,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private List<Address> addressList = new ArrayList<>();
 
     private GoogleMap map;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private LocationRequest locationRequest;
-    private LocationCallback locationCallback;
     private Marker userMarker;
-    private Location androidCurrentLocation = new Location("test");
     private LocationHelper locationHelper;
 
-    private Button btn_park;
-    private Button btn_leave;
-    private MapView mapView;
     private View mView;
-    private FloatingActionButton btn_find_user_parked;
-
-    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    private DocumentReference userDocument;
-    private ListenerRegistration listenerRegistration;
+    @BindView(R.id.btn_park) Button btn_park;
+    @BindView(R.id.btn_leave) Button btn_leave;
+    @BindView(R.id.map) MapView mapView;
+    @BindView(R.id.btn_find_user_current_location) FloatingActionButton btn_find_user_parked;
 
     private MapsFragment.MapsCallBack mapsCallBack;
     private Context mContext;
-    private NavDrawer navDrawer;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -117,8 +101,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         if (mapView != null) {
             initMap(mapView);
-            startLocationUpdates();
-//            loadUserParkingDataFromFirebase();
         }
 
         if (savedInstanceState != null) {
@@ -143,20 +125,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        navDrawer = (NavDrawer) getActivity();
-        userDocument = firebaseFirestore.collection("users").document(navDrawer.getCurrentUser().getUserUUID());
         geocoder = new Geocoder(mContext);
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
         locationHelper = new LocationHelper(this.getContext());
+        locationHelper.startLocationUpdates();
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
-
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
-
+        ButterKnife.bind(MapsFragment.this.getActivity());
         return mView;
     }
 
@@ -168,11 +147,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
         btn_leave.setOnClickListener(this);
-        btn_find_user_parked = getView().findViewById(R.id.btn_find_user_parked);
+        btn_find_user_parked = getView().findViewById(R.id.btn_find_user_current_location);
         btn_find_user_parked.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
 
-        if (navDrawer.getCurrentUser().isUserParked()) {
+        if (NavDrawer.getCurrentUser().isUserParked()) {
             btn_find_user_parked.setEnabled(true);
         } else {
             Log.i(TAG, "fromOnCreate");
@@ -189,7 +168,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public void onPause() {
         super.onPause();
-        mFusedLocationProviderClient.removeLocationUpdates(locationCallback);
     }
 
     @Override
@@ -197,14 +175,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         super.onResume();
         Log.i(TAG, String.valueOf(epochTimeStamp));
 
-        mFusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(mContext);
         isCameraAnimationFinished = true;
 
-        if (navDrawer.getCurrentUser().isUserParked()) {
+        if (NavDrawer.getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_parked.setEnabled(true);
-            placeMarkerOnMap(navDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
@@ -225,12 +202,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             case R.id.btn_park:
                 if (locationHelper.hasLocationPermission()) {
                     setUserParkedLocation();
-
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
                     btn_find_user_parked.setEnabled(true);
                 }
-
                 break;
 
             case R.id.btn_leave:
@@ -250,15 +225,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                         }).show();
                 break;
 
-            case R.id.btn_find_user_parked:
-//                loadUserParkingDataFromFirebase();
-                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
+            case R.id.btn_find_user_current_location:
+                locationHelper.getCurrentLocation();
+                animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }
-    }
-
-    private void loadUserParkingDataFromFirebase() {
-        navDrawer.getCurrentUser().setUserParkedLocation(navDrawer.getCurrentUser().getUserParkedLocation());
     }
 
     private void initMap(MapView mapFragment) {
@@ -266,39 +237,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             mapFragment.onCreate(null);
             mapFragment.onResume();
             mapFragment.getMapAsync(this);
-    }
-
-    protected void startLocationUpdates() {
-
-        // Create the location request to start receiving updates
-        locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        locationRequest.setInterval(UPDATE_INTERVAL);
-        locationRequest.setFastestInterval(FASTEST_INTERVAL);
-
-        // Create LocationSettingsRequest object using location request
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder();
-        builder.addLocationRequest(locationRequest);
-        LocationSettingsRequest locationSettingsRequest = builder.build();
-
-        // Check whether location settings are satisfied
-        // https://developers.google.com/android/reference/com/google/android/gms/location/SettingsClient
-        SettingsClient settingsClient = LocationServices.getSettingsClient(mContext);
-        settingsClient.checkLocationSettings(locationSettingsRequest);
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                // do work here
-                onLocationChanged(locationResult.getLastLocation());
-            }
-        };
-
-        if (ContextCompat.checkSelfPermission(mContext, FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            // new Google API SDK v11 uses getFusedLocationProviderClient(this)
-            mFusedLocationProviderClient.requestLocationUpdates(locationRequest, locationCallback,
-                    Looper.myLooper());
-        }
     }
 
     private void animateCamera(CustomLocation customLocation, float zoom, String title) {
@@ -316,15 +254,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 }
             };
-
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom), mapsCancellableCallback);
-//            map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLongitude(), customLocation.getLatitude()), zoom));
-//            map.getCameraPosition();
-
-            //map.clear();
-
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
-
+            
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -346,15 +276,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 }
 
                 @Override
-                public void onCancel() {
-
-                }
+                public void onCancel() {}
             };
 
             map.clear();
-
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()), zoom));
-
+            
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -368,32 +294,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private void cameraAnimationFinished() {
         isCameraAnimationFinished = true;
     }
-
-//    private boolean isLocationAccurate(FusedLocationProviderClient mFusedLocationProviderClient) {
-//
-//        try {
-//            if (mLocationPermissionStatus) {
-//                final Task determineLocationAccuracy = mFusedLocationProviderClient.getLastLocation();
-//                determineLocationAccuracy.addOnCompleteListener(new OnCompleteListener() {
-//                    @Override
-//                    public void onComplete(@NonNull Task task) {
-//                        if(task.isSuccessful()) {
-//                            androidCurrentLocation = (Location) determineLocationAccuracy.getResult();
-//                            if (mapFirstRun) {
-//
-//                                } else {
-//                                }
-//                            } else {
-//                                Toast.makeText((NavDrawer) mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-//                            }
-//                        }
-//                    });
-//                }
-//            } catch (SecurityException e) {
-//                Log.e(TAG, "Security issue");
-//            }
-//            return true;
-//        }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
@@ -419,11 +319,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
             MarkerOptions markerOptions = new MarkerOptions();
-//            LatLng latLng = new LatLng(customLocation.getLongitude(), customLocation.getLatitude());
-//            LatLng latLng = new LatLng(36.047, -79.889);
 
-            if (navDrawer.getCurrentUser().isUserParked()) {
-                markerOptions.position(new LatLng(navDrawer.getCurrentUser().getUserParkedLocation().getLatitude(), navDrawer.getCurrentUser().getUserParkedLocation().getLongitude()));
+            if (NavDrawer.getCurrentUser().isUserParked()) {
+                markerOptions.position(new LatLng(NavDrawer.getCurrentUser().getUserParkedLocation().getLatitude(), NavDrawer.getCurrentUser().getUserParkedLocation().getLongitude()));
                 markerOptions.title(title);
                 markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
                 markerOptions.visible(markerVisible);
@@ -435,7 +333,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 setMarkerBounce(userMarker);
             } else {
-                markerOptions.position(new LatLng(androidCurrentLocation.getLatitude(), androidCurrentLocation.getLongitude()));
+                markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
                 markerOptions.title(title);
                 markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
                 markerOptions.visible(markerVisible);
@@ -447,17 +345,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 setMarkerBounce(userMarker);
             }
-            //markerOptions.position(new LatLng(androidCurrentLocation.getLatitude(), androidCurrentLocation.getLongitude()));
-            //markerOptions.title(title);
-//            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
-            //markerOptions.visible(markerVisible);
-            //map.clear();
-
-            //animateCamera(customLocation, DEFAULT_ZOOM);
-
-            //userMarker = map.addMarker(markerOptions);
-
-            //setMarkerBounce(userMarker);
         }
     }
 
@@ -506,7 +393,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
 
         return new LatLng(Double.valueOf(latitudeConversion), Double.valueOf(longitudeConversion));
-
     }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
@@ -517,7 +403,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         vectorDrawable.draw(canvas);
         return BitmapDescriptorFactory.fromBitmap(bitmap);
     }
-
 
     private void setMarkerBounce(final Marker marker) {
         final Handler handler = new Handler();
@@ -562,57 +447,17 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private LatLng getCurrentLatLng() {
-
-        return new LatLng(navDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), navDrawer.getCurrentUser().getUserCurrentLocation().getLatitude());
-    }
-
-    // Update objects and perform actions as necessary once fetchCurrentLocation task completes
-    private void userCurrentLocationUpdated(CustomLocation customLocation) {
-        setCurrentAddress(getAddressFromGeocoder(customLocation));
-
-        // Caused marker ti disappear
-        //animateCamera(customLocation, DEFAULT_ZOOM);
-        mapsCallBack.userLocationUpdate(customLocation);
+        return new LatLng(NavDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), NavDrawer.getCurrentUser().getUserCurrentLocation().getLatitude());
     }
 
     private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
         setCurrentAddress(getAddressFromGeocoder(customLocation));
-//        animateCamera(customLocation, DEFAULT_ZOOM);
         placeMarkerOnMap(customLocation, currentAddress, true);
         mapsCallBack.parkedLocationUpdate(customLocation, isParked);
     }
 
-    private void setUserCurrentLocation() {
-
-    }
-
     private void setUserParkedLocation() {
-        try {
-            if (locationHelper.hasLocationPermission()) {
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if (task.isSuccessful()) {
-                            CustomLocation customLocation = new CustomLocation((Location) task.getResult());
-                            userParkedLocationUpdated(customLocation, true);
-                            animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-
-                            /*if (mapFirstRun) {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-                            } else {
-                                userCurrentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*/
-                        } else {
-                            Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        } catch (SecurityException e) {
-            Log.e(TAG, "Security issue");
-        }
+        userParkedLocationUpdated(locationHelper.getCurrentLocation(), true);
     }
 
     /**
@@ -635,10 +480,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMyLocationEnabled();
         }
 
-        if (navDrawer.getCurrentUser().isUserParked()) {
+        if (NavDrawer.getCurrentUser().isUserParked()) {
             setUserParkedLocation();
         } else {
-            setUserCurrentLocation();
+//            mapsCallBack.userLocationUpdate(locationHelper.getCurrentLocation());
         }
 
         // Set the button to be enabled when the map is ready
@@ -679,7 +524,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 customLocation.setLatitude(userLocation.latitude);
                 customLocation.setLongitude(userLocation.longitude);
                 animateCamera(customLocation, DEFAULT_ZOOM, currentAddress);
-//            map.animateCamera(CameraUpdateFactory.newLatLngZoom(userLocation, 14), 1500, null);
             }
         } else {
             // Do nothing - returns default CustomLocation
@@ -691,8 +535,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     // TODO: Update user's Marker
     @Override
     public void onLocationChanged(Location location) {
-//        userCurrentLocationUpdated(new CustomLocation(location));
-        setUserCurrentLocation();
+
     }
 
     @Override
@@ -743,7 +586,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     public interface MapsCallBack {
-        void userLocationUpdate(CustomLocation location);
 
         void parkedLocationUpdate(CustomLocation userParkedLocation, boolean isParked);
     }
