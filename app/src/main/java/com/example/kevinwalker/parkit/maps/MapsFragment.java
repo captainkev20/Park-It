@@ -10,11 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -253,7 +251,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 }
             };
-            
+          
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -277,7 +275,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onCancel() {}
             };
-            
+          
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -313,7 +311,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
+    protected void placeParkedMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
@@ -327,6 +325,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMarkerBounce(userMarker);
         }
     }
+
 
     private LatLng convertCustomLocationToLatLng(CustomLocation customLocation) {
         byte decimalPlaces = 5;
@@ -438,6 +437,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     private void setUserParkedLocation() {
         userParkedLocationUpdated(locationHelper.getCurrentLocation(), true);
+
     }
 
     /**
@@ -459,9 +459,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             setMyLocationEnabled();
         }
-
         placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(NavDrawer.getCurrentUser().getUserParkedLocation()), true);
         animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+
 
         // Set the button to be enabled when the map is ready
         btn_park.setEnabled(true);
@@ -513,6 +513,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public void onLocationChanged(Location location) {
 
+
     }
 
     @Override
@@ -558,7 +559,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
+        btn_current_location.setEnabled(true); // TODO: Change to a "current location" button
         mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 

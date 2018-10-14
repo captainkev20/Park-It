@@ -304,6 +304,7 @@ public class NavDrawer extends AppCompatActivity
         return userExists;
     }
 
+    // Relates to UserProfileFragment
     @Override
     public void userUpdated(User user) {
         setCurrentUser(user);
