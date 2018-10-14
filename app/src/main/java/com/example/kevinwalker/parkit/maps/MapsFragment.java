@@ -247,9 +247,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onFinish() {
                     cameraAnimationFinished();
-                    if (NavDrawer.getCurrentUser().isUserParked()) {
-                        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), "Test", true);
-                    }
                 }
                 @Override
                 public void onCancel() {
@@ -275,16 +272,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onFinish() {
                     cameraAnimationFinished();
-                    if (NavDrawer.getCurrentUser().isUserParked()) {
-                        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), "Test", true);
-                    }
                 }
 
                 @Override
                 public void onCancel() {}
             };
-
-            map.clear();
             
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
@@ -329,7 +321,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
             markerOptions.visible(markerVisible);
             map.clear();
-
 
             userMarker = map.addMarker(markerOptions);
 
@@ -449,7 +440,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userParkedLocationUpdated(locationHelper.getCurrentLocation(), true);
     }
 
-
     /**
      * Manipulates the map once available.
      * This callback is triggered when the map is ready to be used.
@@ -470,15 +460,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMyLocationEnabled();
         }
 
-//        userParkedLocationUpdated(NavDrawer.getCurrentUser().getUserCurrentLocation(), NavDrawer.getCurrentUser().isUserParked());
+        userParkedLocationUpdated(NavDrawer.getCurrentUser().getUserParkedLocation(), NavDrawer.getCurrentUser().isUserParked());
         animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
-
-        /*if (NavDrawer.getCurrentUser().isUserParked()) {
-            setUserParkedLocation();
-            placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
-        } else {
-            mapsCallBack.userLocationUpdate(locationHelper.getCurrentLocation());
-        }*/
 
         // Set the button to be enabled when the map is ready
         btn_park.setEnabled(true);
