@@ -1,10 +1,10 @@
 package com.example.kevinwalker.parkit;
 
-import android.content.Context;
 import android.content.Intent;
-import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -16,35 +16,32 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.maps.MapsFragment;
-import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
+import com.example.kevinwalker.parkit.spot.NewSpotFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, UserProfileFragment.UserProfileCallback {
+        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, NewSpotFragment.NewSpotCallback, UserProfileFragment.UserProfileCallback {
 
+    private FloatingActionButton fab;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FragmentManager fragmentManager;
@@ -55,22 +52,16 @@ public class NavDrawer extends AppCompatActivity
     private MapsFragment mapFragment;
     private UserProfileFragment userProfileFragment;
     private PaymentFragment paymentFragment;
-    private SpotListings spotFragment;
+    private SpotListings spotListingFragment;
+    private SpotFragment spotFragment;
+    private NewSpotFragment newSpotFragment;
     private FrameLayout container;
-    private static User currentUser = new User();
+    public static User currentUser = new User();
 
     private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    DocumentReference userDocument;
-
-    private Boolean mLocationPermissionStatus = false;
-    private FusedLocationProviderClient mFusedLocationProviderClient;
-    private Location androidCurrentLocation = new Location("test");
-    private Context mContext;
-
-
-
+    static DocumentReference userDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +77,21 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        //fetchCurrentLocation();
+        fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+                newSpotFragment = new NewSpotFragment();
+                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.replace(R.id.container, newSpotFragment);
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
+
+            }
+        });
+
+        fab.setVisibility(View.GONE);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -140,7 +145,7 @@ public class NavDrawer extends AppCompatActivity
         fragmentTransaction.commit();
     }
 
-    private void mergeCurrentUserWithFirestore(User currentUser) {
+    private static void mergeCurrentUserWithFirestore(User currentUser) {
         userDocument.set(currentUser, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
@@ -155,8 +160,6 @@ public class NavDrawer extends AppCompatActivity
                     }
                 });
     }
-
-
 
     @Override
     protected void onStart() {
@@ -173,17 +176,13 @@ public class NavDrawer extends AppCompatActivity
         newFragment.show(getSupportFragmentManager(), "AlertDiaLog");
     }
 
-    private void showGetUserInfoAlertDialog(){
-
-    }
-
     @Override
     public void logOff() {
         FirebaseAuth.getInstance().signOut();
         startActivity(new Intent(NavDrawer.this, Login.class));
     }
 
-    public void saveCurrentUserLocation(CustomLocation currentUserLocation){
+    public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
         currentUser.setUserCurrentLocation(currentUserLocation);
         mergeCurrentUserWithFirestore(currentUser);
     }
@@ -193,41 +192,6 @@ public class NavDrawer extends AppCompatActivity
         currentUser.setUserParked(isParked);
         mergeCurrentUserWithFirestore(currentUser);
     }
-
-    /*private void fetchCurrentLocation() {
-        try {
-            if (mLocationPermissionStatus) {
-                final Task location = mFusedLocationProviderClient.getLastLocation();
-                location.addOnCompleteListener(new OnCompleteListener() {
-                    @Override
-                    public void onComplete(@NonNull Task task) {
-                        if(task.isSuccessful()) {
-                            androidCurrentLocation = (Location) location.getResult();
-
-                            CustomLocation customLocation = new CustomLocation(androidCurrentLocation);
-                            currentUser.setUserCurrentLocation(customLocation);
-                            //mapsCallBack.userLocationUpdate(customLocation);
-
-                            //currentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            //animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-
-                            *//*if (mapFirstRun) {
-                                currentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                                animateCamera(navDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
-                            } else {
-                                currentLocationUpdated(new CustomLocation((Location)task.getResult()));
-                            }*//*
-                        } else {
-                            Toast.makeText(mContext, "Current location unavailable...", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-            }
-        } catch (SecurityException e) {
-            Log.e(TAG, "Security issue");
-        }
-    }*/
-
 
     @Override
     public void onBackPressed() {
@@ -274,8 +238,8 @@ public class NavDrawer extends AppCompatActivity
 
         } else if (id == R.id.nav_listings) {
             FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            spotFragment = new SpotListings();
-            fragmentTransaction.replace(R.id.container, spotFragment);
+            spotListingFragment = SpotListings.newInstance(1);
+            fragmentTransaction.replace(R.id.container, spotListingFragment);
             fragmentTransaction.commit();
 
         } else if (id == R.id.nav_map) {
@@ -312,28 +276,29 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void userLocationUpdate(CustomLocation location) {
-        saveCurrentUserLocation(location);
-    }
-
-    @Override
     public void parkedLocationUpdate(CustomLocation userParkedLocation, boolean isParked) {
         saveUserParkedLocation(userParkedLocation, isParked);
     }
 
-    public User getCurrentUser() {
+    public static User getCurrentUser() {
         return currentUser;
     }
 
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+    public static void setCurrentUser(User user) {
+        currentUser = user;
         mergeCurrentUserWithFirestore(currentUser);
     }
 
     @Override
-    public void onSpotListingInteraction(Spot item) {
+    public void onSpotListingInteraction(Spot item) {}
 
+    @Override
+    public void setFabVisibility(int viewVisibilityConstant) {
+        fab.setVisibility(viewVisibilityConstant);
     }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {}
 
     public boolean isUserExists() {
         return userExists;

@@ -44,7 +44,7 @@
 
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/btn_current_location"
+        android:id="@+id/btn_find_user_current_location"
         android:layout_width="50dp"
         android:layout_height="50dp"
         android:layout_alignParentBottom="true"

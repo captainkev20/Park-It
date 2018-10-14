@@ -157,8 +157,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-        ButterKnife.bind(this, view);
-
         getActivity().setTitle(getResources().getString(R.string.profile_nav_title));
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_test_profile_pic);
