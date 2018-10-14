@@ -247,8 +247,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onFinish() {
                     cameraAnimationFinished();
+                    if (NavDrawer.getCurrentUser().isUserParked()) {
+                        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), "Test", true);
+                    }
                 }
-
                 @Override
                 public void onCancel() {
 
@@ -273,6 +275,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onFinish() {
                     cameraAnimationFinished();
+                    if (NavDrawer.getCurrentUser().isUserParked()) {
+                        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), "Test", true);
+                    }
                 }
 
                 @Override
@@ -319,29 +324,16 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
             MarkerOptions markerOptions = new MarkerOptions();
-
-            if (NavDrawer.getCurrentUser().isUserParked()) {
-                markerOptions.position(new LatLng(NavDrawer.getCurrentUser().getUserParkedLocation().getLatitude(), NavDrawer.getCurrentUser().getUserParkedLocation().getLongitude()));
-                markerOptions.title(title);
-                markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
-                markerOptions.visible(markerVisible);
-                map.clear();
+            markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
+            markerOptions.title(title);
+            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
+            markerOptions.visible(markerVisible);
+            map.clear();
 
 
-                userMarker = map.addMarker(markerOptions);
+            userMarker = map.addMarker(markerOptions);
 
-                setMarkerBounce(userMarker);
-            } else {
-                markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
-                markerOptions.title(title);
-                markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
-                markerOptions.visible(markerVisible);
-                map.clear();
-
-                userMarker = map.addMarker(markerOptions);
-
-                setMarkerBounce(userMarker);
-            }
+            setMarkerBounce(userMarker);
         }
     }
 
@@ -478,7 +470,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMyLocationEnabled();
         }
 
-        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+//        userParkedLocationUpdated(NavDrawer.getCurrentUser().getUserCurrentLocation(), NavDrawer.getCurrentUser().isUserParked());
         animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
 
         /*if (NavDrawer.getCurrentUser().isUserParked()) {
