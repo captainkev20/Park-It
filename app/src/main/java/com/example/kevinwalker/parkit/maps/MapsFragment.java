@@ -460,7 +460,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMyLocationEnabled();
         }
 
-        userParkedLocationUpdated(NavDrawer.getCurrentUser().getUserParkedLocation(), NavDrawer.getCurrentUser().isUserParked());
+        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(NavDrawer.getCurrentUser().getUserParkedLocation()), true);
         animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
 
         // Set the button to be enabled when the map is ready
