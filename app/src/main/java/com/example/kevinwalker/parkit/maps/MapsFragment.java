@@ -461,9 +461,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             setMyLocationEnabled();
         }
-        placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(NavDrawer.getCurrentUser().getUserParkedLocation()), true);
-        animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
 
+        if (NavDrawer.getCurrentUser().isUserParked()) {
+            placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(NavDrawer.getCurrentUser().getUserParkedLocation()), true);
+            animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+        } else {
+            animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+        }
 
         // Set the button to be enabled when the map is ready
         btn_park.setEnabled(true);
