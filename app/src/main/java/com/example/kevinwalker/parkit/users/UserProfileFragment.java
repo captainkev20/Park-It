@@ -212,13 +212,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
     private void updateUI() {
         if (currentUser != null) {
-            txt_first_name.setText(navDrawer.getCurrentUser().getFirstName());
-            txt_email.setText(navDrawer.getCurrentUser().getUserEmail());
-            txt_phone_number.setText(navDrawer.getCurrentUser().getUserPhone());
-            et_phone_number.setText(navDrawer.getCurrentUser().getUserPhone());
-            et_email.setText(navDrawer.getCurrentUser().getUserEmail());
-            et_last_name2.setText(navDrawer.getCurrentUser().getLastName());
-            et_first_name2.setText(navDrawer.getCurrentUser().getFirstName());
+            txt_first_name.setText(NavDrawer.getCurrentUser().getFirstName());
+            txt_email.setText(NavDrawer.getCurrentUser().getUserEmail());
+            txt_phone_number.setText(NavDrawer.getCurrentUser().getUserPhone());
+            et_phone_number.setText(NavDrawer.getCurrentUser().getUserPhone());
+            et_email.setText(NavDrawer.getCurrentUser().getUserEmail());
+            et_last_name2.setText(NavDrawer.getCurrentUser().getLastName());
+            et_first_name2.setText(NavDrawer.getCurrentUser().getFirstName());
         }
     }
 

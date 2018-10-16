@@ -10,9 +10,11 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
+import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
@@ -311,7 +313,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     // TODO: Add or remove arguments to match our needs for the various Marker types we'll be using/ defining
-    protected void placeParkedMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
+    protected void placeMarkerOnMap(CustomLocation customLocation, String title, boolean markerVisible) {
         if (map != null) {
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
@@ -559,7 +561,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_current_location.setEnabled(true); // TODO: Change to a "current location" button
+        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
         mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 
