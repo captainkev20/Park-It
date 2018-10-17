@@ -105,13 +105,7 @@ public class NavDrawer extends AppCompatActivity
 
         setTitle(getResources().getString(R.string.map_nav_title));
 
-        if (FirestoreHelper.getInstance().getCurrentUser() != null) {
-            initMapFragmentTransaction();
-            FirestoreHelper.getInstance().getCurrentUser().setUserPhone("666666665");
-            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
-        } else {
-            Log.i(TAG, "Null user");
-        }
+        initMapFragmentTransaction();
     }
 
     private void initMapFragmentTransaction() {

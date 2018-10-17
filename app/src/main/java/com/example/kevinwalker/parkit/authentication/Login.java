@@ -46,15 +46,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mAuth = FirebaseAuth.getInstance();
+        // Check if user is signed in redirect to NavDrawer if so.
+        FirebaseUser currentUser = mAuth.getCurrentUser();
+        if (currentUser != null) {
+            startNavDrawerActivity();
+        }
+
         setContentView(R.layout.activity_login);
 
         ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
         TextView txt_forgot_password;
         TextView txt_register;
         Button btn_login;
-
-        mAuth = FirebaseAuth.getInstance();
-
 
         // Find our Views so the corresponding objects we've declared can be inflated
         et_email = findViewById(R.id.et_phone_number);
@@ -95,12 +100,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     protected void onStart() {
         // To @Override, we have to make a call to the parent's (AppCompatActivity) method "onStart()"
         super.onStart();
-
-        // Check if user is signed in redirect to NavDrawer if so.
-        FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null) {
-            startNavDrawerActivity();
-        }
 
     }
 

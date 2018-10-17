@@ -19,7 +19,7 @@ public class FirestoreHelper {
     private static User currentUser = new User();
     private static DocumentReference userDocument;
     private static FirestoreHelper instance;
-    private static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
     public static FirestoreHelper getInstance() {
         if (instance != null) {
