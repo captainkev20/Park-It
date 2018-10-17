@@ -57,10 +57,10 @@ public class LocationHelper {
                     @Override
                     public void onComplete(@NonNull Task task) {
                         if (task.isSuccessful()) {
-                            User user = NavDrawer.getCurrentUser();
+                            User user = FirestoreHelper.getInstance().getCurrentUser();
                             customLocation = new CustomLocation((Location) task.getResult());
                             user.setUserCurrentLocation(customLocation);
-                            NavDrawer.setCurrentUser(user);
+                            FirestoreHelper.getInstance().setCurrentUser(user);
                         } else {
                             customLocation = new CustomLocation();
                         }
@@ -71,7 +71,7 @@ public class LocationHelper {
             Log.e(TAG, "Security issue");
         }
 
-        return NavDrawer.currentUser.getUserCurrentLocation();
+        return FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation();
     }
 
     public boolean hasLocationPermission() {

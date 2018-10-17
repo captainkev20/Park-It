@@ -16,7 +16,6 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Handler;
-import android.os.Looper;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -26,18 +25,11 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
-import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.example.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
-import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -56,7 +48,6 @@ import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
-import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -90,7 +81,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @BindView(R.id.btn_park) Button btn_park;
     @BindView(R.id.btn_leave) Button btn_leave;
     @BindView(R.id.map) MapView mapView;
-    @BindView(R.id.btn_find_user_current_location) FloatingActionButton btn_find_user_parked;
+    @BindView(R.id.btn_find_user_current_location) FloatingActionButton btn_find_user_current_location;
 
     private MapsFragment.MapsCallBack mapsCallBack;
     private Context mContext;
@@ -128,6 +119,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         geocoder = new Geocoder(mContext);
         locationHelper = new LocationHelper(this.getContext());
         locationHelper.startLocationUpdates();
+        FirestoreHelper.getInstance().initializeFirestore();
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
     }
@@ -147,12 +139,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_park.setOnClickListener(this);
         btn_leave = getView().findViewById(R.id.btn_leave);
         btn_leave.setOnClickListener(this);
-        btn_find_user_parked = getView().findViewById(R.id.btn_find_user_current_location);
-        btn_find_user_parked.setOnClickListener(this);
+        btn_find_user_current_location = getView().findViewById(R.id.btn_find_user_current_location);
+        btn_find_user_current_location.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
 
-        if (NavDrawer.getCurrentUser().isUserParked()) {
-            btn_find_user_parked.setEnabled(true);
+        if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
+            btn_find_user_current_location.setEnabled(true);
         } else {
             Log.i(TAG, "fromOnCreate");
         }
@@ -177,11 +169,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         isCameraAnimationFinished = true;
 
-        if (NavDrawer.getCurrentUser().isUserParked()) {
+        if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
-            btn_find_user_parked.setEnabled(true);
-            placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            btn_find_user_current_location.setEnabled(true);
+            placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
@@ -204,7 +196,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     setUserParkedLocation();
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
-                    btn_find_user_parked.setEnabled(true);
+                    btn_find_user_current_location.setEnabled(true);
                 }
                 break;
 
@@ -227,7 +219,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
             case R.id.btn_find_user_current_location:
                 locationHelper.getCurrentLocation();
-                animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
+                animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
         }
     }
@@ -329,52 +321,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
 
-    private LatLng convertCustomLocationToLatLng(CustomLocation customLocation) {
-        byte decimalPlaces = 5;
-        boolean foundDecimal = false;
-        String decimal = ".";
-        String stringLatitude = Double.toString(customLocation.getLatitude());
-        String latitudeConversion = "";
-        String longitudeConversion = "";
-        String stringLongitude = Double.toString(customLocation.getLongitude());
-
-        for (int i = 0; i < stringLatitude.length(); i++) {
-            if (decimalPlaces > 0) {
-                if (foundDecimal == true) {
-                    --decimalPlaces;
-                    latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
-                } else {
-                    if (!decimal.equals(String.valueOf(stringLatitude.charAt(i)))) {
-                        latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
-                    } else {
-                        foundDecimal = true;
-                        latitudeConversion = latitudeConversion + String.valueOf(stringLatitude.charAt(i));
-                    }
-                }
-            }
-        }
-
-        decimalPlaces = 4;
-        foundDecimal = false;
-
-        for (int i = 0; i < stringLongitude.length(); i++) {
-            if (decimalPlaces > 0) {
-                if (foundDecimal == true) {
-                    --decimalPlaces;
-                    longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
-                } else {
-                    if (!decimal.equals(String.valueOf(stringLatitude.charAt(i)))) {
-                        longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
-                    } else {
-                        foundDecimal = true;
-                        longitudeConversion = longitudeConversion + String.valueOf(stringLongitude.charAt(i));
-                    }
-                }
-            }
-        }
-
-        return new LatLng(Double.valueOf(latitudeConversion), Double.valueOf(longitudeConversion));
-    }
 
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
@@ -428,7 +374,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     }
 
     private LatLng getCurrentLatLng() {
-        return new LatLng(NavDrawer.getCurrentUser().getUserCurrentLocation().getLongitude(), NavDrawer.getCurrentUser().getUserCurrentLocation().getLatitude());
+        return new LatLng(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation().getLongitude(), FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation().getLatitude());
     }
 
     private void userParkedLocationUpdated(CustomLocation customLocation, boolean isParked) {
@@ -462,11 +408,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             setMyLocationEnabled();
         }
 
-        if (NavDrawer.getCurrentUser().isUserParked()) {
-            placeMarkerOnMap(NavDrawer.getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(NavDrawer.getCurrentUser().getUserParkedLocation()), true);
-            animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+        if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
+            placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation()), true);
+            animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
         } else {
-            animateCamera(NavDrawer.getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+            animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
         }
 
         // Set the button to be enabled when the map is ready
@@ -565,7 +511,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_parked.setEnabled(true); // TODO: Change to a "current location" button
+        btn_find_user_current_location.setEnabled(true); // TODO: Change to a "current location" button
         mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 

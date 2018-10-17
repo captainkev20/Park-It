@@ -26,6 +26,7 @@ import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -72,12 +73,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private View mView;
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    DocumentReference documentReference;
     private UserProfileCallback callback;
     private NavDrawer navDrawer;
-    private User currentUser;
-    private ListenerRegistration listenerRegistration;
 
     @Override
     public void onAttach(Context context) {
@@ -93,10 +90,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         navDrawer = (NavDrawer) getActivity();
-        currentUser = navDrawer.getCurrentUser();
-        documentReference = firebaseFirestore.document("users/" + navDrawer.getCurrentUser().getUserUUID());
     }
 
     @Override
@@ -104,24 +99,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         mView = inflater.inflate(R.layout.activity_user, container, false);
         ButterKnife.bind(this, mView);
 
-        listenerRegistration = documentReference.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot snapshot,
-                                @Nullable FirebaseFirestoreException e) {
-                if (e != null) {
-                    Log.w(TAG, "Listen failed.", e);
-                    return;
-                }
-
-                if (snapshot != null && snapshot.exists()) {
-                    currentUser = snapshot.toObject(User.class);
-                    updateUI();
-                } else {
-                    Log.d(TAG, "Current data: null");
-                }
-            }
-        });
-
+        //updateUI();
+        
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
 
@@ -133,6 +112,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         switch (view.getId()) {
             case R.id.txt_edit_user_profile:
                 profile_view_switcher.showNext();
+                updateUI();
                 break;
 
             case R.id.txt_save_profile:
@@ -142,12 +122,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 String phoneNum = et_phone_number.getText().toString();
 
                 // TODO: Data input validation
-                currentUser.setFirstName(firstNameString);
-                currentUser.setLastName(lastNameString);
-                currentUser.setUserEmail(userEmail);
-                currentUser.setUserPhone(phoneNum);
+                FirestoreHelper.getInstance().getCurrentUser().setFirstName(firstNameString);
+                FirestoreHelper.getInstance().getCurrentUser().setLastName(lastNameString);
+                FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail);
+                FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum);
 
-                callback.userUpdated(currentUser);
+                FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                updateUI();
 
                 profile_view_switcher.showPrevious();
                 break;
@@ -158,6 +139,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         getActivity().setTitle(getResources().getString(R.string.profile_nav_title));
+
+        updateUI();
 
         Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_test_profile_pic);
 
@@ -211,15 +194,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
 
     private void updateUI() {
-        if (currentUser != null) {
-            txt_first_name.setText(NavDrawer.getCurrentUser().getFirstName());
-            txt_email.setText(NavDrawer.getCurrentUser().getUserEmail());
-            txt_phone_number.setText(NavDrawer.getCurrentUser().getUserPhone());
-            et_phone_number.setText(NavDrawer.getCurrentUser().getUserPhone());
-            et_email.setText(NavDrawer.getCurrentUser().getUserEmail());
-            et_last_name2.setText(NavDrawer.getCurrentUser().getLastName());
-            et_first_name2.setText(NavDrawer.getCurrentUser().getFirstName());
-        }
+        txt_first_name.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
+        txt_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
+        txt_phone_number.setText(FirestoreHelper.getInstance().getCurrentUser().getUserPhone());
+        et_phone_number.setText(FirestoreHelper.getInstance().getCurrentUser().getUserPhone());
+        et_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
+        et_last_name2.setText(FirestoreHelper.getInstance().getCurrentUser().getLastName());
+        et_first_name2.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
     }
 
     private void dispatchTakePictureIntent() {
@@ -232,9 +213,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onStop() {
         super.onStop();
-        listenerRegistration.remove();
     }
-    
+
     public interface UserProfileCallback {
         void userUpdated(User user);
     }

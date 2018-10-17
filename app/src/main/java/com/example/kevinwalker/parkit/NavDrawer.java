@@ -30,6 +30,7 @@ import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -56,7 +57,6 @@ public class NavDrawer extends AppCompatActivity
     private SpotFragment spotFragment;
     private NewSpotFragment newSpotFragment;
     private FrameLayout container;
-    public static User currentUser = new User();
 
     private boolean userExists = false;
     private static final String TAG = NavDrawer.class.getName();
@@ -67,6 +67,8 @@ public class NavDrawer extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
+        FirestoreHelper.getInstance().initializeFirestore();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -103,36 +105,13 @@ public class NavDrawer extends AppCompatActivity
 
         setTitle(getResources().getString(R.string.map_nav_title));
 
-        // Get base user information from Login Intent
-        final Intent intent = getIntent();
-        if (intent != null) {
-            currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
-            currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
+        if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+            initMapFragmentTransaction();
+            FirestoreHelper.getInstance().getCurrentUser().setUserPhone("666666665");
+            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        } else {
+            Log.i(TAG, "Null user");
         }
-
-        // Initialize our User DocumentReference
-        userDocument = firebaseFirestore.collection("users").document(currentUser.getUserUUID());
-
-        userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    currentUser = documentSnapshot.toObject(User.class);
-                    if (currentUser.getUserUUID().trim().isEmpty()) {
-                        currentUser.setUserUUID(intent.getStringExtra(Login.EXTRA_USER));
-                        mergeCurrentUserWithFirestore(currentUser);
-                    }
-                    if (currentUser.getUserEmail().trim().isEmpty()) {
-                        currentUser.setUserEmail(intent.getStringExtra(Login.EXTRA_USER_EMAIL));
-                        mergeCurrentUserWithFirestore(currentUser);
-                    }
-                } else {
-                    mergeCurrentUserWithFirestore(currentUser);
-                }
-                // Initialize map after getting back status of User in database. Values will be up to date at this point
-                initMapFragmentTransaction();
-            }
-        });
     }
 
     private void initMapFragmentTransaction() {
@@ -143,22 +122,6 @@ public class NavDrawer extends AppCompatActivity
         mapFragment = new MapsFragment();
         fragmentTransaction.replace(R.id.container, mapFragment);
         fragmentTransaction.commit();
-    }
-
-    private static void mergeCurrentUserWithFirestore(User currentUser) {
-        userDocument.set(currentUser, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
     }
 
     @Override
@@ -183,14 +146,14 @@ public class NavDrawer extends AppCompatActivity
     }
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
-        currentUser.setUserCurrentLocation(currentUserLocation);
-        mergeCurrentUserWithFirestore(currentUser);
+        FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
+        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
-        currentUser.setUserParkedLocation(userParkedLocation);
-        currentUser.setUserParked(isParked);
-        mergeCurrentUserWithFirestore(currentUser);
+        FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
+        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
+        FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
     }
 
     @Override
@@ -280,15 +243,6 @@ public class NavDrawer extends AppCompatActivity
         saveUserParkedLocation(userParkedLocation, isParked);
     }
 
-    public static User getCurrentUser() {
-        return currentUser;
-    }
-
-    public static void setCurrentUser(User user) {
-        currentUser = user;
-        mergeCurrentUserWithFirestore(currentUser);
-    }
-
     @Override
     public void onSpotListingInteraction(Spot item) {}
 
@@ -307,6 +261,5 @@ public class NavDrawer extends AppCompatActivity
     // Relates to UserProfileFragment
     @Override
     public void userUpdated(User user) {
-        setCurrentUser(user);
     }
 }
