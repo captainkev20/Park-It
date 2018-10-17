@@ -109,77 +109,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     protected void onResume() {
         super.onResume();
 
-        /*RxView.clicks(btn_login)
-                .map(new Function<Object, HashMap<String, String>>() {
-
-                    @Override
-                    public HashMap<String, String> apply(Object o) throws Exception {
-                        HashMap<String, String> usernameAndPassword = new HashMap<>();
-                        if (!isEditTextEmpty(et_email) && !isEditTextEmpty(et_password)) {
-                            usernameAndPassword.put(et_email.getText().toString(), et_password.getText().toString());
-                        } else if (isEditTextEmpty(et_email)) { // et_email is empty
-                            throw new IllegalArgumentException("Your email field is blank");
-                        } else if (isEditTextEmpty(et_password)) { // et_password is empty
-                            throw new IllegalArgumentException("Your password field is blank");
-                        }
-                        return usernameAndPassword;
-                    }
-                })
-        .doOnNext(new Consumer<HashMap<String, String>>() {
-            @Override
-            public void accept(HashMap<String, String> hashMap) throws Exception {
-                mAuth.signInWithEmailAndPassword(et_email.getText().toString(), et_password.getText().toString())
-                        .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG_LOGIN, "signInWithEmail:success");
-                                    FirebaseUser user = mAuth.getCurrentUser();
-                                    updateUI(user);
-                                } else {
-                                    // If sign in fails, display a message to the user.
-//                                    Log.w(TAG_LOGIN, "signInWithEmail:failure", task.getException());
-//                                    Toast.makeText(EmailPasswordActivity.this, "Authentication failed.",
-//                                            Toast.LENGTH_SHORT).show();
-                                    updateUI(null);
-                                }
-
-                                // ...
-                            }
-                        });
-            }
-        })
-        .doOnError(new Consumer<Throwable>() {
-            @Override
-            public void accept(Throwable throwable) throws Exception {
-                Toast.makeText(getApplicationContext(), throwable.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        })
-        .subscribe(
-                new Observer<HashMap<String, String>>() {
-                    @Override
-                    public void onSubscribe(Disposable d) {
-                        Log.i(TAG_LOGIN, "In Observer onSubscribe, value of Disposable d: " + d.toString());
-                    }
-
-                    @Override
-                    public void onNext(HashMap<String, String> hashMap) {
-                        Log.i(TAG_LOGIN, "In Observer onNext, value of String s: ");
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-                        Log.i(TAG_LOGIN, "In Observer onError, value of e:" + e.getMessage());
-                    }
-
-                    @Override
-                    public void onComplete() {
-                        Log.i(TAG_LOGIN, "In Observer onComplete");
-                    }
-                }
-        );*/
-
     }
 
     // Called immediately before the UI is hidden
@@ -238,24 +167,6 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                     }
                 });
     }
-
-    /*private boolean validateInput(EditText email, EditText password) {
-
-        boolean emailEmpty = isEditTextEmpty(email);
-        boolean passwordEmpty = isEditTextEmpty(password);
-        String enteredEmail = String.valueOf(email);
-
-        // Validate user input
-        if (emailEmpty) { // et_email is empty
-            Toast.makeText(getApplicationContext(), "Your email field is blank", Toast.LENGTH_SHORT).show();
-            return false;
-        } else if (passwordEmpty) { // et_password is empty
-            Toast.makeText(getApplicationContext(), "Your password field is blank", Toast.LENGTH_SHORT).show();
-            return false;
-        } else { // both fields have user input
-            return true;
-        }
-    }*/
 
     private boolean validateEmail(CharSequence email) {
 
