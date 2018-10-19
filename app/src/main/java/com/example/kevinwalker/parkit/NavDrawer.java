@@ -47,9 +47,6 @@ public class NavDrawer extends AppCompatActivity
     protected Toolbar toolbar;
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
-    private FragmentTransaction userFragmentTransaction;
-    private FragmentTransaction paymentFragmentTransaction;
-    private FragmentTransaction spotFragmentTransaction;
     private MapsFragment mapFragment;
     private UserProfileFragment userProfileFragment;
     private PaymentFragment paymentFragment;
@@ -143,7 +140,6 @@ public class NavDrawer extends AppCompatActivity
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
         FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
         FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
-        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
@@ -250,9 +246,7 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void onFragmentInteraction(Uri uri) {}
 
-    public boolean isUserExists() {
-        return userExists;
-    }
+    public boolean isUserExists() { return userExists; }
 
     // Relates to UserProfileFragment
     @Override
