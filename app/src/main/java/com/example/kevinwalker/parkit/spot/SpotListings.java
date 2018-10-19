@@ -16,12 +16,6 @@ import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 
 import java.util.ArrayList;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link SpotListingsInteraction}
- * interface.
- */
 public class SpotListings extends Fragment {
 
     // TODO: Customize parameter argument names
@@ -113,40 +107,6 @@ public class SpotListings extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
-    }
-
-    private void addDummySpots() {
-        Spot spot0 = new Spot();
-        Spot spot1 = new Spot();
-        Spot spot2 = new Spot();
-        Spot spot3 = new Spot();
-
-        spot0.setName("Coliseum Parking");
-        spot1.setName("Don't Park Here");
-        spot2.setName("Outback Overflow");
-        spot3.setName("RV Haven");
-
-        spots.add(spot0);
-        spots.add(spot1);
-        spots.add(spot2);
-        spots.add(spot3);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-        spots.add(spot0);
-
     }
 
     /**
