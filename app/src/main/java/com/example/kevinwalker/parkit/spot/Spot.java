@@ -1,5 +1,8 @@
 package com.example.kevinwalker.parkit.spot;
 
+import com.example.kevinwalker.parkit.maps.CustomLocation;
+import com.example.kevinwalker.parkit.payments.PaymentType;
+
 import java.math.BigDecimal;
 
 /**
@@ -23,6 +26,9 @@ public class Spot {
     private long dateClockIn = 0;
     private long dateClockOut = 0;
     private long dateLastEdit = 0;
+    private int spotDistance = 0;
+
+    private PaymentType paymentType = PaymentType.CASH;
 
     public Spot() {
         this.dateCreated = System.currentTimeMillis();
@@ -159,4 +165,13 @@ public class Spot {
     public void setMonthlyRate(double monthlyRate) {
         this.monthlyRate = monthlyRate;
     }
+
+    public int getSpotDistance() { return spotDistance; }
+
+    public void setSpotDistance(int spotDistance) { this.spotDistance = spotDistance; }
+
+    public PaymentType getPaymentType() { return paymentType; }
+
+    public void setPaymentType(PaymentType paymentType) { this.paymentType = paymentType; }
+
 }

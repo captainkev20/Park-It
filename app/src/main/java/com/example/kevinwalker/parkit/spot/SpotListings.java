@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 
 import java.util.ArrayList;
 
@@ -68,7 +69,7 @@ public class SpotListings extends Fragment {
         }
 
         if (spots.isEmpty()) {
-            addDummySpots();
+            spots.add(FirestoreHelper.getUserSpot());
         }
     }
 

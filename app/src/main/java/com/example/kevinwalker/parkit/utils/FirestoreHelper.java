@@ -3,6 +3,7 @@ package com.example.kevinwalker.parkit.utils;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,9 +16,13 @@ import com.google.firebase.firestore.SetOptions;
 public class FirestoreHelper {
 
     private static final String TAG = FirestoreHelper.class.getName();
+    private static final String testSpot = "0b38974e-f4b3-4988-83df-9b1b33cf6554";
 
     private static User currentUser = new User();
+
+    private static Spot userSpot = new Spot();
     private static DocumentReference userDocument;
+    private static DocumentReference userSpotDocument;
     private static FirestoreHelper instance;
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
 
@@ -52,6 +57,20 @@ public class FirestoreHelper {
                     }
                 } else {
                     mergeCurrentUserWithFirestore(currentUser);
+                }
+            }
+        });
+    }
+
+    public void initializeFirestoreSpot() {
+        // Initialize our Spot DocumentReference
+        userSpotDocument = firebaseFirestore.collection("spots").document(testSpot);
+
+        userSpotDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    userSpot = documentSnapshot.toObject(Spot.class);
                 }
             }
         });
@@ -95,5 +114,8 @@ public class FirestoreHelper {
 
     public void setCurrentUser(User user) {
         currentUser = user;
+    }
+
+    public static Spot getUserSpot() { return userSpot;
     }
 }

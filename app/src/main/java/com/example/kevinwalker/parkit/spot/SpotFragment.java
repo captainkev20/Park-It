@@ -18,9 +18,7 @@ public class SpotFragment extends ParentProfileFragment {
     private View mView;
     @BindView(R.id.txt_distance) TextView txt_distance;
     @BindView(R.id.txt_cost) TextView txt_cost;
-    @BindView(R.id.txt_last_updated) TextView txt_last_updated;
     @BindView(R.id.txt_payment_type) TextView txt_payment_type;
-    @BindView(R.id.txt_surface) TextView txt_surface;
     Spot spot = new Spot();
 
     @Override
@@ -47,7 +45,7 @@ public class SpotFragment extends ParentProfileFragment {
 
     private void updateUI() {
         txt_cost.setText(String.valueOf(spot.getDailyRate()));
-        txt_last_updated.setText(String.valueOf(spot.getDateLastEdit()));
-        txt_surface.setText(String.valueOf(spot.getSurface()));
+        txt_distance.setText(String.valueOf(spot.getSpotDistance()));
+        txt_payment_type.setText(String.valueOf(spot.getPaymentType()));
     }
 }

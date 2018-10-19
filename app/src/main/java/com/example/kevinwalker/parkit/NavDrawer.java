@@ -69,6 +69,7 @@ public class NavDrawer extends AppCompatActivity
         setContentView(R.layout.activity_nav_drawer);
 
         FirestoreHelper.getInstance().initializeFirestore();
+        FirestoreHelper.getInstance().initializeFirestoreSpot();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -142,6 +143,7 @@ public class NavDrawer extends AppCompatActivity
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
         FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
         FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
+        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {

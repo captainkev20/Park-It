@@ -245,7 +245,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
                 }
             };
-          
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom
@@ -269,7 +269,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 @Override
                 public void onCancel() {}
             };
-          
+
             CameraPosition cameraPosition = new CameraPosition.Builder()
                     .target(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()))      // Sets the center of the map to location user
                     .zoom(17)                   // Sets the zoom

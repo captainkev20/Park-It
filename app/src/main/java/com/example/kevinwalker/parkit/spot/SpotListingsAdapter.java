@@ -23,15 +23,16 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_spot, parent, false);
+                .inflate(R.layout.activity_spot2, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.txt_label.setText(mValues.get(position).getName());
-        holder.txt_occupied.setText(String.valueOf(mValues.get(position).isOccupied()));
+        holder.txt_payment_type.setText(mValues.get(position).getPaymentType().toString());
+        holder.txt_cost.setText(String.valueOf(mValues.get(position).getHourlyRate()));
+        holder.txt_distance.setText(String.valueOf(mValues.get(position).getSpotDistance()));
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -52,20 +53,23 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView txt_label;
-        public final TextView txt_occupied;
+        public final TextView txt_payment_type;
+        public final TextView txt_distance;
+        public final TextView txt_cost;
         public Spot mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            txt_label = (TextView) view.findViewById(R.id.txt_label);
-            txt_occupied = (TextView) view.findViewById(R.id.txt_occupied);
+            txt_payment_type = view.findViewById(R.id.txt_payment_type);
+            txt_distance = view.findViewById(R.id.txt_distance);
+            txt_cost = view.findViewById(R.id.txt_cost);
+
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + txt_occupied.getText() + "'";
+            return super.toString();
         }
     }
 }
