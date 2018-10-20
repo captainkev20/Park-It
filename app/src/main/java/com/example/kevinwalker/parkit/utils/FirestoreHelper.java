@@ -116,6 +116,5 @@ public class FirestoreHelper {
         currentUser = user;
     }
 
-    public static Spot getUserSpot() { return userSpot;
-    }
+    public static Spot getUserSpot() { return userSpot; }
 }

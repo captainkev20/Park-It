@@ -3,7 +3,6 @@ package com.example.kevinwalker.parkit;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -14,11 +13,12 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
@@ -27,33 +27,30 @@ import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.NewSpotFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
-import com.example.kevinwalker.parkit.spot.SpotFragment;
 import com.example.kevinwalker.parkit.spot.SpotListings;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
 
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, NewSpotFragment.NewSpotCallback, UserProfileFragment.UserProfileCallback {
 
-    private FloatingActionButton fab;
+    private static final String TAG = NavDrawer.class.getName();
+
+    @BindView(R.id.add_spot_fab) FloatingActionButton addSpotFloatingActionButton;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
+    private FrameLayout container;
+
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private MapsFragment mapFragment;
     private NewSpotFragment newSpotFragment;
-    private FrameLayout container;
 
     private boolean userExists = false;
-    private static final String TAG = NavDrawer.class.getName();
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     static DocumentReference userDocument;
 
@@ -61,6 +58,8 @@ public class NavDrawer extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nav_drawer);
+
+        ButterKnife.bind(this);
 
         FirestoreHelper.getInstance().initializeFirestore();
         FirestoreHelper.getInstance().initializeFirestoreSpot();
@@ -74,8 +73,7 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        addSpotFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -89,7 +87,7 @@ public class NavDrawer extends AppCompatActivity
             }
         });
 
-        fab.setVisibility(View.GONE);
+        addSpotFloatingActionButton.setVisibility(View.GONE);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -231,7 +229,7 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void setFabVisibility(int viewVisibilityConstant) {
-        fab.setVisibility(viewVisibilityConstant);
+        addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
 
     @Override

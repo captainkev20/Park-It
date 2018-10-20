@@ -23,7 +23,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.activity_spot2, parent, false);
+                .inflate(R.layout.fragment_spot_list_layout, parent, false);
         return new ViewHolder(view);
     }
 

@@ -29,7 +29,7 @@ public class SpotFragment extends ParentProfileFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mView = inflater.inflate(R.layout.activity_spot2, container, false);
+        mView = inflater.inflate(R.layout.fragment_spot_list_layout, container, false);
         ButterKnife.bind(this, mView);
 
         updateUI();

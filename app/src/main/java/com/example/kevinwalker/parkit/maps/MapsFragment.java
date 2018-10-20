@@ -128,6 +128,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
         ButterKnife.bind(MapsFragment.this.getActivity());
+
         return mView;
     }
 
@@ -146,7 +147,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_find_user_current_location.setEnabled(true);
         } else {
-            Log.i(TAG, "fromOnCreate");
+            Log.i(TAG, "from onViewCreated");
         }
     }
 
@@ -320,8 +321,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
     }
 
-
-
     private BitmapDescriptor bitmapDescriptorFromVector(Context context, int vectorResId) {
         Drawable vectorDrawable = ContextCompat.getDrawable(context, vectorResId);
         vectorDrawable.setBounds(0, 0, vectorDrawable.getIntrinsicWidth(), vectorDrawable.getIntrinsicHeight());
@@ -385,7 +384,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     private void setUserParkedLocation() {
         userParkedLocationUpdated(locationHelper.getCurrentLocation(), true);
-
     }
 
     /**
@@ -431,34 +429,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             // Adds blue dot to current location once map is centered on it
             map.setMyLocationEnabled(true);
         }
-    }
-
-    private Location getLastKnownLocation() {
-        CustomLocation customLocation = new CustomLocation();
-
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.ACCESS_FINE_LOCATION)
-                == PackageManager.PERMISSION_GRANTED) {
-            LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            Location myLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            if (myLocation == null) {
-                Criteria criteria = new Criteria();
-                criteria.setAccuracy(Criteria.ACCURACY_COARSE);
-                String provider = lm.getBestProvider(criteria, true);
-                myLocation = lm.getLastKnownLocation(provider);
-            }
-
-            if (myLocation != null) {
-                LatLng userLocation = new LatLng(myLocation.getLatitude(), myLocation.getLongitude());
-                customLocation.setLatitude(userLocation.latitude);
-                customLocation.setLongitude(userLocation.longitude);
-                animateCamera(customLocation, DEFAULT_ZOOM, currentAddress);
-            }
-        } else {
-            // Do nothing - returns default CustomLocation
-        }
-
-        return customLocation;
     }
 
     // TODO: Update user's Marker

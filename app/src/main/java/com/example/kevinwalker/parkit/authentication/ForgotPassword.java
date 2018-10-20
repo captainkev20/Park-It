@@ -7,7 +7,10 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 import com.example.kevinwalker.parkit.R;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -16,10 +19,13 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class ForgotPassword extends AppCompatActivity implements View.OnClickListener{
 
-    EditText et_email;
-    Button btn_send_password;
-    private FirebaseAuth mAuth;
     private static final String TAG_FORGOT_PASSWORD = "Forgot Password";
+
+    @BindView(R.id.et_registration_email) EditText et_email;
+    @BindView(R.id.btn_send_password) Button btn_send_password;
+    @BindView(R.id.txt_enter_email) TextView txt_enter_email;
+
+    private FirebaseAuth mAuth;
 
 
     @Override
@@ -27,8 +33,7 @@ public class ForgotPassword extends AppCompatActivity implements View.OnClickLis
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_forgot_password);
 
-        et_email = findViewById(R.id.et_phone_number);
-        btn_send_password = findViewById(R.id.btn_send_password);
+        ButterKnife.bind(this);
 
         btn_send_password.setOnClickListener(this);
 
