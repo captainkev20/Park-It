@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -48,10 +49,6 @@ public class NavDrawer extends AppCompatActivity
     private FragmentManager fragmentManager;
     private FragmentTransaction fragmentTransaction;
     private MapsFragment mapFragment;
-    private UserProfileFragment userProfileFragment;
-    private PaymentFragment paymentFragment;
-    private SpotListings spotListingFragment;
-    private SpotFragment spotFragment;
     private NewSpotFragment newSpotFragment;
     private FrameLayout container;
 
@@ -84,6 +81,7 @@ public class NavDrawer extends AppCompatActivity
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 newSpotFragment = new NewSpotFragment();
                 fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
+                fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
                 fragmentTransaction.replace(R.id.container, newSpotFragment);
                 fragmentTransaction.addToBackStack(null);
                 fragmentTransaction.commit();
@@ -183,37 +181,30 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
+        Fragment menuFragment = null;
         int id = item.getItemId();
 
         if (id == R.id.nav_my_profile) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            userProfileFragment = new UserProfileFragment();
-            fragmentTransaction.replace(R.id.container, userProfileFragment);
-            fragmentTransaction.commit();
+            menuFragment = new UserProfileFragment();
 
         } else if (id == R.id.nav_listings) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            spotListingFragment = SpotListings.newInstance(1);
-            fragmentTransaction.replace(R.id.container, spotListingFragment);
-            fragmentTransaction.commit();
+            menuFragment = SpotListings.newInstance(1);
 
         } else if (id == R.id.nav_map) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            mapFragment = new MapsFragment();
-            fragmentTransaction.replace(R.id.container, mapFragment);
-            fragmentTransaction.commit();
+            menuFragment = new MapsFragment();
 
         } else if (id == R.id.nav_payments) {
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-            paymentFragment = new PaymentFragment();
-            fragmentTransaction.replace(R.id.container, paymentFragment);
-            fragmentTransaction.commit();
+            menuFragment = new PaymentFragment();
 
         } else if (id == R.id.nav_settings) {
 
         } else if (id == R.id.nav_about) {
 
         }
+
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.container, menuFragment);
+        fragmentTransaction.commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

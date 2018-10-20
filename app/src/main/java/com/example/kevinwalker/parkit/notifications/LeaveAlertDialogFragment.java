@@ -14,14 +14,6 @@ import android.view.ViewGroup;
 
 import com.example.kevinwalker.parkit.R;
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link LeaveSpotInteractionListener} interface
- * to handle interaction events.
- * Use the {@link LeaveAlertDialogFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class LeaveAlertDialogFragment extends DialogFragment {
 
     // TODO: Rename parameter arguments, choose names that match
