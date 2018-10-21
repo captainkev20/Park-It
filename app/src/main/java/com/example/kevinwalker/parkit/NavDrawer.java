@@ -261,5 +261,9 @@ public class NavDrawer extends AppCompatActivity
         isUserInitialized = true;
         Toast.makeText(this, "Code be workin'", Toast.LENGTH_SHORT).show();
         navProgressBar.setVisibility(View.INVISIBLE);
+        if (fragmentManager.getFragments().get(0) instanceof MapsFragment) {
+           ((MapsFragment) fragmentManager.getFragments().get(0)).refreshUI();
+        }
+
     }
 }

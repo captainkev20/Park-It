@@ -170,6 +170,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         isCameraAnimationFinished = true;
 
+        refreshUI();
+    }
+
+    public void refreshUI() {
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
