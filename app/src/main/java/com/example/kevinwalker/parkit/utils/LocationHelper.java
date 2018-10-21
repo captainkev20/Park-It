@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 public class LocationHelper {
+
     private static final String TAG = CustomLocation.class.getName();
     private boolean mLocationPermissionStatus = false;
     private CustomLocation customLocation;

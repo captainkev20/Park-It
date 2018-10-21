@@ -57,4 +57,5 @@
         android:src="@drawable/ic_location"
         android:textColor="@android:color/white"
         android:tint="@android:color/holo_blue_light" />
+
 </RelativeLayout>

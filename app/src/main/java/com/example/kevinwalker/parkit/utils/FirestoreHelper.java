@@ -1,13 +1,17 @@
 package com.example.kevinwalker.parkit.utils;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -25,6 +29,9 @@ public class FirestoreHelper {
     private static DocumentReference userSpotDocument;
     private static FirestoreHelper instance;
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
+    private static FirestoreHelper.OnDataUpdated mListener;
+
 
     public static FirestoreHelper getInstance() {
         if (instance != null) {
@@ -34,6 +41,20 @@ public class FirestoreHelper {
             return instance;
         }
     }
+
+    public static FirestoreHelper getInstance(Context context) {
+        if (instance != null) {
+            return instance;
+        } else {
+            instance = new FirestoreHelper();
+            if (context instanceof FirestoreHelper.OnDataUpdated) {
+                mListener = (FirestoreHelper.OnDataUpdated) context;
+            }
+            return instance;
+        }
+    }
+
+
 
     private FirestoreHelper() {}
 
@@ -55,8 +76,10 @@ public class FirestoreHelper {
                         currentUser.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
                         mergeCurrentUserWithFirestore(currentUser);
                     }
+                    mListener.onUserUpdated(currentUser);
+
                 } else {
-                    mergeCurrentUserWithFirestore(currentUser);
+                    //mergeCurrentUserWithFirestore(currentUser);
                 }
             }
         });
@@ -117,4 +140,16 @@ public class FirestoreHelper {
     }
 
     public static Spot getUserSpot() { return userSpot; }
+
+    public DatabaseReference getRef() {
+        return ref;
+    }
+
+    public void setRef(DatabaseReference ref) {
+        this.ref = ref;
+    }
+
+    public interface OnDataUpdated {
+        void onUserUpdated(User user);
+    }
 }

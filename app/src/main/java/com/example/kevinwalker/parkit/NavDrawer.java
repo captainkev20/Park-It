@@ -17,6 +17,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -36,11 +39,18 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class NavDrawer extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener, MapsFragment.MapsCallBack, SpotListings.SpotListingsInteraction, NewSpotFragment.NewSpotCallback, UserProfileFragment.UserProfileCallback {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener,
+        MapsFragment.MapsCallBack,
+        SpotListings.SpotListingsInteraction,
+        NewSpotFragment.NewSpotCallback,
+        UserProfileFragment.UserProfileCallback,
+        FirestoreHelper.OnDataUpdated {
 
     private static final String TAG = NavDrawer.class.getName();
 
     @BindView(R.id.add_spot_fab) FloatingActionButton addSpotFloatingActionButton;
+    @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FrameLayout container;
@@ -52,17 +62,21 @@ public class NavDrawer extends AppCompatActivity
 
     private boolean userExists = false;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private boolean isUserInitialized = false;
     static DocumentReference userDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        FirestoreHelper.getInstance(this).initializeFirestore();
+        FirestoreHelper.getInstance(this).initializeFirestoreSpot();
+
         setContentView(R.layout.activity_nav_drawer);
 
         ButterKnife.bind(this);
 
-        FirestoreHelper.getInstance().initializeFirestore();
-        FirestoreHelper.getInstance().initializeFirestoreSpot();
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -135,12 +149,12 @@ public class NavDrawer extends AppCompatActivity
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
         FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
-        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
+        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
         FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
-        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(FirestoreHelper.getInstance().getCurrentUser());
+        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
         FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
     }
 
@@ -240,5 +254,12 @@ public class NavDrawer extends AppCompatActivity
     // Relates to UserProfileFragment
     @Override
     public void userUpdated(User user) {
+    }
+
+    @Override
+    public void onUserUpdated(User user) {
+        isUserInitialized = true;
+        Toast.makeText(this, "Code be workin'", Toast.LENGTH_SHORT).show();
+        navProgressBar.setVisibility(View.INVISIBLE);
     }
 }

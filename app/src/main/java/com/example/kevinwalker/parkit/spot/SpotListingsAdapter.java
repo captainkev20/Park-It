@@ -33,6 +33,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
         holder.txt_payment_type.setText(mValues.get(position).getPaymentType().toString());
         holder.txt_cost.setText(String.valueOf(mValues.get(position).getHourlyRate()));
         holder.txt_distance.setText(String.valueOf(mValues.get(position).getSpotDistance()));
+        holder.txt_spot_name.setText(mValues.get(position).getName());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,6 +57,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
         public final TextView txt_payment_type;
         public final TextView txt_distance;
         public final TextView txt_cost;
+        public final TextView txt_spot_name;
         public Spot mItem;
 
         public ViewHolder(View view) {
@@ -64,6 +66,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
             txt_payment_type = view.findViewById(R.id.txt_payment_type);
             txt_distance = view.findViewById(R.id.txt_distance);
             txt_cost = view.findViewById(R.id.txt_cost);
+            txt_spot_name = view.findViewById(R.id.txt_spot_name);
 
         }
 

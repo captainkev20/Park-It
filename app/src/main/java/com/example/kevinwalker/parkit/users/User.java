@@ -1,10 +1,7 @@
 package com.example.kevinwalker.parkit.users;
 
-import android.location.Location;
-
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
-import com.example.kevinwalker.parkit.maps.UserParkedLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
 

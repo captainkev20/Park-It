@@ -24,6 +24,9 @@ import butterknife.ButterKnife;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -50,6 +53,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     CollectionReference spotCollectionReference;
     DocumentReference spotDocumentReference;
+    CollectionReference geoFireStoreRef = FirebaseFirestore.getInstance().collection("spots");
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
@@ -97,7 +101,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //spotCollectionReference = firebaseFirestore.collection("spots/");
+        FirestoreHelper.getInstance().initializeFirestoreSpot();
 
         spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
 
@@ -151,6 +155,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                 userSpot.setName(spotNameString);
 
                 mergeSpotWithFirebase(userSpot);
+
+                //GeoFire geoFire = new GeoFire(FirestoreHelper.getInstance().getRef();
+                //geoFire.setLocation(userSpot.getSpotUUID(), new GeoLocation(userSpot.getLatitude(), userSpot.getLongitude()));
 
                 break;
         }

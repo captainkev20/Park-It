@@ -407,10 +407,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         }
 
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
-            placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), getAddressFromGeocoder(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation()), true);
-            animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+            btn_leave.setEnabled(true);
+            btn_park.setEnabled(false);
+            btn_find_user_current_location.setEnabled(true);
+            placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
-            animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM);
+            btn_park.setEnabled(true);
+            btn_leave.setEnabled(false);
         }
 
         // Set the button to be enabled when the map is ready
