@@ -197,6 +197,11 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onBackPressed(){
+
+    }
+
     // Login's implementation of View.OnClickListener
     @Override
     public void onClick(View view) {

@@ -113,10 +113,10 @@ public class NavDrawer extends AppCompatActivity
 
         setTitle(getResources().getString(R.string.map_nav_title));
 
-        initMapFragmentTransaction();
     }
 
     private void initMapFragmentTransaction() {
+
         // Set the default fragment to display
         container = findViewById(R.id.container);
         fragmentManager = getSupportFragmentManager();
@@ -134,17 +134,26 @@ public class NavDrawer extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
+
+        if (isUserInitialized) {
+            navProgressBar.setVisibility(View.GONE);
+        } else {
+            navProgressBar.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showLogOffAlertDialog() {
         LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
-        newFragment.show(getSupportFragmentManager(), "AlertDiaLog");
+        newFragment.show(getSupportFragmentManager(), TAG);
     }
 
     @Override
     public void logOff() {
         FirebaseAuth.getInstance().signOut();
+        Intent intent = new Intent(this, Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(new Intent(NavDrawer.this, Login.class));
+        FirestoreHelper.getInstance().setCurrentUser(new User());
     }
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
@@ -251,9 +260,9 @@ public class NavDrawer extends AppCompatActivity
 
     public boolean isUserExists() { return userExists; }
 
-    // Relates to UserProfileFragment
     @Override
     public void userUpdated(User user) {
+
     }
 
     @Override
@@ -261,9 +270,16 @@ public class NavDrawer extends AppCompatActivity
         isUserInitialized = true;
         Toast.makeText(this, "Code be workin'", Toast.LENGTH_SHORT).show();
         navProgressBar.setVisibility(View.INVISIBLE);
-        if (fragmentManager.getFragments().get(0) instanceof MapsFragment) {
-           ((MapsFragment) fragmentManager.getFragments().get(0)).refreshUI();
+        if (mapFragment == null) {
+            initMapFragmentTransaction();
         }
 
+        if (fragmentManager != null) {
+            if (!fragmentManager.getFragments().isEmpty()) {
+                if (fragmentManager.getFragments().get(0) instanceof MapsFragment) {
+                    ((MapsFragment) fragmentManager.getFragments().get(0)).refreshUI();
+                }
+            }
+        }
     }
 }
