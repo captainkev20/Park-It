@@ -60,6 +60,10 @@ public class NavDrawer extends AppCompatActivity
     private MapsFragment mapFragment;
     private NewSpotFragment newSpotFragment;
 
+    private String currentFragmentTAG = "";
+
+    // TODO: Add FragmentTags
+
     private boolean userExists = false;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private boolean isUserInitialized = false;
@@ -218,11 +222,18 @@ public class NavDrawer extends AppCompatActivity
             menuFragment = new PaymentFragment();
 
         } else if (id == R.id.nav_settings) {
-
+            // TODO: Replicate for other nav options
+//            if (familyFragment == null) {
+//                familyFragment = FamilyFragment.newInstance();
+//            }
+//            setCurrentFragment(familyFragment);
+//            fab.show();
+//            setTitle(getResources().getString(R.string.family_toolbar_title));
         } else if (id == R.id.nav_about) {
 
         }
 
+        // TODO: Delete once functionality is replaced
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.replace(R.id.container, menuFragment);
         fragmentTransaction.commit();
@@ -230,6 +241,57 @@ public class NavDrawer extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private void setCurrentFragment(Fragment fragment) {
+        FragmentTransaction ft = fragmentManager.beginTransaction();
+        ft.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+        if (fragmentManager.getFragments().contains(fragment)) {
+            if (!fragmentManager.getFragments().isEmpty()) {
+                ft.hide(getFragmentForTag());
+            }
+            setCurrentFragmentTAG(fragment);
+            ft.show(fragment).commit();
+        } else {
+            if (!fragmentManager.getFragments().isEmpty()) {
+                ft.hide(getFragmentForTag());
+            }
+            setCurrentFragmentTAG(fragment);
+            ft.add(R.id.container, fragment, currentFragmentTAG).commit();
+        }
+    }
+
+    private Fragment getFragmentForTag() {
+        Fragment fragment = new Fragment();
+        switch (currentFragmentTAG) {
+            // TODO: Replace with your FragmentTags
+//            case homeFragmentTag:
+//                fragment = homeFragment;
+//                break;
+//            default:
+//                fragment = homeFragment;
+//                break;
+        }
+        return fragment;
+    }
+
+    private void setCurrentFragmentTAG(Fragment fragment) {
+        // TODO: Replace with your FragmentTags
+//        if (fragment instanceof HomeFragment) {
+//            currentFragmentTAG = homeFragmentTag;
+//        } else if (fragment instanceof MapsFragment) {
+//            currentFragmentTAG = mapsFragmentTag;
+//        } else if (fragment instanceof FrontDeskFragment) {
+//            currentFragmentTAG = frontDeskFragmentTag;
+//        } else if (fragment instanceof FamilyFragment) {
+//            currentFragmentTAG = familyFragmentTag;
+//        } else if (fragment instanceof QueueFragment) {
+//            currentFragmentTAG = queueFragmentTag;
+//        } else if (fragment instanceof FamilyMemberFragment) {
+//            currentFragmentTAG = familyMemberFragmentTag;
+//        } else if (fragment instanceof AddFamilyMemberFragment) {
+//            currentFragmentTAG = addFamilyMemberFragmentTag;
+//        }
     }
 
     @Override
