@@ -149,7 +149,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             case R.id.txt_save_spot:
 
                 String spotNameString = et_spot_name.getText().toString();
-                double spotHourlyRate = Double.parseDouble(et_hourly_rate.getText().toString());
+                int spotHourlyRate = Integer.parseInt(et_hourly_rate.getText().toString());
 
                 userSpot.setHourlyRate(spotHourlyRate);
                 userSpot.setName(spotNameString);

@@ -268,7 +268,6 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void onUserUpdated(User user) {
         isUserInitialized = true;
-        Toast.makeText(this, "Code be workin'", Toast.LENGTH_SHORT).show();
         navProgressBar.setVisibility(View.INVISIBLE);
         if (mapFragment == null) {
             initMapFragmentTransaction();

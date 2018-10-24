@@ -19,7 +19,7 @@ public class Spot {
     private SpotSize spotSize = SpotSize.STANDARD;
     private Surface surface = Surface.ASPHALT;
     private Ownership ownership = Ownership.SELF;
-    private double hourlyRate = 0.00;
+    private int hourlyRate = 0;
     private double dailyRate = 0.00;
     private double monthlyRate = 0.00;
     private long dateCreated = 0;
@@ -142,11 +142,9 @@ public class Spot {
         this.occupied = occupied;
     }
 
-    public double getHourlyRate() {
-        return hourlyRate;
-    }
+    public int getHourlyRate() { return hourlyRate; }
 
-    public void setHourlyRate(double hourlyRate) {
+    public void setHourlyRate(int hourlyRate) {
         this.hourlyRate = hourlyRate;
     }
 

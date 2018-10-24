@@ -4,7 +4,7 @@
     <string name="last_updated">Last Updated: </string>
     <string name="surface">Surface: </string>
     <string name="payment_type">Payment Type: </string>
-    <string name="distance">Distance: </string>
+    <string name="distance">miles</string>
     <string name="park_button">PARK</string>
     <string name="rating">Rating: </string>
     <string name="rating_placeholder">Rating Placeholder </string>
@@ -55,8 +55,11 @@
     <string name="zip">Zip: </string>
 
     <string name="spot_name">Spot Name: </string>
+    <string name="dollar_sign">$</string>
+    <string name="miles">miles</string>
     <string name="hourly_rate">Hourly Rate: </string>
-    <string name="per_hour">/Hr.</string>
+    <string name="per_hour">per hour</string>
+    <string name="payment_types_accepted">payment types accepted</string>
     <string name="add_new_spot">Add New Spot</string>
     <string name="btn_spot_location">Spot Location</string>
     <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
