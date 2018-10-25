@@ -18,7 +18,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -30,7 +29,7 @@ import com.example.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
 import com.example.kevinwalker.parkit.payments.PaymentFragment;
 import com.example.kevinwalker.parkit.spot.NewSpotFragment;
 import com.example.kevinwalker.parkit.spot.Spot;
-import com.example.kevinwalker.parkit.spot.SpotListings;
+import com.example.kevinwalker.parkit.spot.SpotListingsFragment;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
@@ -42,15 +41,17 @@ public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener,
         MapsFragment.MapsCallBack,
-        SpotListings.SpotListingsInteraction,
+        SpotListingsFragment.SpotListingsInteraction,
         NewSpotFragment.NewSpotCallback,
         UserProfileFragment.UserProfileCallback,
         FirestoreHelper.OnDataUpdated {
 
     private static final String TAG = NavDrawer.class.getName();
 
-    @BindView(R.id.add_spot_fab) FloatingActionButton addSpotFloatingActionButton;
-    @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
+    @BindView(R.id.add_spot_fab)
+    FloatingActionButton addSpotFloatingActionButton;
+    @BindView(R.id.nav_progress_bar)
+    ProgressBar navProgressBar;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FrameLayout container;
@@ -59,10 +60,16 @@ public class NavDrawer extends AppCompatActivity
     private FragmentTransaction fragmentTransaction;
     private MapsFragment mapFragment;
     private NewSpotFragment newSpotFragment;
+    private UserProfileFragment userProfileFragment;
+    private SpotListingsFragment spotListingsFragment;
+    private PaymentFragment paymentFragment;
 
     private String currentFragmentTAG = "";
-
-    // TODO: Add FragmentTags
+    private static final String mapFragmentTag = "mapFragmentTag";
+    private static final String newSpotFragmentTag = "newSpotFragmentTag";
+    private static final String userProfileFragmentTag = "userProfileFragmentTag";
+    private static final String spotListingFragmentTag = "spotListingFragment";
+    private static final String paymentFragmentTag = "paymentFragmentTag";
 
     private boolean userExists = false;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -94,14 +101,14 @@ public class NavDrawer extends AppCompatActivity
         addSpotFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                newSpotFragment = new NewSpotFragment();
-                fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN);
-                fragmentTransaction.setCustomAnimations(R.anim.fade_in, R.anim.fade_out);
-                fragmentTransaction.replace(R.id.container, newSpotFragment);
-                fragmentTransaction.addToBackStack(null);
-                fragmentTransaction.commit();
+                if (newSpotFragment == null) {
+                    newSpotFragment = new NewSpotFragment();
+                }
+                setCurrentFragment(newSpotFragment);
+                //fragmentTransaction.addToBackStack(null);
 
+                setFabVisibility(View.GONE);
+                setTitle(getResources().getString(R.string.add_new_spot));
             }
         });
 
@@ -160,7 +167,7 @@ public class NavDrawer extends AppCompatActivity
         FirestoreHelper.getInstance().setCurrentUser(new User());
     }
 
-    public static void saveCurrentUserLocation(CustomLocation currentUserLocation){
+    public static void saveCurrentUserLocation(CustomLocation currentUserLocation) {
         FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
         //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
     }
@@ -206,37 +213,44 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
 
-        Fragment menuFragment = null;
         int id = item.getItemId();
 
         if (id == R.id.nav_my_profile) {
-            menuFragment = new UserProfileFragment();
+            if (userProfileFragment == null) {
+                userProfileFragment = new UserProfileFragment();
+            }
+            setCurrentFragment(userProfileFragment);
+            setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
-            menuFragment = SpotListings.newInstance(1);
+            if (spotListingsFragment == null) {
+                spotListingsFragment = SpotListingsFragment.newInstance(1);
+            }
+            setCurrentFragment(spotListingsFragment);
+            setFabVisibility(View.VISIBLE);
+            setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
-            menuFragment = new MapsFragment();
+            if (mapFragment == null) {
+                mapFragment = new MapsFragment();
+            }
+            setCurrentFragment(mapFragment);
+            setFabVisibility(View.GONE);
+            setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
-            menuFragment = new PaymentFragment();
+            if (paymentFragment == null) {
+                paymentFragment = new PaymentFragment();
+            }
+            setCurrentFragment(paymentFragment);
+            setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_settings) {
             // TODO: Replicate for other nav options
-//            if (familyFragment == null) {
-//                familyFragment = FamilyFragment.newInstance();
-//            }
-//            setCurrentFragment(familyFragment);
-//            fab.show();
-//            setTitle(getResources().getString(R.string.family_toolbar_title));
+
         } else if (id == R.id.nav_about) {
 
         }
-
-        // TODO: Delete once functionality is replaced
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.container, menuFragment);
-        fragmentTransaction.commit();
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
@@ -246,7 +260,13 @@ public class NavDrawer extends AppCompatActivity
     private void setCurrentFragment(Fragment fragment) {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+        // If fragment attempting to show already been instantiated AND other fragments that have been displayed
         if (fragmentManager.getFragments().contains(fragment)) {
+            // Quit process if user clicks on fragment that has already been displayed
+            if (currentFragmentTAG.equals(getTagForFragment(fragment))) {
+                return;
+            }
+            // If not empty, a fragment exists
             if (!fragmentManager.getFragments().isEmpty()) {
                 ft.hide(getFragmentForTag());
             }
@@ -262,36 +282,59 @@ public class NavDrawer extends AppCompatActivity
     }
 
     private Fragment getFragmentForTag() {
-        Fragment fragment = new Fragment();
+        Fragment fragment;
         switch (currentFragmentTAG) {
-            // TODO: Replace with your FragmentTags
-//            case homeFragmentTag:
-//                fragment = homeFragment;
-//                break;
-//            default:
-//                fragment = homeFragment;
-//                break;
+            case mapFragmentTag:
+                fragment = mapFragment;
+                break;
+            case newSpotFragmentTag:
+                fragment = newSpotFragment;
+                break;
+            case userProfileFragmentTag:
+                fragment = userProfileFragment;
+                break;
+            case spotListingFragmentTag:
+                fragment = spotListingsFragment;
+                break;
+            case paymentFragmentTag:
+                fragment = paymentFragment;
+                break;
+            default:
+                fragment = mapFragment;
+                break;
         }
         return fragment;
     }
 
+    private String getTagForFragment(Fragment fragment) {
+        String fragmentTag = "";
+        if (fragment instanceof MapsFragment) {
+            fragmentTag = mapFragmentTag;
+        } else if (fragment instanceof NewSpotFragment) {
+            fragmentTag = newSpotFragmentTag;
+        } else if (fragment instanceof UserProfileFragment) {
+            fragmentTag = userProfileFragmentTag;
+        } else if (fragment instanceof SpotListingsFragment) {
+            fragmentTag = spotListingFragmentTag;
+        } else if (fragment instanceof PaymentFragment) {
+            fragmentTag = paymentFragmentTag;
+        }
+
+        return fragmentTag;
+    }
+
     private void setCurrentFragmentTAG(Fragment fragment) {
-        // TODO: Replace with your FragmentTags
-//        if (fragment instanceof HomeFragment) {
-//            currentFragmentTAG = homeFragmentTag;
-//        } else if (fragment instanceof MapsFragment) {
-//            currentFragmentTAG = mapsFragmentTag;
-//        } else if (fragment instanceof FrontDeskFragment) {
-//            currentFragmentTAG = frontDeskFragmentTag;
-//        } else if (fragment instanceof FamilyFragment) {
-//            currentFragmentTAG = familyFragmentTag;
-//        } else if (fragment instanceof QueueFragment) {
-//            currentFragmentTAG = queueFragmentTag;
-//        } else if (fragment instanceof FamilyMemberFragment) {
-//            currentFragmentTAG = familyMemberFragmentTag;
-//        } else if (fragment instanceof AddFamilyMemberFragment) {
-//            currentFragmentTAG = addFamilyMemberFragmentTag;
-//        }
+        if (fragment instanceof MapsFragment) {
+            currentFragmentTAG = mapFragmentTag;
+        } else if (fragment instanceof NewSpotFragment) {
+            currentFragmentTAG = newSpotFragmentTag;
+        } else if (fragment instanceof UserProfileFragment) {
+            currentFragmentTAG = userProfileFragmentTag;
+        } else if (fragment instanceof SpotListingsFragment) {
+            currentFragmentTAG = spotListingFragmentTag;
+        } else if (fragment instanceof PaymentFragment) {
+            currentFragmentTAG = paymentFragmentTag;
+        }
     }
 
     @Override
@@ -310,7 +353,8 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void onSpotListingInteraction(Spot item) {}
+    public void onSpotListingInteraction(Spot item) {
+    }
 
     @Override
     public void setFabVisibility(int viewVisibilityConstant) {
@@ -318,9 +362,12 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {}
+    public void onFragmentInteraction(Uri uri) {
+    }
 
-    public boolean isUserExists() { return userExists; }
+    public boolean isUserExists() {
+        return userExists;
+    }
 
     @Override
     public void userUpdated(User user) {

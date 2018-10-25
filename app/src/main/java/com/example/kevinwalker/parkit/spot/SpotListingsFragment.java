@@ -16,7 +16,7 @@ import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 
 import java.util.ArrayList;
 
-public class SpotListings extends Fragment {
+public class SpotListingsFragment extends Fragment {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -29,13 +29,13 @@ public class SpotListings extends Fragment {
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public SpotListings() {
+    public SpotListingsFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static SpotListings newInstance(int columnCount) {
-        SpotListings fragment = new SpotListings();
+    public static SpotListingsFragment newInstance(int columnCount) {
+        SpotListingsFragment fragment = new SpotListingsFragment();
         ArrayList<Spot> spots = new ArrayList<>();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);

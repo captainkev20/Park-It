@@ -13,9 +13,9 @@ import java.util.List;
 public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapter.ViewHolder> {
 
     private final List<Spot> mValues;
-    private final SpotListings.SpotListingsInteraction mListener;
+    private final SpotListingsFragment.SpotListingsInteraction mListener;
 
-    public SpotListingsAdapter(List<Spot> items, SpotListings.SpotListingsInteraction listener) {
+    public SpotListingsAdapter(List<Spot> items, SpotListingsFragment.SpotListingsInteraction listener) {
         mValues = items;
         mListener = listener;
     }
