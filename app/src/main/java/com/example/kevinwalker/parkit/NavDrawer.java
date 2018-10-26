@@ -105,7 +105,6 @@ public class NavDrawer extends AppCompatActivity
                     newSpotFragment = new NewSpotFragment();
                 }
                 setCurrentFragment(newSpotFragment);
-                //fragmentTransaction.addToBackStack(null);
 
                 setFabVisibility(View.GONE);
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -123,7 +122,6 @@ public class NavDrawer extends AppCompatActivity
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
 
         setTitle(getResources().getString(R.string.map_nav_title));
-
     }
 
     private void initMapFragmentTransaction() {
@@ -133,8 +131,7 @@ public class NavDrawer extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
         mapFragment = new MapsFragment();
-        fragmentTransaction.replace(R.id.container, mapFragment);
-        fragmentTransaction.commit();
+        setCurrentFragment(mapFragment);
     }
 
     @Override
@@ -169,12 +166,12 @@ public class NavDrawer extends AppCompatActivity
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation) {
         FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
-        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
         FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
-        //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
         FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
     }
 
@@ -183,8 +180,24 @@ public class NavDrawer extends AppCompatActivity
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+
         } else {
-            super.onBackPressed();
+            setFabVisibility(View.GONE);
+            setTitle(R.string.map_nav_title);
+            switch (currentFragmentTAG) {
+                case userProfileFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                case spotListingFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                case paymentFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                default:
+                    setCurrentFragment(mapFragment);
+                    break;
+            }
         }
     }
 
@@ -220,6 +233,7 @@ public class NavDrawer extends AppCompatActivity
                 userProfileFragment = new UserProfileFragment();
             }
             setCurrentFragment(userProfileFragment);
+            setFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -243,6 +257,7 @@ public class NavDrawer extends AppCompatActivity
                 paymentFragment = new PaymentFragment();
             }
             setCurrentFragment(paymentFragment);
+            setFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_settings) {
@@ -385,7 +400,7 @@ public class NavDrawer extends AppCompatActivity
         if (fragmentManager != null) {
             if (!fragmentManager.getFragments().isEmpty()) {
                 if (fragmentManager.getFragments().get(0) instanceof MapsFragment) {
-                    ((MapsFragment) fragmentManager.getFragments().get(0)).refreshUI();
+                    mapFragment.refreshUI();
                 }
             }
         }

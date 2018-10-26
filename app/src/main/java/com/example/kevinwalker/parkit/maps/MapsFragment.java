@@ -161,6 +161,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public void onPause() {
         super.onPause();
+
+        locationHelper.getmFusedLocationProviderClient().removeLocationUpdates(locationHelper.getLocationCallback());
     }
 
     @Override
@@ -169,6 +171,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         Log.i(TAG, String.valueOf(epochTimeStamp));
 
         isCameraAnimationFinished = true;
+
+        locationHelper.startLocationUpdates();
 
         refreshUI();
     }

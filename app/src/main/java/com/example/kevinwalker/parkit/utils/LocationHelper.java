@@ -185,4 +185,8 @@ public class LocationHelper {
     public void setmContext(Context mContext) {
         this.mContext = mContext;
     }
+
+    public LocationCallback getLocationCallback() { return locationCallback; }
+
+    public void setLocationCallback(LocationCallback locationCallback) { this.locationCallback = locationCallback; }
 }
