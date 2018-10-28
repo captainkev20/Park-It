@@ -10,6 +10,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,7 @@ import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
@@ -57,9 +60,11 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
+    private SpotListingsFragment spotListingsFragment = new SpotListingsFragment();
 
     private Context mContext;
-
+    private NewSpotCallback mListener;
+    private NavDrawer navDrawer;
 
     private static final String TAG = NewSpotFragment.class.getName();
 
@@ -156,8 +161,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
                 mergeSpotWithFirebase(userSpot);
 
-                //GeoFire geoFire = new GeoFire(FirestoreHelper.getInstance().getRef();
-                //geoFire.setLocation(userSpot.getSpotUUID(), new GeoLocation(userSpot.getLatitude(), userSpot.getLongitude()));
+
+                //navDrawer.setCurrentFragment(spotListingsFragment);
+                mListener.navigateToSpotListings();
 
                 break;
         }
@@ -169,6 +175,14 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
                 Toast.makeText(getActivity(), "Spot Saved!", Toast.LENGTH_SHORT).show();
+
+
+
+                /*Fragment fragment = new SpotListingsFragment();
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
+                transaction.replace(R.id.container, fragment).commit();*/
+
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -206,5 +220,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     public interface NewSpotCallback {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
+        void navigateToSpotListings();
     }
 }

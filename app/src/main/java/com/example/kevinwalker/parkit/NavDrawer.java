@@ -104,9 +104,9 @@ public class NavDrawer extends AppCompatActivity
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
+                setFabVisibility(View.GONE);
                 setCurrentFragment(newSpotFragment);
 
-                setFabVisibility(View.GONE);
                 setTitle(getResources().getString(R.string.add_new_spot));
             }
         });
@@ -272,7 +272,7 @@ public class NavDrawer extends AppCompatActivity
         return true;
     }
 
-    private void setCurrentFragment(Fragment fragment) {
+    public void setCurrentFragment(Fragment fragment) {
         FragmentTransaction ft = fragmentManager.beginTransaction();
         ft.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
         // If fragment attempting to show already been instantiated AND other fragments that have been displayed
@@ -377,7 +377,14 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(Uri uri) { }
+
+    @Override
+    public void navigateToSpotListings() {
+        if (spotListingsFragment == null) {
+            spotListingsFragment = new SpotListingsFragment();
+        }
+        setCurrentFragment(spotListingsFragment);
     }
 
     public boolean isUserExists() {
