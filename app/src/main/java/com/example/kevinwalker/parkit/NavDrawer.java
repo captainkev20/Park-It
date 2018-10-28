@@ -37,6 +37,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
+
 public class NavDrawer extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener,
@@ -381,10 +383,19 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void navigateToSpotListings() {
+        // Checks fragment state and resets Recycler View to show added spot
         if (spotListingsFragment == null) {
+            spotListingsFragment = new SpotListingsFragment();
+            spotListingsFragment.resetRecyclerView();
+        } else {
             spotListingsFragment = new SpotListingsFragment();
         }
         setCurrentFragment(spotListingsFragment);
+    }
+
+    @Override
+    public void onAllSpotsUpdated(ArrayList<Spot> spots) {
+        spotListingsFragment.resetRecyclerView(spots);
     }
 
     public boolean isUserExists() {

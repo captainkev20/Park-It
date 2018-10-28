@@ -7,15 +7,25 @@ import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+
+import java.util.ArrayList;
+
+import javax.annotation.Nullable;
 
 public class FirestoreHelper {
 
@@ -28,6 +38,7 @@ public class FirestoreHelper {
     private static DocumentReference userDocument;
     private static DocumentReference userSpotDocument;
     private static FirestoreHelper instance;
+    ArrayList<Spot> allSpots = new ArrayList<>();
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
     private static FirestoreHelper.OnDataUpdated mListener;
@@ -62,6 +73,16 @@ public class FirestoreHelper {
     public void initializeFirestore() {
         // Initialize our User DocumentReference
         userDocument = firebaseFirestore.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+            @Override
+            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                if (documentSnapshot.exists()) {
+                    currentUser = documentSnapshot.toObject(User.class);
+                    mergeCurrentUserWithFirestore();
+                    mListener.onUserUpdated(currentUser);
+                }
+            }
+        });
 
         userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -131,6 +152,22 @@ public class FirestoreHelper {
                 });
     }
 
+    public ArrayList<Spot> getAllSpots() {
+        FirebaseFirestore.getInstance().collection("spots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        allSpots.add(document.toObject(Spot.class));
+                    }
+                    mListener.onAllSpotsUpdated(allSpots);
+                }
+            }
+        });
+
+        return allSpots;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
@@ -151,5 +188,6 @@ public class FirestoreHelper {
 
     public interface OnDataUpdated {
         void onUserUpdated(User user);
+        void onAllSpotsUpdated(ArrayList<Spot> spots);
     }
 }

@@ -1,17 +1,11 @@
 package com.example.kevinwalker.parkit.spot;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,34 +13,26 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
-import com.firebase.geofire.GeoFire;
-import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
-
-import org.w3c.dom.Text;
-
-import java.math.BigDecimal;
 import java.util.UUID;
 
 
 public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener {
+
+    private static final String TAG = NewSpotFragment.class.getName();
 
     @BindView(R.id.et_spot_name) EditText et_spot_name;
     @BindView(R.id.et_hourly_rate) EditText et_hourly_rate;
@@ -60,29 +46,17 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
-    private SpotListingsFragment spotListingsFragment = new SpotListingsFragment();
 
     private Context mContext;
     private NewSpotCallback mListener;
-    private NavDrawer navDrawer;
-
-    private static final String TAG = NewSpotFragment.class.getName();
 
     private View mView;
 
-
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-
-
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
-    //private OnFragmentInteractionListener mListener;
 
     public NewSpotFragment() {
         // Required empty public constructor
@@ -131,7 +105,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                         Toast.makeText(getActivity(), "Failed to write", Toast.LENGTH_SHORT).show();
                     }
                 });
-
     }
 
     @Override
@@ -140,7 +113,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         mView = inflater.inflate(R.layout.fragment_new_spot, container, false);
 
         // Inflate the layout for this fragment
-
         ButterKnife.bind(this, mView);
 
         txt_save_spot.setOnClickListener(this);
@@ -161,9 +133,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
                 mergeSpotWithFirebase(userSpot);
 
-
-                //navDrawer.setCurrentFragment(spotListingsFragment);
-                mListener.navigateToSpotListings();
+                newSpotCallback.navigateToSpotListings();
 
                 break;
         }
@@ -175,14 +145,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
                 Toast.makeText(getActivity(), "Spot Saved!", Toast.LENGTH_SHORT).show();
-
-
-
-                /*Fragment fragment = new SpotListingsFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.setCustomAnimations(R.anim.slide_in_from_left, R.anim.slide_out_to_right);
-                transaction.replace(R.id.container, fragment).commit();*/
-
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
@@ -196,10 +158,8 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
-
         getActivity().setTitle(getResources().getString(R.string.add_new_spot));
     }
-
 
     @Override
     public void onAttach(Context context) {
@@ -218,7 +178,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     }
 
     public interface NewSpotCallback {
-        // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
         void navigateToSpotListings();
     }

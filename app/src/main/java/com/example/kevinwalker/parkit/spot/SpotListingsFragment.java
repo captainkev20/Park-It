@@ -10,29 +10,28 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 
 public class SpotListingsFragment extends Fragment {
 
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
+
+    @BindView(R.id.spot_recycler_view) RecyclerView spotRecyclerView;
+
     private int mColumnCount = 1;
     private SpotListingsInteraction mListener;
     private ArrayList<Spot> spots = new ArrayList<>();
+    private SpotListingsAdapter spotListingsAdapter;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public SpotListingsFragment() {
-    }
 
-    // TODO: Customize parameter initialization
+    public SpotListingsFragment() {}
+
     @SuppressWarnings("unused")
     public static SpotListingsFragment newInstance(int columnCount) {
         SpotListingsFragment fragment = new SpotListingsFragment();
@@ -61,7 +60,6 @@ public class SpotListingsFragment extends Fragment {
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
-
         if (spots.isEmpty()) {
             spots.add(FirestoreHelper.getUserSpot());
         }
@@ -72,17 +70,22 @@ public class SpotListingsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_spot_list, container, false);
 
+        ButterKnife.bind(this, view);
+
+        FirestoreHelper.getInstance().getAllSpots();
+
         // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            spotRecyclerView = (RecyclerView) view;
             if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
+                spotRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
+                spotRecyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
-            recyclerView.setAdapter(new SpotListingsAdapter(spots, mListener));
+            //resetRecyclerView();
         }
+
         return view;
     }
 
@@ -109,16 +112,16 @@ public class SpotListingsFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
+    public void resetRecyclerView() {
+        spotListingsAdapter = new SpotListingsAdapter(FirestoreHelper.getInstance().getAllSpots(), mListener);
+        spotRecyclerView.setAdapter(spotListingsAdapter);
+    }
+
+    public void resetRecyclerView(ArrayList<Spot> spots) {
+        spotListingsAdapter = new SpotListingsAdapter(spots, mListener);
+        spotRecyclerView.setAdapter(spotListingsAdapter);
+    }
+
     public interface SpotListingsInteraction {
         void onSpotListingInteraction(Spot item);
         void setFabVisibility(int viewVisibilityConstant);

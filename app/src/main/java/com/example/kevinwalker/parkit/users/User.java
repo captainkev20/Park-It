@@ -24,8 +24,6 @@ public class User {
     private Vehicle[] vehicles;
     private PaymentType[] paymentTypes;
     private boolean isUserParked = false;
-//    private CustomLocation userParkedLocation = new CustomLocation(new Location("testParkedLocation"),0);
-//    private CustomLocation userCurrentLocation = new CustomLocation(new Location("testCurrentLocation"),0);
     private CustomLocation userParkedLocation;
     private CustomLocation userCurrentLocation;
 

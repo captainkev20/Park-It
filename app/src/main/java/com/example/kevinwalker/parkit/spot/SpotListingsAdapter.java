@@ -67,7 +67,6 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
             txt_distance = view.findViewById(R.id.txt_distance);
             txt_cost = view.findViewById(R.id.txt_cost);
             txt_spot_name = view.findViewById(R.id.txt_spot_name);
-
         }
 
         @Override
