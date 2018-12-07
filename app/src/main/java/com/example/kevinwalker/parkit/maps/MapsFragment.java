@@ -10,11 +10,9 @@ import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.location.Address;
-import android.location.Criteria;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
@@ -146,8 +144,12 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_find_user_current_location.setEnabled(true);
+            btn_park.setEnabled(false); //Do not show
+            btn_leave.setEnabled(true); // Show
         } else {
             Log.i(TAG, "from onViewCreated");
+            btn_park.setEnabled(true); // Show
+            btn_leave.setEnabled(false); // Do not show
         }
     }
 

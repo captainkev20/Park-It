@@ -58,7 +58,7 @@ public class NavDrawer extends AppCompatActivity
     protected Toolbar toolbar;
     private FrameLayout container;
 
-    private FragmentManager fragmentManager;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
     private FragmentTransaction fragmentTransaction;
     private MapsFragment mapFragment;
     private NewSpotFragment newSpotFragment;
@@ -132,6 +132,7 @@ public class NavDrawer extends AppCompatActivity
         container = findViewById(R.id.container);
         fragmentManager = getSupportFragmentManager();
         fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.commit();
         mapFragment = new MapsFragment();
         setCurrentFragment(mapFragment);
     }
@@ -173,8 +174,9 @@ public class NavDrawer extends AppCompatActivity
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
         FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
-        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
         FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
+        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+
     }
 
     @Override

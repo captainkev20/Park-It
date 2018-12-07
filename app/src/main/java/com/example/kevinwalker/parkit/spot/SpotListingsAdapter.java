@@ -29,6 +29,8 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
+        //TODO: Modify to speed up
         holder.mItem = mValues.get(position);
         holder.txt_payment_type.setText(mValues.get(position).getPaymentType().toString());
         holder.txt_cost.setText(String.valueOf(mValues.get(position).getHourlyRate()));

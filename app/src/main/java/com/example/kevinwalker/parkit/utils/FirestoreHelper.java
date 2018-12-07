@@ -91,16 +91,17 @@ public class FirestoreHelper {
                     currentUser = documentSnapshot.toObject(User.class);
                     if (currentUser.getUserUUID().trim().isEmpty()) {
                         currentUser.setUserUUID(FirebaseAuth.getInstance().getCurrentUser().getUid());
-                        mergeCurrentUserWithFirestore(currentUser);
+                        mergeCurrentUserWithFirestore();
                     }
                     if (currentUser.getUserEmail().trim().isEmpty()) {
                         currentUser.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                        mergeCurrentUserWithFirestore(currentUser);
+                        mergeCurrentUserWithFirestore();
                     }
                     mListener.onUserUpdated(currentUser);
 
                 } else {
-                    //mergeCurrentUserWithFirestore(currentUser);
+                    // TODO: Why would we merge if the snapshot does not exist?
+                    mergeCurrentUserWithFirestore();
                 }
             }
         });

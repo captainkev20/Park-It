@@ -13,6 +13,14 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.stripe.android.Stripe;
+import com.stripe.android.TokenCallback;
+import com.stripe.android.model.Card;
+import com.stripe.android.model.Token;
+import com.stripe.android.view.CardInputWidget;
+
 
 import com.example.kevinwalker.parkit.R;
 
@@ -22,13 +30,34 @@ import butterknife.ButterKnife;
 public class PaymentFragment extends Fragment {
 
     private View mView;
-    @BindView(R.id.image_card_logo) ImageView image_card_logo;
-    @BindView(R.id.txt_card_ending_in) TextView txt_card_ending_in;
-    @BindView(R.id.btn_add_payment) FloatingActionButton btn_add_payment;
+    @BindView(R.id.card_input_widget) CardInputWidget card_input_widget;
+    private Card card;
+    private Stripe stripe;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        card = new Card(
+                "4242424242424242", //card number
+                12, //expMonth
+                2016,//expYear
+                "123"//cvc
+        );
+
+        /*stripe.createToken(
+                card, new TokenCallback() {
+                    @Override
+                    public void onError(Exception error) {
+                        Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onSuccess(Token token) {
+                        Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                    }
+                });*/
+
     }
 
     @Override
