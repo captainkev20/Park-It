@@ -6,7 +6,6 @@ import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,18 +26,8 @@ public class LeaveAlertDialogFragment extends DialogFragment {
 
     private LeaveSpotInteractionListener mListener;
 
-    public LeaveAlertDialogFragment() {
-        // Required empty public constructor
-    }
+    public LeaveAlertDialogFragment() {}
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment LeaveAlertDialogFragment.
-     */
     // TODO: Rename and change types and number of parameters
     public static LeaveAlertDialogFragment newInstance(String param1, String param2) {
         LeaveAlertDialogFragment fragment = new LeaveAlertDialogFragment();
@@ -59,16 +48,12 @@ public class LeaveAlertDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(getResources().getString(R.string.LEAVE_DIALOG_TITLE))
-                // Set Dialog Message
                 .setMessage(getResources().getString(R.string.LEAVE_DIALOG_MESSAGE))
-
-                // positive button
                 .setPositiveButton(getResources().getString(R.string.LEAVE_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.leaveSpace();
                     }
                 })
-                // negative button
                 .setNegativeButton(getResources().getString(R.string.LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         mListener.userStayInSpace();
@@ -82,7 +67,7 @@ public class LeaveAlertDialogFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+
         return inflater.inflate(R.layout.fragment_leave_alert_dialog, container, false);
     }
 
@@ -110,16 +95,6 @@ public class LeaveAlertDialogFragment extends DialogFragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface LeaveSpotInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

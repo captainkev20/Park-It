@@ -1,13 +1,8 @@
 package com.example.kevinwalker.parkit.spot;
 
-import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
 
-import java.math.BigDecimal;
 
-/**
- * Created by hollis on 8/19/18.
- */
 
 public class Spot {
     private double latitude = 0;

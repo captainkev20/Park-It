@@ -5,9 +5,6 @@ import android.widget.ImageView;
 
 import java.util.Date;
 
-/**
- * Created by kevinwalker on 3/19/18.
- */
 
 public class Badge {
 

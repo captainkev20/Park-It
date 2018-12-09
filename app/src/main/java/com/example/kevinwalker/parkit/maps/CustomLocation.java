@@ -4,9 +4,6 @@ package com.example.kevinwalker.parkit.maps;
 import android.location.Location;
 
 
-/**
- * Created by hollis on 7/22/18.
- */
 
 public class CustomLocation extends Location {
 

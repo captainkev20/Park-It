@@ -88,9 +88,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
-        if (mapView != null) {
-            initMap(mapView);
-        }
+
 
         if (savedInstanceState != null) {
             epochTimeStamp = savedInstanceState.getLong(EPOCH_TIME);
@@ -142,6 +140,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_current_location.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
 
+        if (mapView != null) {
+            initMap(mapView);
+        }
+
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_find_user_current_location.setEnabled(true);
             btn_park.setEnabled(false); //Do not show
@@ -179,12 +181,20 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         refreshUI();
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        // TODO: Determine why this does not remove location updates to Firebase user once logged out
+        locationHelper.getmFusedLocationProviderClient().removeLocationUpdates(locationHelper.getLocationCallback());
+    }
+
     public void refreshUI() {
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
             btn_find_user_current_location.setEnabled(true);
-            placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), currentAddress, true);
+            //placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
@@ -350,7 +360,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             public void run() {
                 long elapsed = SystemClock.uptimeMillis() - startTime;
                 float t = Math.max(1 - interpolator.getInterpolation((float) elapsed / duration), 0);
-                marker.setAnchor(0.5f, 1.0f + t);
+                marker.setAnchor(0.5f, 1.0f + 1.2f * t);
 
                 if (t > 0.0) {
                     handler.postDelayed(this, 16);
@@ -424,6 +434,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
+            btn_find_user_current_location.setEnabled(true);
         }
 
         // Set the button to be enabled when the map is ready

@@ -107,6 +107,10 @@ public class FirestoreHelper {
         });
     }
 
+    public static void logOff() {
+        currentUser = new User();
+    }
+
     public void initializeFirestoreSpot() {
         // Initialize our Spot DocumentReference
         userSpotDocument = firebaseFirestore.collection("spots").document(testSpot);

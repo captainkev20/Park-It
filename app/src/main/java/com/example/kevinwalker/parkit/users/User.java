@@ -5,10 +5,6 @@ import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
 
-/**
- * Created by hollis on 4/19/18.
- */
-
 public class User {
 
     private String firstName = "";

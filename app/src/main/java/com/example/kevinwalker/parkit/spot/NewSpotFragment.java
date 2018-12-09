@@ -112,7 +112,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                              Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.fragment_new_spot, container, false);
 
-        // Inflate the layout for this fragment
         ButterKnife.bind(this, mView);
 
         txt_save_spot.setOnClickListener(this);

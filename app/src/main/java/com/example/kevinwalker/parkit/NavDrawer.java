@@ -153,6 +153,13 @@ public class NavDrawer extends AppCompatActivity
         }
     }
 
+    @Override
+    protected  void onDestroy() {
+        super.onDestroy();
+
+
+    }
+
     private void showLogOffAlertDialog() {
         LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
         newFragment.show(getSupportFragmentManager(), TAG);
@@ -160,11 +167,13 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void logOff() {
-        FirebaseAuth.getInstance().signOut();
+        /*FirebaseAuth.getInstance().signOut();
         Intent intent = new Intent(this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(new Intent(NavDrawer.this, Login.class));
-        FirestoreHelper.getInstance().setCurrentUser(new User());
+        startActivity(new Intent(NavDrawer.this, Login.class));*/
+
+        // Commentted out as this appeared to write blank user object FB upon signing out
+        // FirestoreHelper.getInstance().setCurrentUser(new User());
     }
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation) {
@@ -221,6 +230,11 @@ public class NavDrawer extends AppCompatActivity
 
         if (id == R.id.action_log_off) {
             showLogOffAlertDialog();
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(this, Login.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(new Intent(NavDrawer.this, Login.class));
+            return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -358,7 +372,7 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void onPositiveClick() {
-
+        //FirestoreHelper.logOff();
     }
 
     @Override

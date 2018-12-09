@@ -10,9 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
-import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.users.User;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,11 +20,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
 
@@ -35,10 +29,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
     private EditText username;
     private EditText password;
     private EditText confirmPassword;
-    private EditText firstName;
     private Button register;
-    private User currentUser = new User();
-    FirebaseDatabase database = FirebaseDatabase.getInstance();
     private static final String TAG = Registration.class.getName();
 
     private FirebaseAuth mAuth;

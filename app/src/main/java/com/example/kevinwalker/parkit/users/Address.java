@@ -1,10 +1,5 @@
 package com.example.kevinwalker.parkit.users;
 
-
-/**
- * Created by kevinwalker on 3/19/18.
- */
-
 public class Address {
 
     private String street1;
