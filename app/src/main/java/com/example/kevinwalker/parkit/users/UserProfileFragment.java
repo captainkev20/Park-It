@@ -3,7 +3,6 @@ package com.example.kevinwalker.parkit.users;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
@@ -12,11 +11,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -27,11 +26,14 @@ import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -39,6 +41,8 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 import java.io.File;
 import java.io.FileOutputStream;
+
+import static android.app.Activity.RESULT_OK;
 
 public class UserProfileFragment extends ParentProfileFragment implements View.OnClickListener {
 
@@ -60,8 +64,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.txt_save_profile) TextView txt_save_profile;
     @BindView(R.id.edit_profile_card_view) CardView edit_profile_card_view;
     @BindView(R.id.main_profile_card_view) CardView main_profile_card_view;
+    @BindView(R.id.save_photo_progress_bar) ProgressBar save_user_progress_bar;
 
     private static final String TAG = UserProfileFragment.class.getName();
+    private StorageReference userProfileReference;
+    StorageReference filePath;
     static final int REQUEST_IMAGE_CAPTURE = 1;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -85,6 +92,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         super.onCreate(savedInstanceState);
 
         navDrawer = (NavDrawer) getActivity();
+        userProfileReference = FirebaseStorage.getInstance().getReference();
+        filePath = userProfileReference.child("UserProfilePhotos/").child(getFirebaseUser().getUid() + "_profile_picture.png");
     }
 
     @Override
@@ -93,9 +102,15 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         ButterKnife.bind(this, mView);
 
         //updateUI();
-        
+
+        getUserProfilePhotoFromFirebase(filePath);
+
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
+        edit_image_logo.setOnClickListener(this);
+
+        save_user_progress_bar.setVisibility(View.GONE);
+
 
         return mView;
     }
@@ -121,10 +136,14 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum);
 
                 FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                getUserProfilePhotoFromFirebase(filePath);
                 updateUI();
 
                 profile_view_switcher.showPrevious();
                 break;
+
+            case R.id.edit_image_logo:
+                dispatchTakePictureIntent();
         }
     }
 
@@ -134,35 +153,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         getActivity().setTitle(getResources().getString(R.string.profile_nav_title));
 
         updateUI();
-
-        Bitmap bm = BitmapFactory.decodeResource(getResources(), R.drawable.ic_test_profile_pic);
-
-        setPrimaryPhoto(bm);
-        image_logo.setImageBitmap(getPrimaryPhoto());
     }
 
     private FirebaseUser getFirebaseUser() {
         return FirebaseAuth.getInstance().getCurrentUser();
-    }
-
-    private void updateUserPhoto(File file, FirebaseUser firebaseUser) {
-        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                .setPhotoUri(Uri.parse(file.getName()))
-                .build();
-
-        firebaseUser.updateProfile(profileUpdates)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Log.d(TAG, "User profile updated.");
-                            Toast.makeText(getActivity(), "Saved new profile photo", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Log.d(TAG, "Failed to updated FirebaseUser Profile Picture");
-                            Toast.makeText(getActivity(), "Update failed", Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
     }
 
     private void refreshProfilePicture(Bitmap bitmap) {
@@ -185,6 +179,20 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         return dest;
     }
 
+    // TODO: Review with Hollis and determine if this is best way to handle
+    private void getUserProfilePhotoFromFirebase(StorageReference userProfileReference) {
+        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.get().load(uri.toString()).centerCrop().resize(128, 140).rotate(90).into(image_logo);
+                Picasso.get().load(uri.toString()).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+            }
+        });
+    }
 
     private void updateUI() {
         txt_first_name.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
@@ -198,8 +206,49 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Verify a camera activity can handle the intent
         if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+            }
+        }
+
+    // TODO: Review with Hollis and determine if this is best way to handle
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+
+            save_user_progress_bar.setVisibility(View.VISIBLE);
+            edit_image_logo.setVisibility(View.INVISIBLE);
+
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Uri uri = Uri.fromFile(getProfilePictureFile(imageBitmap));
+
+            StorageReference filePath = userProfileReference.child("UserProfilePhotos/").child(uri.getLastPathSegment());
+
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            save_user_progress_bar.setVisibility(View.GONE);
+                            edit_image_logo.setVisibility(View.VISIBLE);
+
+                            Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
+                            FirestoreHelper.getInstance().getCurrentUser().setUserProfilePhotoURL(String.valueOf(filePath));
+                            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                            Picasso.get().load(uri).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), "Failed to write!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 

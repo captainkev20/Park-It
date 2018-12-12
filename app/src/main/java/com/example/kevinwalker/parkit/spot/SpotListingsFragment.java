@@ -10,6 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -97,7 +99,13 @@ public class SpotListingsFragment extends Fragment {
     @Override
     public void onResume(){
         super.onResume();
-        mListener.setFabVisibility(View.VISIBLE);
+
+        // TODO: Review with Hollis and determine if best way to handle this
+        NavDrawer navDrawer = new NavDrawer();
+        if (navDrawer.getCurrentFragmentTag().equals("spotListingFragment")) {
+            mListener.setFabVisibility(View.VISIBLE);
+        }
+
     }
 
     @Override

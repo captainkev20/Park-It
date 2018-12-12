@@ -10,6 +10,7 @@ public class User {
     private String firstName = "";
     private String lastName = "";
     private String userUUID = "";
+    private String userProfilePhotoURL = "";
     private String userEmail = "";
     private String userPhone = "";
     private float userRating = 0;
@@ -83,6 +84,10 @@ public class User {
     public void setUserUUID(String userUUID) {
         this.userUUID = userUUID;
     }
+
+    public String getUserProfilePhotoURL() { return userProfilePhotoURL; }
+
+    public void setUserProfilePhotoURL(String userProfilePhotoURL) { this.userProfilePhotoURL = userProfilePhotoURL; }
 
     public String getUserPhone() { return userPhone; }
 

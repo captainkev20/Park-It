@@ -423,6 +423,16 @@ public class NavDrawer extends AppCompatActivity
 
     }
 
+    // Needed to be able to determine current fragment and show/hide add spot button accordingly
+    public String getCurrentFragmentTag() {
+        return currentFragmentTAG;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+    }
+
     @Override
     public void onUserUpdated(User user) {
         isUserInitialized = true;
