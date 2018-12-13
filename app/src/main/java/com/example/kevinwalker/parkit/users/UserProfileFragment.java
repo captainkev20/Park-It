@@ -180,7 +180,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     }
 
     // TODO: Review with Hollis and determine if this is best way to handle
-    private void getUserProfilePhotoFromFirebase(StorageReference userProfileReference) {
+    private void getUserProfilePhotoFromFirebase(StorageReference filePath) {
         filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
