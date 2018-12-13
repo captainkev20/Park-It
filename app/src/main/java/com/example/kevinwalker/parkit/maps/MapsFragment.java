@@ -424,6 +424,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             map = googleMap;
             map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
             setMyLocationEnabled();
+            animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
         }
 
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {

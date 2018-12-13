@@ -19,9 +19,9 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundLayerName" value="ic_launcher_background" />
-                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/if_menu-alt_134216.png" />
+                                      <entry key="foregroundImage" value="$USER_HOME$/Downloads/placeholder_profile_pic.jpg" />
                                       <entry key="foregroundLayerName" value="ic_launcher_foreground" />
-                                      <entry key="outputName" value="ic_hamburger_icon" />
+                                      <entry key="outputName" value="ic_placeholder_profile_pic" />
                                     </map>
                                   </option>
                                 </PersistentState>
