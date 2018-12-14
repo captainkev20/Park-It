@@ -94,6 +94,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         navDrawer = (NavDrawer) getActivity();
         userProfileReference = FirebaseStorage.getInstance().getReference();
         filePath = userProfileReference.child("UserProfilePhotos/").child(getFirebaseUser().getUid() + "_profile_picture.png");
+
     }
 
     @Override
@@ -103,7 +104,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
         //updateUI();
 
-        getUserProfilePhotoFromFirebase(filePath);
+        FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
 
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
@@ -136,7 +137,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum);
 
                 FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
-                getUserProfilePhotoFromFirebase(filePath);
+                FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
                 updateUI();
 
                 profile_view_switcher.showPrevious();
@@ -179,21 +180,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         return dest;
     }
 
-    // TODO: Review with Hollis and determine if this is best way to handle
-    private void getUserProfilePhotoFromFirebase(StorageReference filePath) {
-        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.get().load(uri.toString()).centerCrop().resize(128, 140).rotate(90).into(image_logo);
-                Picasso.get().load(uri.toString()).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-            }
-        });
-    }
-
     private void updateUI() {
         txt_first_name.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
         txt_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
@@ -202,6 +188,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         et_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
         et_last_name2.setText(FirestoreHelper.getInstance().getCurrentUser().getLastName());
         et_first_name2.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
+    }
+
+    public void updateUserProfilePicture(Uri filePath) {
+        Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
+        Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(image_logo);
     }
 
     private void dispatchTakePictureIntent() {

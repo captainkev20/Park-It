@@ -1,9 +1,9 @@
 package com.example.kevinwalker.parkit.utils;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
@@ -22,6 +22,8 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -38,6 +40,7 @@ public class FirestoreHelper {
     private static DocumentReference userDocument;
     private static DocumentReference userSpotDocument;
     private static FirestoreHelper instance;
+    private static StorageReference filePath;
     ArrayList<Spot> allSpots = new ArrayList<>();
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
@@ -157,6 +160,29 @@ public class FirestoreHelper {
                 });
     }
 
+
+    // TODO: Review with Hollis and determine if this is best way to handle
+    public StorageReference getUserProfilePhotoFromFirebase() {
+        filePath = FirebaseStorage.getInstance().getReference().child("UserProfilePhotos/").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
+        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.d(TAG, "Image successfully retrieved!");
+
+                mListener.profilePictureUpdated(uri);
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Image failed to retrieve!");
+            }
+        });
+
+        return filePath;
+
+    }
+
     public ArrayList<Spot> getAllSpots() {
         FirebaseFirestore.getInstance().collection("spots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -194,5 +220,6 @@ public class FirestoreHelper {
     public interface OnDataUpdated {
         void onUserUpdated(User user);
         void onAllSpotsUpdated(ArrayList<Spot> spots);
+        void profilePictureUpdated(Uri filePath);
     }
 }

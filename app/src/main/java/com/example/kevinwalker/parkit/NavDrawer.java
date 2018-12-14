@@ -21,6 +21,7 @@ import android.widget.ProgressBar;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.example.kevinwalker.parkit.authentication.Login;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
@@ -36,6 +37,7 @@ import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 
@@ -117,6 +119,11 @@ public class NavDrawer extends AppCompatActivity
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        //View navHeader = navigationView.getHeaderView(0);
+        //CircleImageView navHeaderProfilePicture = navHeader.findViewById(R.id.image_logo);
+
+
 
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
@@ -231,6 +238,7 @@ public class NavDrawer extends AppCompatActivity
         if (id == R.id.action_log_off) {
             showLogOffAlertDialog();
             FirebaseAuth.getInstance().signOut();
+            FirestoreHelper.logOff();
             Intent intent = new Intent(this, Login.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(new Intent(NavDrawer.this, Login.class));
@@ -421,6 +429,11 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void userUpdated(User user) {
 
+    }
+
+    @Override
+    public void profilePictureUpdated(Uri filePath) {
+        userProfileFragment.updateUserProfilePicture(filePath);
     }
 
     // Needed to be able to determine current fragment and show/hide add spot button accordingly
