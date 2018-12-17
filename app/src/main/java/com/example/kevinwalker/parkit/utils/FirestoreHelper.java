@@ -103,15 +103,16 @@ public class FirestoreHelper {
                     mListener.onUserUpdated(currentUser);
 
                 } else {
-                    // TODO: Why would we merge if the snapshot does not exist?
+                    // TODO: Ask Hollis why would we merge if the snapshot does not exist?
                     mergeCurrentUserWithFirestore();
                 }
             }
         });
     }
 
+    // TODO: Ask hollis why this does not work; it writes blank users once I log out.
     public static void logOff() {
-        currentUser = new User();
+        //currentUser = new User();
     }
 
     public void initializeFirestoreSpot() {
