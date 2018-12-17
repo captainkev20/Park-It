@@ -414,6 +414,7 @@ public class NavDrawer extends AppCompatActivity
         } else {
             spotListingsFragment = new SpotListingsFragment();
         }
+        setFabVisibility(View.VISIBLE);
         setCurrentFragment(spotListingsFragment);
     }
 
