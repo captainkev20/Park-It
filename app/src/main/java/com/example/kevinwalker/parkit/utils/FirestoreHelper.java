@@ -181,7 +181,26 @@ public class FirestoreHelper {
         });
 
         return filePath;
+    }
 
+    public StorageReference getUserNavProfileHeaderFromFirebase() {
+        filePath = FirebaseStorage.getInstance().getReference().child("UserProfilePhotos/").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
+        filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Log.d(TAG, "Image successfully retrieved!");
+
+                mListener.navHeaderProfilePictureUpdated(uri);
+            }
+
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Image failed to retrieve!");
+            }
+        });
+
+        return filePath;
     }
 
     public ArrayList<Spot> getAllSpots() {
@@ -222,5 +241,6 @@ public class FirestoreHelper {
         void onUserUpdated(User user);
         void onAllSpotsUpdated(ArrayList<Spot> spots);
         void profilePictureUpdated(Uri filePath);
+        void navHeaderProfilePictureUpdated(Uri filePath);
     }
 }

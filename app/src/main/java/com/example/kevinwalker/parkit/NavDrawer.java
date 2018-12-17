@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -56,6 +57,7 @@ public class NavDrawer extends AppCompatActivity
     FloatingActionButton addSpotFloatingActionButton;
     @BindView(R.id.nav_progress_bar)
     ProgressBar navProgressBar;
+    CircleImageView navHeaderProfilePicture;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FrameLayout container;
@@ -87,6 +89,7 @@ public class NavDrawer extends AppCompatActivity
 
         FirestoreHelper.getInstance(this).initializeFirestore();
         FirestoreHelper.getInstance(this).initializeFirestoreSpot();
+        FirestoreHelper.getInstance(this).getUserNavProfileHeaderFromFirebase();
 
         setContentView(R.layout.activity_nav_drawer);
 
@@ -120,10 +123,8 @@ public class NavDrawer extends AppCompatActivity
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        //View navHeader = navigationView.getHeaderView(0);
-        //CircleImageView navHeaderProfilePicture = navHeader.findViewById(R.id.image_logo);
-
-
+        View navHeader = navigationView.getHeaderView(0);
+        navHeaderProfilePicture = navHeader.findViewById(R.id.image_logo);
 
         navigationView.setItemTextColor(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
@@ -427,6 +428,9 @@ public class NavDrawer extends AppCompatActivity
         return userExists;
     }
 
+    private void updateNavDrawerHeaderProfilePicture() {
+    }
+
     @Override
     public void userUpdated(User user) {
 
@@ -435,6 +439,11 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void profilePictureUpdated(Uri filePath) {
         userProfileFragment.updateUserProfilePicture(filePath);
+    }
+
+    @Override
+    public void navHeaderProfilePictureUpdated(Uri filePath) {
+        Picasso.get().load(filePath).centerCrop().resize(145,125).rotate(90).into(navHeaderProfilePicture);
     }
 
     // Needed to be able to determine current fragment and show/hide add spot button accordingly
