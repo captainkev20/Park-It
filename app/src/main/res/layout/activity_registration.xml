@@ -6,118 +6,120 @@
     android:layout_height="match_parent"
     tools:context="com.example.kevinwalker.parkit.authentication.Registration">
 
-    <TextView
-        android:id="@+id/txt_username"
-        android:layout_width="wrap_content"
-        android:layout_height="21dp"
-        android:layout_marginBottom="8dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout1"
+        style="@style/TextLabel"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/txt_enter_email"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="100dp"
+        android:textColorHint="@color/colorPrimary"
+        android:theme="@style/TextLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.09"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.21" />
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
 
-    <EditText
-        android:id="@+id/et_username"
-        android:layout_width="331dp"
-        android:layout_height="51dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:hint="@string/et_enter_new_email"
-        android:inputType="textEmailAddress"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.263" />
+        <EditText
+            android:id="@+id/et_username"
+            android:layout_width="311dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:textAlignment="textStart"
+            android:hint="@string/et_enter_new_email"
+            android:inputType="textEmailAddress"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.263" />
 
-    <TextView
-        android:id="@+id/txt_password"
-        android:layout_width="wrap_content"
-        android:layout_height="21dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/password"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.097"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.347" />
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="332dp"
-        android:layout_height="43dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:hint="@string/et_enter_new_password"
-        android:inputType="textPassword"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.496"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.406" />
+    </android.support.design.widget.TextInputLayout>
 
-    <TextView
-        android:id="@+id/txt_confirm_password"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginBottom="8dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout2"
+        style="@style/TextLabel"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="@string/confirm_password"
-        android:textColor="@color/colorPrimary"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColorHint="@color/colorPrimary"
+        android:theme="@style/TextLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.117"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.481" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout1"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
 
-    <EditText
-        android:id="@+id/et_confirm_password"
-        android:layout_width="330dp"
-        android:layout_height="50dp"
-        android:layout_marginBottom="8dp"
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="332dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:textAlignment="textStart"
+            android:hint="@string/et_enter_new_password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.496"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.406" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout3"
+        style="@style/TextLabel"
+        android:layout_width="350dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:hint="@string/et_confirm_password"
-        android:inputType="textPassword"
-        android:textAlignment="center"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:textColorHint="@color/colorPrimary"
+        android:theme="@style/TextLabel"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.492"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.548" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout2"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary">
+
+        <EditText
+            android:id="@+id/et_confirm_password"
+            android:layout_width="330dp"
+            android:layout_height="52dp"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:ems="10"
+            android:textAlignment="textStart"
+            android:hint="@string/et_confirm_password"
+            android:inputType="textPassword"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.492"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.548" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+
 
     <Button
         android:id="@+id/btn_register"
@@ -127,9 +129,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/register_button"
+        android:background="@drawable/register_create_account_button"
         android:fontFamily="@font/roboto"
-        android:text="@string/registration_register"
+        android:text="@string/registration_create"
         android:textColor="@android:color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -98,6 +98,7 @@
     <string name="login_username_empty">Your username is blank</string>
     <string name="login_password_empty">Your password field is blank</string>
     <string name="registration_register">Register</string>
+    <string name="registration_create">Create Account!</string>
     <string name="registration_success">You are now registered</string>
     <string name="registration_failure">We\'re sorry but an error occurred during registration...</string>
     <string name="registration_password_mismatch">Your passwords do not match</string>
