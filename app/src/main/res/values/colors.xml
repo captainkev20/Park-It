@@ -8,4 +8,6 @@
     <color name="colorStatusBar">#15d9a3</color>
     <color name="colorDisabledLoginButton">#D3D3D3</color>
     <color name="colorAddSpotListingButton">#FFFFFF</color>
+    <color name="colorWelcomeMessage">#008ee5</color>
+    <color name="colorRegisterButton">#008ee5</color>
 </resources>

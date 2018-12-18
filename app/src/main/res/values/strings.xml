@@ -80,8 +80,8 @@
     <string name="btn_cancel">CANCEL </string>
     <string name="btn_user_cars_">MY CARS</string>
     <string name="go_back">Go Back</string>
-    <string name="et_email_hint">enter your email...</string>
-    <string name="et_password_hint">******</string>
+    <string name="et_email_hint">E-mail</string>
+    <string name="et_password_hint">Password</string>
     <string name="tv_homepage_welcome">Welcome to HomePage</string>
     <string name="onCreate">Hello from onCreate()!</string>
     <string name="onStart">Hello from onStart()!</string>

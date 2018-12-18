@@ -13,7 +13,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import io.reactivex.*;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
@@ -24,7 +23,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jakewharton.rxbinding2.widget.RxTextView;
 
-import java.util.Observable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,6 +36,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
 
     private EditText et_email;
     private EditText et_password;
+    private Button btn_register;
 
     private FirebaseAuth mAuth;
 
@@ -64,19 +63,20 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         // Find our Views so the corresponding objects we've declared can be inflated
         et_email = findViewById(R.id.et_phone_number);
         et_password = findViewById(R.id.et_password);
+        btn_register = findViewById(R.id.btn_register);
         btn_login = findViewById(R.id.btn_login);
         txt_forgot_password = findViewById(R.id.txt_forgot_password);
-        txt_register = findViewById(R.id.txt_register);
 
         // Attach "this" OnClickListener - the Activity's implementation of View.OnClickListener
         et_email.setOnClickListener(this);
         et_password.setOnClickListener(this);
+        btn_register.setOnClickListener(this);
         btn_login.setOnClickListener(this);
         txt_forgot_password.setOnClickListener(this);
-        txt_register.setOnClickListener(this);
         constraintLayout.setOnClickListener(this);
 
         btn_login.setEnabled(false);
+        btn_register.setEnabled(true);
 
         io.reactivex.Observable<CharSequence> loginObservable = RxTextView.textChanges(et_email);
         loginObservable
@@ -228,7 +228,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
                 Intent forgotPassword = new Intent(getApplicationContext(), ForgotPassword.class);
                 startActivity(forgotPassword);
                 break;
-            case R.id.txt_register:
+            case R.id.btn_register:
                 startActivity(new Intent(getApplicationContext(), Registration.class));
                 break;
             case R.id.constraint_layout:

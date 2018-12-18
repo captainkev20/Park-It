@@ -138,6 +138,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
                 FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
                 FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
+                FirestoreHelper.getInstance().getUserNavProfileHeaderFromFirebase();
                 updateUI();
 
                 profile_view_switcher.showPrevious();

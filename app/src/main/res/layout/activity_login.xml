@@ -8,41 +8,80 @@
     android:layout_height="match_parent"
     tools:context="com.example.kevinwalker.parkit.authentication.Login">
 
-    <EditText
-        android:id="@+id/et_phone_number"
-        android:layout_width="311dp"
-        android:layout_height="52dp"
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout5"
+        android:layout_width="308dp"
+        style="@style/TextLabel"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
+        android:textColorHint="@color/colorPrimary"
+        android:theme="@style/TextLabel"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:fontFamily="@font/roboto"
-        android:hint="@string/et_email_hint"
-        android:inputType="textEmailAddress"
-        android:textAlignment="center"
+        android:layout_marginTop="228dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.356"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_park_it" />
+        app:layout_constraintTop_toTopOf="parent">
 
-    <EditText
-        android:id="@+id/et_password"
-        android:layout_width="306dp"
-        android:layout_height="52dp"
+        <EditText
+            android:id="@+id/et_phone_number"
+            android:layout_width="311dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="100dp"
+            android:ems="10"
+            android:fontFamily="@font/roboto"
+            android:hint="@string/et_email_hint"
+            android:inputType="textEmailAddress"
+            android:textAlignment="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_park_it" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/textInputLayout3"
+        style="@style/TextLabel"
+        android:layout_width="308dp"
+        android:layout_height="0dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="176dp"
-        android:background="@drawable/border"
-        android:ems="10"
-        android:fontFamily="@font/roboto"
-        android:hint="@string/et_password_hint"
-        android:imeOptions="actionDone"
-        android:inputType="textPassword"
-        android:textAlignment="center"
+        android:layout_marginTop="8dp"
+        android:textColorHint="@color/colorPrimary"
+        android:theme="@style/TextLabel"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/colorPrimary"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.494"
+        app:layout_constraintHorizontal_bias="0.366"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txt_park_it" />
+        app:layout_constraintTop_toBottomOf="@+id/textInputLayout5">
+
+        <EditText
+            android:id="@+id/et_password"
+            android:layout_width="306dp"
+            android:layout_height="52dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="176dp"
+            android:ems="10"
+            android:fontFamily="@font/roboto"
+            android:hint="@string/et_password_hint"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:textAlignment="textStart"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.494"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/txt_park_it" />
+
+
+    </android.support.design.widget.TextInputLayout>
+
+
+
 
     <Button
         android:id="@+id/btn_login"
@@ -76,17 +115,20 @@
         app:layout_constraintHorizontal_bias="0.882"
         app:layout_constraintStart_toStartOf="parent" />
 
-    <TextView
-        android:id="@+id/txt_register"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/btn_register"
+        android:layout_width="312dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/register_button_enabled"
+        android:enabled="false"
+        android:fontFamily="@font/roboto"
         android:text="@string/registration_register"
-        android:textColor="@android:color/holo_blue_light"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/btn_login" />
 
@@ -119,6 +161,7 @@
         android:fontFamily="@font/roboto_thin_italic"
         android:text="@string/park_it_welcome_message"
         android:textAlignment="center"
+        android:textColor="@color/colorWelcomeMessage"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.495"
