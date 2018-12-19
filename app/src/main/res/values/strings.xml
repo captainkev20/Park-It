@@ -41,6 +41,7 @@
     <string name="phone_number">Phone Number: </string>
     <string name="edit_profile">EDIT</string>
     <string name="save">SAVE</string>
+    <string name="cancel_user_edit_profile">CANCEL</string>
     <string name="email">E-mail: </string>
     <string name="enter_first_Name">Enter First Name</string>
     <string name="enter_last_name">Enter Last Name</string>

@@ -55,8 +55,7 @@ public class NavDrawer extends AppCompatActivity
 
     @BindView(R.id.add_spot_fab)
     FloatingActionButton addSpotFloatingActionButton;
-    @BindView(R.id.nav_progress_bar)
-    ProgressBar navProgressBar;
+    @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
     CircleImageView navHeaderProfilePicture;
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -456,6 +455,7 @@ public class NavDrawer extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    // TODO: Ask Hollis why isUserInitalized is creating problem
     @Override
     public void onUserUpdated(User user) {
         isUserInitialized = true;

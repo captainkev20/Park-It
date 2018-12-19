@@ -61,6 +61,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.et_first_name2) EditText et_first_name2;
     @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
     @BindView(R.id.txt_edit_user_profile) TextView txt_edit_user_profile;
+    @BindView(R.id.txt_cancel_edit_profile) TextView txt_cancel_edit_profile;
     @BindView(R.id.txt_save_profile) TextView txt_save_profile;
     @BindView(R.id.edit_profile_card_view) CardView edit_profile_card_view;
     @BindView(R.id.main_profile_card_view) CardView main_profile_card_view;
@@ -109,6 +110,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         txt_edit_user_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
         edit_image_logo.setOnClickListener(this);
+        txt_cancel_edit_profile.setOnClickListener(this);
 
         save_user_progress_bar.setVisibility(View.GONE);
 
@@ -146,6 +148,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
             case R.id.edit_image_logo:
                 dispatchTakePictureIntent();
+                break;
+
+            case R.id.txt_cancel_edit_profile:
+                profile_view_switcher.showPrevious();
         }
     }
 

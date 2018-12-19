@@ -56,7 +56,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class MapsFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback, View.OnClickListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener, LocationListener {
+public class MapsFragment extends android.support.v4.app.Fragment implements OnMapReadyCallback,
+        View.OnClickListener,
+        GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener,
+        GoogleMap.OnMarkerClickListener,
+        LocationListener {
 
     private static final String TAG = MapsFragment.class.getName();
     private static final float DEFAULT_ZOOM = 9f;
@@ -139,13 +144,13 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         btn_find_user_current_location = getView().findViewById(R.id.btn_find_user_current_location);
         btn_find_user_current_location.setOnClickListener(this);
         mapView = mView.findViewById(R.id.map);
+        btn_find_user_current_location.setEnabled(true);
 
         if (mapView != null) {
             initMap(mapView);
         }
 
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
-            btn_find_user_current_location.setEnabled(true);
             btn_park.setEnabled(false); //Do not show
             btn_leave.setEnabled(true); // Show
         } else {
@@ -217,7 +222,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     setUserParkedLocation();
                     btn_park.setEnabled(false);
                     btn_leave.setEnabled(true);
-                    btn_find_user_current_location.setEnabled(true);
                 }
                 break;
 
@@ -254,7 +258,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
 
     private void animateCamera(CustomLocation customLocation, float zoom, String title) {
         if (isCameraAnimationFinished) {
-            isCameraAnimationFinished = false;
             Log.d(TAG, "Moving camera to: " + "Lat: " + customLocation.getLatitude() + " Lon: " + customLocation.getLongitude());
             GoogleMap.CancelableCallback mapsCancellableCallback = new GoogleMap.CancelableCallback() {
                 @Override
@@ -274,6 +277,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                     .tilt(40)                   // Sets the tilt of the camera to 30 degrees
                     .build();                   // Creates a CameraPosition from the builder
             map.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition), mapsCancellableCallback);
+        } else {
+            isCameraAnimationFinished = false;
         }
     }
 
@@ -430,12 +435,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
             btn_leave.setEnabled(true);
             btn_park.setEnabled(false);
-            btn_find_user_current_location.setEnabled(true);
             placeMarkerOnMap(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), currentAddress, true);
         } else {
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
-            btn_find_user_current_location.setEnabled(true);
         }
 
         // Set the button to be enabled when the map is ready
@@ -506,7 +509,6 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         userMarker.remove();
         btn_leave.setEnabled(false);
         btn_park.setEnabled(true);
-        btn_find_user_current_location.setEnabled(true); // TODO: Change to a "current location" button
         mapsCallBack.parkedLocationUpdate(new CustomLocation(), false);
     }
 
