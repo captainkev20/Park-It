@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,8 +19,10 @@ import butterknife.ButterKnife;
 
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
+import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
+import com.example.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.CollectionReference;
@@ -33,11 +36,15 @@ import java.util.UUID;
 public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener {
 
     private static final String TAG = NewSpotFragment.class.getName();
+    private CustomLocation spotLocation = new CustomLocation();
+    private LocationHelper locationHelper;
+    private boolean isSpotLocationSet = false;
 
     @BindView(R.id.et_spot_name) EditText et_spot_name;
     @BindView(R.id.et_hourly_rate) EditText et_hourly_rate;
     @BindView(R.id.txt_save_spot) TextView txt_save_spot;
     @BindView(R.id.layout_et_spot_name) TextInputLayout layout_et_spot_name;
+    @BindView(R.id.btn_spot_location) Button btn_spot_location;
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     CollectionReference spotCollectionReference;
@@ -81,6 +88,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         }
 
         FirestoreHelper.getInstance().initializeFirestoreSpot();
+        locationHelper = new LocationHelper(this.getContext());
 
         spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
 
@@ -115,6 +123,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         ButterKnife.bind(this, mView);
 
         txt_save_spot.setOnClickListener(this);
+        btn_spot_location.setOnClickListener(this);
 
         return mView;
     }
@@ -129,12 +138,22 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
                 userSpot.setHourlyRate(spotHourlyRate);
                 userSpot.setName(spotNameString);
+                userSpot.setLatitude(spotLocation.getLatitude());
+                userSpot.setLongitude(spotLocation.getLongitude());
 
-                mergeSpotWithFirebase(userSpot);
-
-                newSpotCallback.navigateToSpotListings();
+                if (isSpotLocationSet) {
+                    mergeSpotWithFirebase(userSpot);
+                    newSpotCallback.navigateToSpotListings();
+                } else {
+                    Toast.makeText(getActivity(), "Sorry, you must specify your location when creating spot", Toast.LENGTH_SHORT).show();
+                }
 
                 break;
+
+            case R.id.btn_spot_location:
+                spotLocation = locationHelper.getCurrentLocation();
+                isSpotLocationSet = true;
+
         }
     }
 

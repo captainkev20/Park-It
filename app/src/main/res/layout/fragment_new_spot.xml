@@ -103,6 +103,7 @@
                     android:layout_marginStart="44dp"
                     android:layout_marginTop="508dp"
                     android:clickable="true"
+                    android:focusableInTouchMode="true"
                     android:focusable="auto"
                     android:text="@string/save"
                     android:textColor="@android:color/holo_blue_light"
@@ -112,12 +113,12 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <Button
-                    android:id="@+id/button"
+                    android:id="@+id/btn_spot_location"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/btn_spot_location"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.039"
