@@ -10,14 +10,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
@@ -33,7 +34,7 @@ import com.google.firebase.firestore.SetOptions;
 import java.util.UUID;
 
 
-public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener {
+public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
 
     private static final String TAG = NewSpotFragment.class.getName();
     private CustomLocation spotLocation = new CustomLocation();
@@ -42,7 +43,8 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
     @BindView(R.id.et_spot_name) EditText et_spot_name;
     @BindView(R.id.et_hourly_rate) EditText et_hourly_rate;
-    @BindView(R.id.txt_save_spot) TextView txt_save_spot;
+    @BindView(R.id.btn_save_spot) Button btn_save_spot;
+    @BindView(R.id.spinner_spot_size) Spinner spinner_spot_size;
     @BindView(R.id.layout_et_spot_name) TextInputLayout layout_et_spot_name;
     @BindView(R.id.btn_spot_location) Button btn_spot_location;
 
@@ -122,7 +124,14 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
         ButterKnife.bind(this, mView);
 
-        txt_save_spot.setOnClickListener(this);
+        // TODO: Review with Hollis
+        ArrayAdapter<CharSequence> spotSizeAdapter = ArrayAdapter.createFromResource(getActivity(), R.array.spinner_spot_size_items,
+                android.R.layout.simple_spinner_item);
+        spotSizeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner_spot_size.setAdapter(spotSizeAdapter);
+        spinner_spot_size.setOnItemSelectedListener(this);
+
+        btn_save_spot.setOnClickListener(this);
         btn_spot_location.setOnClickListener(this);
 
         return mView;
@@ -131,7 +140,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txt_save_spot:
+            case R.id.btn_save_spot:
 
                 String spotNameString = et_spot_name.getText().toString();
                 int spotHourlyRate = Integer.parseInt(et_hourly_rate.getText().toString());
@@ -140,7 +149,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                 userSpot.setName(spotNameString);
                 userSpot.setLatitude(spotLocation.getLatitude());
                 userSpot.setLongitude(spotLocation.getLongitude());
+                userSpot.setSpotSize(spinner_spot_size.getSelectedItem().toString());
 
+                // TODO: Review with Hollis
                 if (isSpotLocationSet) {
                     mergeSpotWithFirebase(userSpot);
                     newSpotCallback.navigateToSpotListings();
@@ -193,6 +204,17 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 
     public interface NewSpotCallback {

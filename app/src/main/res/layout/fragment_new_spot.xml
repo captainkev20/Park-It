@@ -69,9 +69,9 @@
                     android:id="@+id/textInputLayout3"
                     android:layout_width="244dp"
                     android:layout_height="57dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="16dp"
-                    android:layout_marginTop="152dp"
+                    android:layout_marginTop="72dp"
+                    android:layout_marginEnd="8dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
@@ -81,9 +81,9 @@
                         android:id="@+id/et_hourly_rate"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginEnd="8dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
+                        android:layout_marginEnd="8dp"
                         android:backgroundTint="@color/colorPrimary"
                         android:digits="0123456789"
                         android:ems="10"
@@ -96,26 +96,10 @@
 
                 </android.support.design.widget.TextInputLayout>
 
-                <TextView
-                    android:id="@+id/txt_save_spot"
-                    android:layout_width="49dp"
-                    android:layout_height="28dp"
-                    android:layout_marginStart="44dp"
-                    android:layout_marginTop="508dp"
-                    android:clickable="true"
-                    android:focusableInTouchMode="true"
-                    android:focusable="auto"
-                    android:text="@string/save"
-                    android:textColor="@android:color/holo_blue_light"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
                 <Button
                     android:id="@+id/btn_spot_location"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="51dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="8dp"
                     android:layout_marginEnd="8dp"
@@ -129,13 +113,43 @@
                     android:id="@+id/textView"
                     android:layout_width="254dp"
                     android:layout_height="54dp"
-                    android:layout_marginEnd="8dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="20dp"
+                    android:layout_marginTop="88dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/info_spot_location"
                     android:textColor="@color/colorPrimary"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.256"
+                    app:layout_constraintHorizontal_bias="0.166"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/layout_et_spot_name" />
+
+                <Button
+                    android:id="@+id/btn_save_spot"
+                    android:layout_width="311dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="448dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/register_button_enabled"
+                    android:enabled="true"
+                    android:fontFamily="@font/roboto"
+                    android:text="@string/save"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.619"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <Spinner
+                    android:id="@+id/spinner_spot_size"
+                    android:layout_width="289dp"
+                    android:layout_height="55dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.302"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/layout_et_spot_name" />
 

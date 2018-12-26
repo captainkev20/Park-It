@@ -11,7 +11,7 @@ public class Spot {
     private String ownerUUID = "";
     private String spotUUID = "";
     private boolean occupied = false;
-    private SpotSize spotSize = SpotSize.STANDARD;
+    private String spotSize = "STANDARD";
     private Surface surface = Surface.ASPHALT;
     private Ownership ownership = Ownership.SELF;
     private int hourlyRate = 0;
@@ -49,11 +49,11 @@ public class Spot {
 
     public void setSpotUUID(String spotUUID) { this.spotUUID = spotUUID; }
 
-    public SpotSize getSpotSize() {
+    public String getSpotSize() {
         return spotSize;
     }
 
-    public void setSpotSize(SpotSize spotSize) {
+    public void setSpotSize(String spotSize) {
         this.spotSize = spotSize;
     }
 

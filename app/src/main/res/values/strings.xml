@@ -51,6 +51,15 @@
     <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
 
+    <string-array name="spinner_spot_size_items">
+        <item>COMPACT</item>
+        <item>STANDARD</item>
+        <item>TRUCK</item>
+        <item>RV</item>
+        <item>SEMI</item>
+
+    </string-array>
+
 
     <string name="name_on_card">Name on Card: </string>
     <string name="card_num">Card Number: </string>
