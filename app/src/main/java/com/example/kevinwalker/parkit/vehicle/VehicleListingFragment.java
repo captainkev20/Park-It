@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
@@ -94,13 +95,17 @@ public class VehicleListingFragment extends ParentProfileFragment {
     @Override
     public void onResume(){
         super.onResume();
-
+        // TODO: Review with Hollis and determine if best way to handle this
+        NavDrawer navDrawer = new NavDrawer();
+        if (navDrawer.getCurrentFragmentTag().equals("vehicleListingFragmentTag")) {
+            mListener.setVehicleFabVisibility(View.VISIBLE);
+        }
     }
 
     @Override
     public void onPause() {
         super.onPause();
-
+        mListener.setVehicleFabVisibility(View.GONE);
     }
 
     @Override
@@ -127,7 +132,7 @@ public class VehicleListingFragment extends ParentProfileFragment {
 
     public interface VehicleListingsInteraction {
         void onVehicleListingInteraction(Vehicle item);
-        void setFabVisibility(int viewVisibilityConstant);
+        void setVehicleFabVisibility(int viewVisibilityConstant);
     }
 
 }

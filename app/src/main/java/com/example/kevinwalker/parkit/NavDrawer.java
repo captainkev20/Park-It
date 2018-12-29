@@ -123,7 +123,7 @@ public class NavDrawer extends AppCompatActivity
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
-                setFabVisibility(View.GONE);
+                setSpotFabVisibility(View.GONE);
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -131,6 +131,7 @@ public class NavDrawer extends AppCompatActivity
         });
 
         addSpotFloatingActionButton.setVisibility(View.GONE);
+        addVehicleFloatingActionButton.setVisibility(View.GONE);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -215,7 +216,7 @@ public class NavDrawer extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
 
         } else {
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(R.string.map_nav_title);
             switch (currentFragmentTAG) {
                 case userProfileFragmentTag:
@@ -275,7 +276,7 @@ public class NavDrawer extends AppCompatActivity
                 userProfileFragment = new UserProfileFragment();
             }
             setCurrentFragment(userProfileFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -283,7 +284,7 @@ public class NavDrawer extends AppCompatActivity
                 spotListingsFragment = SpotListingsFragment.newInstance(1);
             }
             setCurrentFragment(spotListingsFragment);
-            setFabVisibility(View.VISIBLE);
+            setSpotFabVisibility(View.VISIBLE);
             setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
@@ -291,7 +292,7 @@ public class NavDrawer extends AppCompatActivity
                 mapFragment = new MapsFragment();
             }
             setCurrentFragment(mapFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
@@ -299,7 +300,7 @@ public class NavDrawer extends AppCompatActivity
                 paymentFragment = new PaymentFragment();
             }
             setCurrentFragment(paymentFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_vehicles) {
@@ -307,7 +308,7 @@ public class NavDrawer extends AppCompatActivity
                 vehicleListingFragment = new VehicleListingFragment();
             }
             setCurrentFragment(vehicleListingFragment);
-            setFabVisibility(View.GONE);
+            setVehicleFabVisibility(View.VISIBLE);
             setTitle(getResources().getString(R.string.vehicles_nav_title));
 
         } else if (id == R.id.nav_about) {
@@ -439,8 +440,13 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    public void setFabVisibility(int viewVisibilityConstant) {
+    public void setSpotFabVisibility(int viewVisibilityConstant) {
         addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
+    }
+
+    @Override
+    public void setVehicleFabVisibility(int viewVisibilityConstant) {
+        addVehicleFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
 
     @Override
@@ -455,20 +461,20 @@ public class NavDrawer extends AppCompatActivity
         } else {
             spotListingsFragment = new SpotListingsFragment();
         }
-        setFabVisibility(View.VISIBLE);
+        setSpotFabVisibility(View.VISIBLE);
         setCurrentFragment(spotListingsFragment);
     }
 
     @Override
     public void navigateToVehicleListings() {
-        // Checks fragment state and resets Recycler View to show added spot
+        // Checks fragment state and resets Recycler View to show added vehicle
         if (vehicleListingFragment == null) {
             vehicleListingFragment = new VehicleListingFragment();
             vehicleListingFragment.resetRecyclerView();
         } else {
             vehicleListingFragment = new VehicleListingFragment();
         }
-        setFabVisibility(View.VISIBLE);
+        setVehicleFabVisibility(View.VISIBLE);
         setCurrentFragment(vehicleListingFragment);
     }
 
@@ -540,7 +546,7 @@ public class NavDrawer extends AppCompatActivity
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
-                setFabVisibility(View.GONE);
+                setSpotFabVisibility(View.GONE);
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -549,7 +555,7 @@ public class NavDrawer extends AppCompatActivity
                 if (newVehicleFragment == null) {
                     newVehicleFragment = new NewVehicleFragment();
                 }
-                setFabVisibility(View.GONE);
+                setVehicleFabVisibility(View.GONE);
                 setCurrentFragment(newVehicleFragment);
 
                 setTitle(getResources().getString(R.string.add_new_vehicle));
