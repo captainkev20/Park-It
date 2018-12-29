@@ -10,8 +10,11 @@
     <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
     <string name="vehicle">Vehicle: </string>
+    <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
+    <string name="et_vehicle_name">Enter Vehicle Name</string>
+    <string name="et_license">Enter License</string>
     <string name="txt_enter_email">Email: </string>
     <string name="et_enter_new_email">Enter Email</string>
     <string name="login_enter_first_name">First Name</string>
@@ -32,7 +35,7 @@
     <string name="ic_email_envelope">\ue945</string>
 
     <!--// Save Profile Pic //-->
-    <string name="change_profile_pic">Are you sure you want to change your profile picture?</string>
+    <string name="change_profile_pic">Are you sure you want to change your profile vehiclePicture?</string>
     <string name="positive_change_profile_pic">YES</string>
 
     <string name="score_placeholder">000099</string>
@@ -60,6 +63,11 @@
 
     </string-array>
 
+    <string name="vehicle_name">Vehicle Name</string>
+    <string name="vehicle_license_plate">License Plate</string>
+    <string name="vehicle_make">Make</string>
+
+
 
     <string name="name_on_card">Name on Card: </string>
     <string name="card_num">Card Number: </string>
@@ -85,6 +93,7 @@
     <string name="payments_nav_title">Payments </string>
     <string name="settings_nav_title">Settings </string>
     <string name="about_nav_title">About Us </string>
+    <string name="vehicles_nav_title">Vehicles</string>
 
 
     <string name="btn_save">SAVE </string>

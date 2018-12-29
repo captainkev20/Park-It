@@ -32,4 +32,14 @@
         android:tint="@color/colorAddSpotListingButton"
         app:backgroundTint="@color/colorPrimary" />
 
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_vehicle_fab"
+        android:layout_width="61dp"
+        android:layout_height="54dp"
+        android:layout_gravity="bottom|end"
+        android:layout_margin="@dimen/fab_margin"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@color/colorAddSpotListingButton"
+        app:backgroundTint="@color/colorPrimary" />
+
 </android.support.design.widget.CoordinatorLayout>

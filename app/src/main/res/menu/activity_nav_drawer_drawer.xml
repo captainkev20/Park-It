@@ -21,9 +21,9 @@
             android:title="Payments"
             android:icon="@drawable/ic_payments"/>
         <item
-            android:id="@+id/nav_settings"
-            android:title="Settings"
-            android:icon="@drawable/ic_settings"/>
+            android:id="@+id/nav_vehicles"
+            android:title="Vehicles"
+            android:icon="@drawable/ic_vehicle"/>
         <item
             android:id="@+id/nav_about"
             android:title="About"

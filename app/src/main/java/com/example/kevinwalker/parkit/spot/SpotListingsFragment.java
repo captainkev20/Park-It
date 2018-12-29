@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import butterknife.BindView;

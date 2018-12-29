@@ -2,47 +2,61 @@ package com.example.kevinwalker.parkit.vehicle;
 
 import android.widget.ImageView;
 
-/**
- * Created by kevinwalker on 3/19/18.
- */
-
 public class Vehicle {
 
-    private String make;
-    private String model;
-    private Short year;
-    private ImageView picture;
+    private String vehicleMake = "";
+    private String vehicleModel = "";
+    private String vehicleName = "";
+    private String vehicleLicensePlate;
+    private String vehicleUUID = "";
+    private int vehicleYear = 0;
+    private ImageView vehiclePicture;
 
-    public String getMake() {
-        return make;
+    public Vehicle(){}
+
+    public String getVehicleMake() {
+        return vehicleMake;
     }
 
-    public void setMake(String make) {
-        this.make = make;
+    public void setVehicleMake(String vehicleMake) {
+        this.vehicleMake = vehicleMake;
     }
 
-    public String getModel() {
-        return model;
+    public String getVehicleModel() {
+        return vehicleModel;
     }
 
-    public void setModel(String model) {
-        this.model = model;
+    public void setVehicleModel(String vehicleModel) {
+        this.vehicleModel = vehicleModel;
     }
 
-    public Short getYear() {
-        return year;
+    public int getVehicleYear() {
+        return vehicleYear;
     }
 
-    public void setYear(Short year) {
-        this.year = year;
+    public void setVehicleYear(int vehicleYear) {
+        this.vehicleYear = vehicleYear;
     }
 
-    public ImageView getPicture() {
-        return picture;
+    public ImageView getVehiclePicture() {
+        return vehiclePicture;
     }
 
-    public void setPicture(ImageView picture) {
-        this.picture = picture;
-    }
+    public void setVehiclePicture(ImageView vehiclePicture) {
+        this.vehiclePicture = vehiclePicture; }
+
+    public String getVehicleName() { return vehicleName; }
+
+    public void setVehicleName(String vehicleName) { this.vehicleName = vehicleName; }
+
+    public String getVehicleLicensePlate() { return vehicleLicensePlate; }
+
+    public void setVehicleLicensePlate(String vehicleLicensePlate) {
+        this.vehicleLicensePlate = vehicleLicensePlate; }
+
+    public String getVehicleUUID() { return vehicleUUID; }
+
+    public void setVehicleUUID(String vehicleUUID) { this.vehicleUUID = vehicleUUID; }
+
 
 }
