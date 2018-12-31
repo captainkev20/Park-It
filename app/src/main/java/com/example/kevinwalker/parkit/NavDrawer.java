@@ -140,6 +140,7 @@ public class NavDrawer extends AppCompatActivity
         navHeaderProfilePicture = navHeader.findViewById(R.id.image_logo);
 
         navigationView.setItemTextColor(null);
+        navigationView.setItemIconTintList(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
