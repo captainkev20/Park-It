@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
+import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -27,6 +28,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import java.util.ArrayList;
+import java.util.Map;
 import java.util.UUID;
 
 import butterknife.BindView;
@@ -46,6 +49,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
     private NewVehicleCallback newVehicleCallback;
     private Vehicle userVehicle = new Vehicle();
+    private ArrayList<Vehicle> vehicles = new ArrayList<>();
+    private User currentUser;
 
     private Context mContext;
     private NewVehicleCallback mListener;
@@ -81,6 +86,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         }
 
         FirestoreHelper.getInstance().initializeFirestoreVehicle();
+        currentUser = FirestoreHelper.getInstance().getCurrentUser();
 
         vehicleDocumentReference = firebaseFirestore.collection("vehicles").document(String.valueOf(UUID.randomUUID()));
 
@@ -129,13 +135,19 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                 String vehicleName = et_vehicle_name.getText().toString();
                 String vehicleLicensePlate = et_license.getText().toString();
 
+
+                // TODO: Review with Hollis - creating user/vehicle and adding
                 userVehicle.setVehicleName(vehicleName);
                 userVehicle.setVehicleLicensePlate(vehicleLicensePlate);
+                vehicles.add(0, userVehicle);
 
-                mergeVehicleWithFirebase(userVehicle);
+                currentUser.setVehicles(vehicles);
+
+                FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(currentUser);
                 newVehicleCallback.navigateToVehicleListings();
 
                 break;
+
         }
     }
 
