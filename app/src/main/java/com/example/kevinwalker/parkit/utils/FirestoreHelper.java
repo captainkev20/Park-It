@@ -7,6 +7,7 @@ import android.util.Log;
 
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
+import com.example.kevinwalker.parkit.vehicle.Vehicle;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -33,15 +34,19 @@ public class FirestoreHelper {
 
     private static final String TAG = FirestoreHelper.class.getName();
     private static final String testSpot = "0b38974e-f4b3-4988-83df-9b1b33cf6554";
+    private static final String testVehicle = "86b2a124-e59c-4387-8dff-3a7200957cae";
 
     private static User currentUser = new User();
 
     private static Spot userSpot = new Spot();
+    private static Vehicle userVehicle = new Vehicle();
     private static DocumentReference userDocument;
     private static DocumentReference userSpotDocument;
+    private static DocumentReference userVehicleDocument;
     private static FirestoreHelper instance;
     private static StorageReference filePath;
     ArrayList<Spot> allSpots = new ArrayList<>();
+    ArrayList<Vehicle> allVehicles = new ArrayList<>();
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
     private static FirestoreHelper.OnDataUpdated mListener;
@@ -124,6 +129,19 @@ public class FirestoreHelper {
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
                     userSpot = documentSnapshot.toObject(Spot.class);
+                }
+            }
+        });
+    }
+
+    public void initializeFirestoreVehicle() {
+        userVehicleDocument = firebaseFirestore.collection("vehicles").document(testVehicle);
+
+        userVehicleDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    userVehicle = documentSnapshot.toObject(Vehicle.class);
                 }
             }
         });
@@ -219,6 +237,22 @@ public class FirestoreHelper {
         return allSpots;
     }
 
+    public ArrayList<Vehicle> getAllVehicles() {
+        FirebaseFirestore.getInstance().collection("vehicles").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        allVehicles.add(document.toObject(Vehicle.class));
+                    }
+                    mListener.onAllVehiclesUpdated(allVehicles);
+                }
+            }
+        });
+
+        return allVehicles;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
@@ -228,6 +262,8 @@ public class FirestoreHelper {
     }
 
     public static Spot getUserSpot() { return userSpot; }
+
+    public static Vehicle getUserVehicle() { return userVehicle; }
 
     public DatabaseReference getRef() {
         return ref;
@@ -240,6 +276,7 @@ public class FirestoreHelper {
     public interface OnDataUpdated {
         void onUserUpdated(User user);
         void onAllSpotsUpdated(ArrayList<Spot> spots);
+        void onAllVehiclesUpdated(ArrayList<Vehicle> vehicles);
         void profilePictureUpdated(Uri filePath);
         void navHeaderProfilePictureUpdated(Uri filePath);
     }

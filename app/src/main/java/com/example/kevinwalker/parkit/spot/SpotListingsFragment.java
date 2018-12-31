@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
 import butterknife.BindView;
@@ -103,7 +102,7 @@ public class SpotListingsFragment extends Fragment {
         // TODO: Review with Hollis and determine if best way to handle this
         NavDrawer navDrawer = new NavDrawer();
         if (navDrawer.getCurrentFragmentTag().equals("spotListingFragment")) {
-            mListener.setFabVisibility(View.VISIBLE);
+            mListener.setSpotFabVisibility(View.VISIBLE);
         }
 
     }
@@ -111,7 +110,7 @@ public class SpotListingsFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mListener.setFabVisibility(View.GONE);
+        mListener.setSpotFabVisibility(View.GONE);
     }
 
     @Override
@@ -132,6 +131,6 @@ public class SpotListingsFragment extends Fragment {
 
     public interface SpotListingsInteraction {
         void onSpotListingInteraction(Spot item);
-        void setFabVisibility(int viewVisibilityConstant);
+        void setSpotFabVisibility(int viewVisibilityConstant);
     }
 }

@@ -34,10 +34,12 @@ import com.example.kevinwalker.parkit.spot.SpotListingsFragment;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.users.UserProfileFragment;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
+import com.example.kevinwalker.parkit.vehicle.NewVehicleFragment;
+import com.example.kevinwalker.parkit.vehicle.Vehicle;
+import com.example.kevinwalker.parkit.vehicle.VehicleListingFragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -47,14 +49,18 @@ public class NavDrawer extends AppCompatActivity
         LogOffAlertDialogFragment.AlertDialogFragmentInteractionListener,
         MapsFragment.MapsCallBack,
         SpotListingsFragment.SpotListingsInteraction,
+        VehicleListingFragment.VehicleListingsInteraction,
         NewSpotFragment.NewSpotCallback,
+        NewVehicleFragment.NewVehicleCallback,
         UserProfileFragment.UserProfileCallback,
-        FirestoreHelper.OnDataUpdated {
+        FirestoreHelper.OnDataUpdated, View.OnClickListener {
 
     private static final String TAG = NavDrawer.class.getName();
 
     @BindView(R.id.add_spot_fab)
     FloatingActionButton addSpotFloatingActionButton;
+    @BindView(R.id.add_vehicle_fab)
+    FloatingActionButton addVehicleFloatingActionButton;
     @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
     CircleImageView navHeaderProfilePicture;
     protected DrawerLayout drawer;
@@ -68,13 +74,17 @@ public class NavDrawer extends AppCompatActivity
     private UserProfileFragment userProfileFragment;
     private SpotListingsFragment spotListingsFragment;
     private PaymentFragment paymentFragment;
+    private VehicleListingFragment vehicleListingFragment;
+    private NewVehicleFragment newVehicleFragment;
 
     private String currentFragmentTAG = "";
     private static final String mapFragmentTag = "mapFragmentTag";
     private static final String newSpotFragmentTag = "newSpotFragmentTag";
+    private static final String newVehicleFragmentTag = "newVehicleFragmentTag";
     private static final String userProfileFragmentTag = "userProfileFragmentTag";
     private static final String spotListingFragmentTag = "spotListingFragment";
     private static final String paymentFragmentTag = "paymentFragmentTag";
+    private static final String vehicleListingFragmentTag = "vehicleListingFragmentTag";
 
     private boolean userExists = false;
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
@@ -104,13 +114,16 @@ public class NavDrawer extends AppCompatActivity
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
+        addSpotFloatingActionButton.setOnClickListener(this);
+        addVehicleFloatingActionButton.setOnClickListener(this);
+
         addSpotFloatingActionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
-                setFabVisibility(View.GONE);
+                setSpotFabVisibility(View.GONE);
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -118,6 +131,7 @@ public class NavDrawer extends AppCompatActivity
         });
 
         addSpotFloatingActionButton.setVisibility(View.GONE);
+        addVehicleFloatingActionButton.setVisibility(View.GONE);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -126,6 +140,7 @@ public class NavDrawer extends AppCompatActivity
         navHeaderProfilePicture = navHeader.findViewById(R.id.image_logo);
 
         navigationView.setItemTextColor(null);
+        navigationView.setItemIconTintList(null);
         navigationView.setItemTextAppearance(R.style.MenuTextStyle);
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.colorStatusBar));
@@ -202,7 +217,7 @@ public class NavDrawer extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
 
         } else {
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(R.string.map_nav_title);
             switch (currentFragmentTAG) {
                 case userProfileFragmentTag:
@@ -212,6 +227,9 @@ public class NavDrawer extends AppCompatActivity
                     setCurrentFragment(mapFragment);
                     break;
                 case paymentFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                case vehicleListingFragmentTag:
                     setCurrentFragment(mapFragment);
                     break;
                 default:
@@ -259,7 +277,7 @@ public class NavDrawer extends AppCompatActivity
                 userProfileFragment = new UserProfileFragment();
             }
             setCurrentFragment(userProfileFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -267,7 +285,7 @@ public class NavDrawer extends AppCompatActivity
                 spotListingsFragment = SpotListingsFragment.newInstance(1);
             }
             setCurrentFragment(spotListingsFragment);
-            setFabVisibility(View.VISIBLE);
+            setSpotFabVisibility(View.VISIBLE);
             setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
@@ -275,7 +293,7 @@ public class NavDrawer extends AppCompatActivity
                 mapFragment = new MapsFragment();
             }
             setCurrentFragment(mapFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
@@ -283,11 +301,16 @@ public class NavDrawer extends AppCompatActivity
                 paymentFragment = new PaymentFragment();
             }
             setCurrentFragment(paymentFragment);
-            setFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
-        } else if (id == R.id.nav_settings) {
-            // TODO: Replicate for other nav options
+        } else if (id == R.id.nav_vehicles) {
+            if (vehicleListingFragment == null) {
+                vehicleListingFragment = new VehicleListingFragment();
+            }
+            setCurrentFragment(vehicleListingFragment);
+            setVehicleFabVisibility(View.VISIBLE);
+            setTitle(getResources().getString(R.string.vehicles_nav_title));
 
         } else if (id == R.id.nav_about) {
 
@@ -340,6 +363,12 @@ public class NavDrawer extends AppCompatActivity
             case paymentFragmentTag:
                 fragment = paymentFragment;
                 break;
+            case vehicleListingFragmentTag:
+                fragment = vehicleListingFragment;
+                break;
+            case newVehicleFragmentTag:
+                fragment = newVehicleFragment;
+                break;
             default:
                 fragment = mapFragment;
                 break;
@@ -359,6 +388,10 @@ public class NavDrawer extends AppCompatActivity
             fragmentTag = spotListingFragmentTag;
         } else if (fragment instanceof PaymentFragment) {
             fragmentTag = paymentFragmentTag;
+        } else if (fragment instanceof VehicleListingFragment) {
+            fragmentTag = vehicleListingFragmentTag;
+        } else if (fragment instanceof  NewVehicleFragment) {
+            fragmentTag = newVehicleFragmentTag;
         }
 
         return fragmentTag;
@@ -375,6 +408,10 @@ public class NavDrawer extends AppCompatActivity
             currentFragmentTAG = spotListingFragmentTag;
         } else if (fragment instanceof PaymentFragment) {
             currentFragmentTAG = paymentFragmentTag;
+        } else if (fragment instanceof VehicleListingFragment) {
+            currentFragmentTAG = vehicleListingFragmentTag;
+        } else if (fragment instanceof NewVehicleFragment) {
+            currentFragmentTAG = newVehicleFragmentTag;
         }
     }
 
@@ -397,9 +434,20 @@ public class NavDrawer extends AppCompatActivity
     public void onSpotListingInteraction(Spot item) {
     }
 
+
     @Override
-    public void setFabVisibility(int viewVisibilityConstant) {
+    public void onVehicleListingInteraction(Vehicle item) {
+
+    }
+
+    @Override
+    public void setSpotFabVisibility(int viewVisibilityConstant) {
         addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
+    }
+
+    @Override
+    public void setVehicleFabVisibility(int viewVisibilityConstant) {
+        addVehicleFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
 
     @Override
@@ -414,14 +462,33 @@ public class NavDrawer extends AppCompatActivity
         } else {
             spotListingsFragment = new SpotListingsFragment();
         }
-        setFabVisibility(View.VISIBLE);
+        setSpotFabVisibility(View.VISIBLE);
         setCurrentFragment(spotListingsFragment);
+    }
+
+    @Override
+    public void navigateToVehicleListings() {
+        // Checks fragment state and resets Recycler View to show added vehicle
+        if (vehicleListingFragment == null) {
+            vehicleListingFragment = new VehicleListingFragment();
+            vehicleListingFragment.resetRecyclerView();
+        } else {
+            vehicleListingFragment = new VehicleListingFragment();
+        }
+        setVehicleFabVisibility(View.VISIBLE);
+        setCurrentFragment(vehicleListingFragment);
     }
 
     @Override
     public void onAllSpotsUpdated(ArrayList<Spot> spots) {
         spotListingsFragment.resetRecyclerView(spots);
     }
+
+    @Override
+    public void onAllVehiclesUpdated(ArrayList<Vehicle> vehicles) {
+        vehicleListingFragment.resetRecyclerView(vehicles);
+    }
+
 
     public boolean isUserExists() {
         return userExists;
@@ -470,6 +537,29 @@ public class NavDrawer extends AppCompatActivity
                     mapFragment.refreshUI();
                 }
             }
+        }
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.add_spot_fab:
+                if (newSpotFragment == null) {
+                    newSpotFragment = new NewSpotFragment();
+                }
+                setSpotFabVisibility(View.GONE);
+                setCurrentFragment(newSpotFragment);
+
+                setTitle(getResources().getString(R.string.add_new_spot));
+
+            case R.id.add_vehicle_fab:
+                if (newVehicleFragment == null) {
+                    newVehicleFragment = new NewVehicleFragment();
+                }
+                setVehicleFabVisibility(View.GONE);
+                setCurrentFragment(newVehicleFragment);
+
+                setTitle(getResources().getString(R.string.add_new_vehicle));
         }
     }
 }
