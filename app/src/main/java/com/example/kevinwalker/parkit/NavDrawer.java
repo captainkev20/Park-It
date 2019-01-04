@@ -218,6 +218,7 @@ public class NavDrawer extends AppCompatActivity
 
         } else {
             setSpotFabVisibility(View.GONE);
+            setVehicleFabVisibility(View.GONE);
             setTitle(R.string.map_nav_title);
             switch (currentFragmentTAG) {
                 case userProfileFragmentTag:
@@ -278,6 +279,7 @@ public class NavDrawer extends AppCompatActivity
             }
             setCurrentFragment(userProfileFragment);
             setSpotFabVisibility(View.GONE);
+            setVehicleFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -286,6 +288,7 @@ public class NavDrawer extends AppCompatActivity
             }
             setCurrentFragment(spotListingsFragment);
             setSpotFabVisibility(View.VISIBLE);
+            setVehicleFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
@@ -294,6 +297,7 @@ public class NavDrawer extends AppCompatActivity
             }
             setCurrentFragment(mapFragment);
             setSpotFabVisibility(View.GONE);
+            setVehicleFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
@@ -302,6 +306,7 @@ public class NavDrawer extends AppCompatActivity
             }
             setCurrentFragment(paymentFragment);
             setSpotFabVisibility(View.GONE);
+            setVehicleFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_vehicles) {
