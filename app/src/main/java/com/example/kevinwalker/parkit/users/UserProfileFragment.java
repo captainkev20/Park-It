@@ -14,6 +14,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RatingBar;
@@ -50,9 +51,9 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.ic_phone) CustomTextView ic_phone;
     @BindView(R.id.ic_email) CustomTextView ic_email;
     @BindView(R.id.txt_first_name) TextView txt_first_name;
+    @BindView(R.id.txt_last_name) TextView txt_last_name;
     @BindView(R.id.txt_phone_number) TextView txt_phone_number;
     @BindView(R.id.txt_email) TextView txt_email;
-    @BindView(R.id.rating_bar) RatingBar rating_bar;
 
     @BindView(R.id.edit_image_logo) CircleImageView edit_image_logo;
     @BindView(R.id.et_phone_number) EditText et_phone_number;
@@ -60,7 +61,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.et_last_name2) EditText et_last_name2;
     @BindView(R.id.et_first_name2) EditText et_first_name2;
     @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
-    @BindView(R.id.txt_edit_user_profile) TextView txt_edit_user_profile;
+    @BindView(R.id.btn_edit_profile) Button btn_edit_profile;
     @BindView(R.id.txt_cancel_edit_profile) TextView txt_cancel_edit_profile;
     @BindView(R.id.txt_save_profile) TextView txt_save_profile;
     @BindView(R.id.edit_profile_card_view) CardView edit_profile_card_view;
@@ -107,7 +108,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
         FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
 
-        txt_edit_user_profile.setOnClickListener(this);
+        btn_edit_profile.setOnClickListener(this);
         txt_save_profile.setOnClickListener(this);
         edit_image_logo.setOnClickListener(this);
         txt_cancel_edit_profile.setOnClickListener(this);
@@ -121,7 +122,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.txt_edit_user_profile:
+            case R.id.btn_edit_profile:
                 profile_view_switcher.showNext();
                 updateUI();
                 break;
@@ -133,6 +134,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 String phoneNum = et_phone_number.getText().toString();
 
                 // TODO: Data input validation
+
+
                 FirestoreHelper.getInstance().getCurrentUser().setFirstName(firstNameString);
                 FirestoreHelper.getInstance().getCurrentUser().setLastName(lastNameString);
                 FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail);
@@ -191,6 +194,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         txt_first_name.setText(FirestoreHelper.getInstance().getCurrentUser().getFirstName());
         txt_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
         txt_phone_number.setText(FirestoreHelper.getInstance().getCurrentUser().getUserPhone());
+        txt_last_name.setText(FirestoreHelper.getInstance().getCurrentUser().getLastName());
         et_phone_number.setText(FirestoreHelper.getInstance().getCurrentUser().getUserPhone());
         et_email.setText(FirestoreHelper.getInstance().getCurrentUser().getUserEmail());
         et_last_name2.setText(FirestoreHelper.getInstance().getCurrentUser().getLastName());
@@ -200,6 +204,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     public void updateUserProfilePicture(Uri filePath) {
         Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
         Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(image_logo);
+    }
+
+    private boolean isEditTextEmpty(EditText editText) {
+        return editText.getText().toString().isEmpty();
     }
 
     private void dispatchTakePictureIntent() {

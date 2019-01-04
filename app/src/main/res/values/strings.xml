@@ -39,8 +39,8 @@
     <string name="positive_change_profile_pic">YES</string>
 
     <string name="score_placeholder">000099</string>
-    <string name="first_name">First Name: </string>
-    <string name="last_name">Last Name: </string>
+    <string name="first_name_placeholder">First Name: </string>
+    <string name="last_name_placeholder">Last Name: </string>
     <string name="phone_number">Phone Number: </string>
     <string name="edit_profile">EDIT</string>
     <string name="save">SAVE</string>
