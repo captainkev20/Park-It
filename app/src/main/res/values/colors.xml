@@ -11,4 +11,7 @@
     <color name="colorWelcomeMessage">#008ee5</color>
     <color name="colorRegisterButton">#008ee5</color>
     <color name="colorCreateAccountButton">#008ee5</color>
+    <color name="colorEditProfileButton">#008ee5</color>
+    <color name="colorSaveProfileButton">#008ee5</color>
+    <color name="colorCancelEditProfileButton">@android:color/holo_red_light</color>
 </resources>
