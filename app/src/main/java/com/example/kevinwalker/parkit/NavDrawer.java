@@ -117,19 +117,6 @@ public class NavDrawer extends AppCompatActivity
         addSpotFloatingActionButton.setOnClickListener(this);
         addVehicleFloatingActionButton.setOnClickListener(this);
 
-        addSpotFloatingActionButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (newSpotFragment == null) {
-                    newSpotFragment = new NewSpotFragment();
-                }
-                setSpotFabVisibility(View.GONE);
-                setCurrentFragment(newSpotFragment);
-
-                setTitle(getResources().getString(R.string.add_new_spot));
-            }
-        });
-
         addSpotFloatingActionButton.setVisibility(View.GONE);
         addVehicleFloatingActionButton.setVisibility(View.GONE);
 
@@ -176,11 +163,7 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
-    protected  void onDestroy() {
-        super.onDestroy();
-
-
-    }
+    protected  void onDestroy() { super.onDestroy(); }
 
     private void showLogOffAlertDialog() {
         LogOffAlertDialogFragment newFragment = new LogOffAlertDialogFragment();
