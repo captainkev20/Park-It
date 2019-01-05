@@ -85,6 +85,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @BindView(R.id.btn_leave) Button btn_leave;
     @BindView(R.id.map) MapView mapView;
     @BindView(R.id.btn_find_user_current_location) FloatingActionButton btn_find_user_current_location;
+    @BindView(R.id.btn_find_user_parked_location) FloatingActionButton btn_find_user_parked_location;
+
 
     private MapsFragment.MapsCallBack mapsCallBack;
     private Context mContext;
@@ -128,23 +130,19 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mView = inflater.inflate(R.layout.activity_maps, container, false);
-        ButterKnife.bind(MapsFragment.this.getActivity());
+        ButterKnife.bind(this, mView);
+
+        btn_park.setOnClickListener(this);
+        btn_leave.setOnClickListener(this);
+        btn_find_user_current_location.setOnClickListener(this);
+        btn_find_user_parked_location.setOnClickListener(this);
+        btn_find_user_current_location.setEnabled(true);
 
         return mView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-
-        // Create views here. Best to do here as by this point view will be properly created and inflated
-        btn_park = getView().findViewById(R.id.btn_park);
-        btn_park.setOnClickListener(this);
-        btn_leave = getView().findViewById(R.id.btn_leave);
-        btn_leave.setOnClickListener(this);
-        btn_find_user_current_location = getView().findViewById(R.id.btn_find_user_current_location);
-        btn_find_user_current_location.setOnClickListener(this);
-        mapView = mView.findViewById(R.id.map);
-        btn_find_user_current_location.setEnabled(true);
 
         if (mapView != null) {
             initMap(mapView);
@@ -226,6 +224,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 break;
 
             case R.id.btn_leave:
+                // TODO: Remove - replace with LeaveDialogFragment
                 AlertDialog.Builder dialog = new AlertDialog.Builder(mContext);
                 dialog.setTitle(getResources().getString(R.string.LEAVE_DIALOG_TITLE))
                         .setMessage(getResources().getString(R.string.LEAVE_DIALOG_MESSAGE))
@@ -246,6 +245,9 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 locationHelper.getCurrentLocation();
                 animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserCurrentLocation(), DEFAULT_ZOOM, currentAddress);
                 break;
+
+            case R.id.btn_find_user_parked_location:
+                animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), DEFAULT_ZOOM, currentAddress);
         }
     }
 
