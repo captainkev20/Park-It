@@ -48,6 +48,7 @@
         <activity android:name=".authentication.Registration" />
         <activity
             android:name=".NavDrawer"
+            android:screenOrientation="portrait"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan"
