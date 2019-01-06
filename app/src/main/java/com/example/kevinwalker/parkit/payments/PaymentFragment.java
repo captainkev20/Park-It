@@ -1,11 +1,14 @@
 package com.example.kevinwalker.parkit.payments;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.Toast;
 
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
@@ -19,36 +22,21 @@ import com.example.kevinwalker.parkit.R;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class PaymentFragment extends Fragment {
+public class PaymentFragment extends Fragment
+        implements View.OnClickListener {
 
     private View mView;
+
     @BindView(R.id.card_input_widget) CardInputWidget card_input_widget;
+    @BindView(R.id.btn_save_payment) Button btn_save_payment;
+
     private Card card;
     private Stripe stripe;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        card = new Card(
-                "4242424242424242", //card number
-                12, //expMonth
-                2016,//expYear
-                "123"//cvc
-        );
-
-        /*stripe.createToken(
-                card, new TokenCallback() {
-                    @Override
-                    public void onError(Exception error) {
-                        Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onSuccess(Token token) {
-                        Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                    }
-                });*/
 
     }
 
@@ -57,6 +45,8 @@ public class PaymentFragment extends Fragment {
         mView = inflater.inflate(R.layout.activity_payment, container, false);
         ButterKnife.bind(this, mView);
 
+        btn_save_payment.setOnClickListener(this);
+
         return mView;
     }
 
@@ -64,5 +54,32 @@ public class PaymentFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         getActivity().setTitle(getResources().getString(R.string.payments_nav_title));
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch(view.getId()) {
+            case R.id.btn_save_payment:
+
+                card = card_input_widget.getCard();
+                if (card == null) {
+                    return;
+                } else {
+                    stripe = new Stripe(getActivity().getApplicationContext(), "pk_test_o9GQIYLn6xNzdKk1TOxz5Iga");
+                    stripe.createToken(
+                            card, new TokenCallback() {
+                                @Override
+                                public void onError(Exception error) {
+                                    Toast.makeText(getActivity(), "Failed", Toast.LENGTH_SHORT).show();
+                                }
+
+                                @Override
+                                public void onSuccess(Token token) {
+                                    // TODO: Send to back-end
+                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+                }
+        }
     }
 }
