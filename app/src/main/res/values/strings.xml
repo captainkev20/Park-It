@@ -63,7 +63,9 @@
 
     </string-array>
 
-    <string name="vehicle_name">Vehicle Name</string>
+    <string name="vehicle_name">Nickname</string>
+    <string name="vehicle_nickname_label">Vehicle Nickname</string>
+    <string name="vehicle_license_place_label">License Plate</string>
     <string name="vehicle_license_plate">License Plate</string>
     <string name="vehicle_make">Make</string>
 
