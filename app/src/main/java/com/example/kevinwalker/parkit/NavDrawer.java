@@ -18,6 +18,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -539,6 +540,7 @@ public class NavDrawer extends AppCompatActivity
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
+                break;
 
             case R.id.add_vehicle_fab:
                 if (newVehicleFragment == null) {
@@ -548,6 +550,7 @@ public class NavDrawer extends AppCompatActivity
                 setCurrentFragment(newVehicleFragment);
 
                 setTitle(getResources().getString(R.string.add_new_vehicle));
+                break;
         }
     }
 }
