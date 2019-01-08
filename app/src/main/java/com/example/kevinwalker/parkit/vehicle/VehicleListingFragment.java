@@ -64,7 +64,7 @@ public class VehicleListingFragment extends ParentProfileFragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         if (vehicles.isEmpty()) {
-            vehicles.add(FirestoreHelper.getUserVehicle());
+            vehicles.add(FirestoreHelper.getInstance().getUserVehicle());
         }
     }
 

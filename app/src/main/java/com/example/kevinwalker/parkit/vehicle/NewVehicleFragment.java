@@ -143,7 +143,10 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
                 currentUser.setVehicles(vehicles);
 
+                // TODO: Modify remaining class so that I am writing vehicles to user instead of Vehicle collection
                 FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(currentUser);
+
+
                 newVehicleCallback.navigateToVehicleListings();
 
                 break;
