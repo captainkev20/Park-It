@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.kevinwalker.parkit.payments.StripeCustomer;
 import com.example.kevinwalker.parkit.spot.Spot;
 import com.example.kevinwalker.parkit.users.User;
 import com.example.kevinwalker.parkit.vehicle.Vehicle;
@@ -35,14 +36,17 @@ public class FirestoreHelper {
     private static final String TAG = FirestoreHelper.class.getName();
     private static final String testSpot = "0b38974e-f4b3-4988-83df-9b1b33cf6554";
     private static final String testVehicle = "86b2a124-e59c-4387-8dff-3a7200957cae";
+    private static final String testStripe = "9HjucfCGRlm5CGz4pYdo";
 
     private static User currentUser = new User();
+    private static StripeCustomer stripeCustomer = new StripeCustomer();
 
     private static Spot userSpot = new Spot();
     private static Vehicle userVehicle = new Vehicle();
     private static DocumentReference userDocument;
     private static DocumentReference userSpotDocument;
     private static DocumentReference userVehicleDocument;
+    private static DocumentReference stripeCustomers;
     private static FirestoreHelper instance;
     private static StorageReference filePath;
     ArrayList<Spot> allSpots = new ArrayList<>();
@@ -80,7 +84,8 @@ public class FirestoreHelper {
     // Needs to be called upon app initialization for the class to work properly
     public void initializeFirestore() {
         // Initialize our User DocumentReference
-        userDocument = firebaseFirestore.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        userDocument = firebaseFirestore.collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
         userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
@@ -147,6 +152,19 @@ public class FirestoreHelper {
         });
     }
 
+    public void initializeFirestoreStripeCustomer() {
+        stripeCustomers = firebaseFirestore.collection("stripe_customers").document(testStripe);
+
+        stripeCustomers.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+            @Override
+            public void onSuccess(DocumentSnapshot documentSnapshot) {
+                if (documentSnapshot.exists()) {
+                    stripeCustomer = documentSnapshot.toObject(StripeCustomer.class);
+                }
+            }
+        });
+    }
+
     public void mergeCurrentUserWithFirestore(User user) {
         userDocument.set(user, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
@@ -179,10 +197,28 @@ public class FirestoreHelper {
                 });
     }
 
+    public void mergeStripeCustomerWithFirestore() {
+        stripeCustomers.set(stripeCustomer, SetOptions.merge())
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d(TAG, "Token successfully written!");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.w(TAG, "Token failed to write", e);
+            }
+        });
+    }
+
 
     // TODO: Review with Hollis and determine if this is best way to handle
     public StorageReference getUserProfilePhotoFromFirebase() {
-        filePath = FirebaseStorage.getInstance().getReference().child("UserProfilePhotos/").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
+        filePath = FirebaseStorage.getInstance().getReference()
+                .child("UserProfilePhotos/")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
         filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -202,7 +238,8 @@ public class FirestoreHelper {
     }
 
     public StorageReference getUserNavProfileHeaderFromFirebase() {
-        filePath = FirebaseStorage.getInstance().getReference().child("UserProfilePhotos/").child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
+        filePath = FirebaseStorage.getInstance().getReference().child("UserProfilePhotos/")
+                .child(FirebaseAuth.getInstance().getCurrentUser().getUid() + "_profile_picture.png");
         filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
             public void onSuccess(Uri uri) {
@@ -222,7 +259,8 @@ public class FirestoreHelper {
     }
 
     public ArrayList<Spot> getAllSpots() {
-        FirebaseFirestore.getInstance().collection("spots").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("spots")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -238,7 +276,8 @@ public class FirestoreHelper {
     }
 
     public ArrayList<Vehicle> getAllVehicles() {
-        FirebaseFirestore.getInstance().collection("vehicles").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        FirebaseFirestore.getInstance().collection("vehicles")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -261,9 +300,13 @@ public class FirestoreHelper {
         currentUser = user;
     }
 
-    public static Spot getUserSpot() { return userSpot; }
+    public Spot getUserSpot() { return userSpot; }
 
-    public static Vehicle getUserVehicle() { return userVehicle; }
+    public Vehicle getUserVehicle() { return userVehicle; }
+
+    public StripeCustomer getStripeCustomer() { return stripeCustomer; }
+
+    public void setStripeUser(StripeCustomer stripeUser) { stripeCustomer = stripeUser; }
 
     public DatabaseReference getRef() {
         return ref;

@@ -62,7 +62,7 @@ public class SpotListingsFragment extends Fragment {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
         if (spots.isEmpty()) {
-            spots.add(FirestoreHelper.getUserSpot());
+            spots.add(FirestoreHelper.getInstance().getUserSpot());
         }
     }
 
