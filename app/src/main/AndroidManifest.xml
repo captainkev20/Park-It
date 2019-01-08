@@ -17,9 +17,9 @@
 
     <application
         android:allowBackup="false"
-        android:icon="@mipmap/ic_car_launcher_two"
+        android:icon="@mipmap/ic_park_it_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_car_launcher_two"
+        android:roundIcon="@mipmap/ic_park_it_icon_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
