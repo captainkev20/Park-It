@@ -4,12 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
@@ -25,6 +27,8 @@ import butterknife.ButterKnife;
 public class PaymentFragment extends Fragment
         implements View.OnClickListener {
 
+    private static final String TAG = PaymentFragment.class.getName();
+
     private View mView;
 
     @BindView(R.id.card_input_widget) CardInputWidget card_input_widget;
@@ -38,6 +42,8 @@ public class PaymentFragment extends Fragment
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        FirestoreHelper.getInstance().initializeFirestoreStripeCustomer();
+        
     }
 
     @Override
@@ -76,7 +82,10 @@ public class PaymentFragment extends Fragment
                                 @Override
                                 public void onSuccess(Token token) {
                                     // TODO: Send to back-end
-                                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(getActivity(), "Card Successfully Saved!", Toast.LENGTH_SHORT).show();
+
+                                    FirestoreHelper.getInstance().getStripeCustomer().setToken(token.getId());
+                                    FirestoreHelper.getInstance().mergeStripeCustomerWithFirestore();
                                 }
                             });
                 }
