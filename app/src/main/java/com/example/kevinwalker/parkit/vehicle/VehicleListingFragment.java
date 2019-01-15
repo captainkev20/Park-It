@@ -76,6 +76,8 @@ public class VehicleListingFragment extends ParentProfileFragment {
         ButterKnife.bind(this, view);
 
         FirestoreHelper.getInstance().getAllVehicles();
+        FirestoreHelper.getInstance().initializeFirestore();
+        FirestoreHelper.getInstance().initializeFirestoreVehicle();
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -95,7 +97,7 @@ public class VehicleListingFragment extends ParentProfileFragment {
     @Override
     public void onResume(){
         super.onResume();
-        // TODO: Review with Hollis and determine if best way to handle this
+        // TODO: Review with Hollis and determine if best way to handle this. Not showing btn when onResume called
         NavDrawer navDrawer = new NavDrawer();
         if (navDrawer.getCurrentFragmentTag().equals("vehicleListingFragmentTag")) {
             mListener.setVehicleFabVisibility(View.VISIBLE);
