@@ -88,7 +88,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         FirestoreHelper.getInstance().initializeFirestoreVehicle();
         currentUser = FirestoreHelper.getInstance().getCurrentUser();
 
-        vehicleDocumentReference = firebaseFirestore.collection("vehicles").document(String.valueOf(UUID.randomUUID()));
+        vehicleDocumentReference = firebaseFirestore.collection("vehicles")
+                .document(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
 
         vehicleDocumentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -141,11 +142,11 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                 userVehicle.setVehicleLicensePlate(vehicleLicensePlate);
                 vehicles.add(0, userVehicle);
 
-                currentUser.setVehicles(vehicles);
+                //currentUser.setVehicles(vehicles);
 
-                // TODO: Modify remaining class so that I am writing vehicles to user instead of Vehicle collection
-                FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(currentUser);
+                //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(currentUser);
 
+                mergeVehicleWithFirebase(vehicles.get(0));
 
                 newVehicleCallback.navigateToVehicleListings();
 
