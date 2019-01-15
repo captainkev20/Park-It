@@ -3,9 +3,6 @@ package com.example.kevinwalker.parkit.users;
 import com.example.kevinwalker.parkit.badges.Badge;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.payments.PaymentType;
-import com.example.kevinwalker.parkit.vehicle.Vehicle;
-
-import java.util.ArrayList;
 
 public class User {
 
@@ -20,7 +17,6 @@ public class User {
     private License license;
     private Badge[] badges;
     private Long userScore;
-    private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private PaymentType[] paymentTypes;
     private boolean isUserParked = false;
     private CustomLocation userParkedLocation;
@@ -33,7 +29,6 @@ public class User {
         userCurrentLocation = new CustomLocation();
         userCurrentLocation.setLongitude(-79.889510);
         userCurrentLocation.setLatitude(36.047091);
-        vehicles.add(new Vehicle());
     }
 
     public User(boolean isUserParked) {
@@ -130,14 +125,6 @@ public class User {
 
     public void setUserScore(Long userScore) {
         this.userScore = userScore;
-    }
-
-    public ArrayList<Vehicle> getVehicles() {
-        return vehicles;
-    }
-
-    public void setVehicles(ArrayList<Vehicle> vehicles) {
-        this.vehicles = vehicles;
     }
 
     public PaymentType[] getPaymentTypes() {
