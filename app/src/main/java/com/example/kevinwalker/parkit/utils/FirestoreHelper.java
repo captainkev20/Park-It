@@ -27,7 +27,9 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -140,7 +142,8 @@ public class FirestoreHelper {
     }
 
     public void initializeFirestoreVehicle() {
-        userVehicleDocument = firebaseFirestore.collection("vehicles").document(testVehicle);
+        userVehicleDocument = firebaseFirestore.collection("vehicles")
+                .document(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
 
         userVehicleDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -277,19 +280,24 @@ public class FirestoreHelper {
 
     public ArrayList<Vehicle> getAllVehicles() {
         FirebaseFirestore.getInstance().collection("vehicles")
-                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()) {
-                    for (QueryDocumentSnapshot document : task.getResult()) {
-                        allVehicles.add(document.toObject(Vehicle.class));
+                .whereEqualTo("vehicleName","My Acura")
+                .get()
+                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        if (task.isSuccessful()) {
+                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                                allVehicles.add(documentSnapshot.toObject(Vehicle.class));
+                            }
+
+                            mListener.onAllVehiclesUpdated(allVehicles);
+                        }
                     }
-                    mListener.onAllVehiclesUpdated(allVehicles);
-                }
-            }
-        });
+                });
+
 
         return allVehicles;
+
     }
 
     public User getCurrentUser() {
