@@ -31,6 +31,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
+
 import java.util.UUID;
 
 
@@ -183,6 +184,8 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             }
         });
     }
+
+
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {

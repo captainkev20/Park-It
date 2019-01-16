@@ -67,7 +67,9 @@
     <string name="vehicle_nickname_label">Vehicle Nickname</string>
     <string name="vehicle_license_place_label">License Plate</string>
     <string name="vehicle_license_plate">License Plate</string>
+    <string name="vehicle_json_name">vehicles</string>
     <string name="vehicle_make">Make</string>
+    <string name="vehicle_make_label">Vehicle Make</string>
 
 
 
