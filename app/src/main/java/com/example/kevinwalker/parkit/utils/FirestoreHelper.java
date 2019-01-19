@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.payments.StripeCustomer;
 import com.example.kevinwalker.parkit.spot.Spot;
@@ -273,6 +274,11 @@ public class FirestoreHelper {
                     mListener.onAllSpotsUpdated(allSpots);
                 }
             }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG,"Failed to fetch");
+            }
         });
 
         return allSpots;
@@ -293,7 +299,12 @@ public class FirestoreHelper {
                             mListener.onAllVehiclesUpdated(allVehicles);
                         }
                     }
-                });
+                }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG,"Failed to fetch");
+            }
+        });
 
 
         return allVehicles;
