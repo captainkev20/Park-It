@@ -47,9 +47,9 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         AdapterView.OnItemSelectedListener {
 
     private static final String TAG = NewVehicleFragment.class.getName();
-    private static final String VEHICLE_SPINNER_JSON_URL = "https://gist.githubusercontent.com/kwalker0456/" +
-            "5d184b08181f819eb1bcca8363a40735/" +
-            "raw/a1d1dc6eb595e9953aa275f35440f05670e3d6de/vehicles.json";
+    private static final String VEHICLE_SPINNER_JSON_URL = "https://gist.githubusercontent.com/" +
+            "kwalker0456/5d184b08181f819eb1bcca8363a40735/raw/3edf3dd2cbcab4aef3cb83154e46371e5c4c5d3a/" +
+            "vehicles.json";
 
     @BindView(R.id.et_license) EditText et_license;
     @BindView(R.id.et_vehicle_name) EditText et_vehicle_name;
@@ -65,7 +65,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     private Vehicle userVehicle = new Vehicle();
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private ArrayList<String> vehicleBrands = new ArrayList<>();
-    private User currentUser;
+    private ArrayAdapter<String> vehicleBrandsAdapter;
 
     private Context mContext;
     private NewVehicleCallback mListener;
@@ -112,9 +112,11 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         }
 
         //FirestoreHelper.getInstance().initializeFirestoreVehicle();
-        currentUser = FirestoreHelper.getInstance().getCurrentUser();
 
         vehicleMakeRequestQueue = Volley.newRequestQueue(getContext());
+        vehicleBrandsAdapter = new ArrayAdapter<>(getActivity(),
+                android.R.layout.simple_spinner_item, vehicleBrands);
+        vehicleBrandsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         populateVehicleSpinner();
 
@@ -170,11 +172,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                 userVehicle.setVehicleName(vehicleName);
                 userVehicle.setVehicleLicensePlate(vehicleLicensePlate);
                 userVehicle.setVehicleMake(spinner_vehicle_make.getSelectedItem().toString());
+
                 vehicles.add(0, userVehicle);
-
-                //currentUser.setVehicles(vehicles);
-
-                //FirestoreHelper.getInstance().mergeCurrentUserWithFirestore(currentUser);
 
                 mergeVehicleWithFirebase(vehicles.get(0));
 
@@ -203,12 +202,14 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
     private void populateVehicleSpinner() {
 
-        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
+        JsonObjectRequest vehicleMakeJsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
                 VEHICLE_SPINNER_JSON_URL, null,
                 new Response.Listener<JSONObject>() {
                     @Override
                     public void onResponse(JSONObject response) {
                         try {
+
+                            // TODO: Review with Hollis. Best to create JSONObject inside of loop? Asked during interivew
                             JSONArray vehicleArray = response.getJSONArray(getResources()
                                     .getString(R.string.vehicle_json_name));
 
@@ -217,11 +218,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
                                 vehicleBrands.add(vehicle.getString("make"));
 
-                                ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                                        android.R.layout.simple_spinner_item, vehicleBrands);
-                                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-                                spinner_vehicle_make.setAdapter(adapter);
+                                spinner_vehicle_make.setAdapter(vehicleBrandsAdapter);
                             }
 
                         } catch (JSONException e) {
@@ -236,7 +233,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
             }
         });
 
-        vehicleMakeRequestQueue.add(jsonObjectRequest);
+        vehicleMakeRequestQueue.add(vehicleMakeJsonObjectRequest);
     }
 
     @Override
