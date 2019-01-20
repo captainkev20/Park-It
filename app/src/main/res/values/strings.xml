@@ -53,6 +53,7 @@
     <string name="saved_profile_photo">Photo Saved</string>
     <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
+    <string name="btn_find_user_parked_location_not_parked">"Sorry, it looks like you have not parked yet!</string>
 
     <string name="text_input_layout_et_first_name">Please enter first name</string>
     <string name="text_input_layout_et_last_name">Please enter last name</string>
@@ -168,7 +169,7 @@
     <string name="PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT">No thanks! </string>
     <string name="title_activity_vehicle_profile">VehicleProfileActivity</string>
     <string name="LEAVE_DIALOG_TITLE">"HOLD UP!"</string>
-    <string name="LEAVE_DIALOG_MESSAGE">"This will vacate your space and let other users know it is avaliable."</string>
+    <string name="LEAVE_DIALOG_MESSAGE">"This will vacate your space and let other users know it is available."</string>
     <string name="LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT">"Not Yet!</string>
     <string name="LEAVE_DIALOG_POSITIVE_BUTTON_TEXT">"I'm outta here!</string>
     <string name="title_activity_maps">Map</string>

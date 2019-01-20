@@ -46,6 +46,7 @@ import android.view.ViewGroup;
 import android.view.animation.BounceInterpolator;
 import android.view.animation.Interpolator;
 import android.widget.Button;
+import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -247,7 +248,11 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 break;
 
             case R.id.btn_find_user_parked_location:
-                animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), DEFAULT_ZOOM, currentAddress);
+                if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
+                    animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), DEFAULT_ZOOM, currentAddress);
+                } else {
+                    Toast.makeText(getActivity(), getResources().getString(R.string.btn_find_user_parked_location_not_parked), Toast.LENGTH_SHORT).show();
+                }
         }
     }
 
