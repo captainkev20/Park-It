@@ -87,45 +87,56 @@ public class FirestoreHelper {
     // Needs to be called upon app initialization for the class to work properly
     public void initializeFirestore() {
         // Initialize our User DocumentReference
-        userDocument = firebaseFirestore.collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
-        userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
-            @Override
-            public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
-                if (documentSnapshot.exists()) {
-                    currentUser = documentSnapshot.toObject(User.class);
-                    mergeCurrentUserWithFirestore();
-                    mListener.onUserUpdated(currentUser);
-                }
-            }
-        });
 
-        userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    currentUser = documentSnapshot.toObject(User.class);
-                    if (currentUser.getUserUUID().trim().isEmpty()) {
-                        currentUser.setUserUUID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            userDocument = firebaseFirestore.collection("users")
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
+            userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (documentSnapshot.exists()) {
+                        currentUser = documentSnapshot.toObject(User.class);
+                        mergeCurrentUserWithFirestore();
+                        mListener.onUserUpdated(currentUser);
+                    }
+                }
+            });
+
+            userDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                @Override
+                public void onSuccess(DocumentSnapshot documentSnapshot) {
+                    if (documentSnapshot.exists()) {
+                        currentUser = documentSnapshot.toObject(User.class);
+                        if (currentUser.getUserUUID().trim().isEmpty()) {
+                            currentUser.setUserUUID(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            mergeCurrentUserWithFirestore();
+                        }
+                        if (currentUser.getUserEmail().trim().isEmpty()) {
+                            currentUser.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
+                            mergeCurrentUserWithFirestore();
+                        }
+                        mListener.onUserUpdated(currentUser);
+
+                    } else {
+                        // TODO: Ask Hollis why would we merge if the snapshot does not exist?
                         mergeCurrentUserWithFirestore();
                     }
-                    if (currentUser.getUserEmail().trim().isEmpty()) {
-                        currentUser.setUserEmail(FirebaseAuth.getInstance().getCurrentUser().getEmail());
-                        mergeCurrentUserWithFirestore();
-                    }
-                    mListener.onUserUpdated(currentUser);
-
-                } else {
-                    // TODO: Ask Hollis why would we merge if the snapshot does not exist?
-                    mergeCurrentUserWithFirestore();
                 }
-            }
-        });
+            });
+        }
+
     }
 
     // TODO: Ask hollis why this does not work; it writes blank users once I log out.
     public static void logOff() {
-        //currentUser = new User();
+        currentUser = null;
+        userDocument = null;
+        userVehicle = null;
+        userVehicleDocument = null;
+        userSpot = null;
+        stripeCustomers = null;
+        filePath = null;
+        stripeCustomer = null;
     }
 
     public void initializeFirestoreSpot() {

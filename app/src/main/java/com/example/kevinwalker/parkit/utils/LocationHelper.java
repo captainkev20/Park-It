@@ -35,6 +35,7 @@ public class LocationHelper {
     private CustomLocation customLocation;
     private boolean mhasLocationPermission = false;
 
+    //TODO: Maybe make this static to fix memory leak
     private FusedLocationProviderClient mFusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
