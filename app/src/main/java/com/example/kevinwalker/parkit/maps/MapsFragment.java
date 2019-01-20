@@ -123,7 +123,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         geocoder = new Geocoder(mContext);
         locationHelper = new LocationHelper(this.getContext());
         locationHelper.startLocationUpdates();
-        FirestoreHelper.getInstance().initializeFirestore();
+//        FirestoreHelper.getInstance().initializeFirestore();
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
     }

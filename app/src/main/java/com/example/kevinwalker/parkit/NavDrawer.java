@@ -95,7 +95,7 @@ public class NavDrawer extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        FirestoreHelper.getInstance(this);
 
         if (FirestoreHelper.getInstance().getCurrentUser() != null) {
             FirestoreHelper.getInstance(this).initializeFirestore();
