@@ -161,6 +161,14 @@ public class NavDrawer extends AppCompatActivity
         } else {
             navProgressBar.setVisibility(View.VISIBLE);
         }
+
+        if (currentFragmentTAG == vehicleListingFragmentTag) {
+            addVehicleFloatingActionButton.setVisibility(View.VISIBLE);
+        }
+
+        if (currentFragmentTAG == spotListingFragmentTag) {
+            addSpotFloatingActionButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
