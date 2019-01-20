@@ -14,4 +14,5 @@
     <color name="colorEditProfileButton">#008ee5</color>
     <color name="colorSaveProfileButton">#008ee5</color>
     <color name="colorCancelEditProfileButton">@android:color/holo_red_light</color>
+    <color name="text_input_layout_error_color">@android:color/holo_red_light</color>
 </resources>

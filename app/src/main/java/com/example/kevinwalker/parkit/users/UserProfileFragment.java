@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
@@ -17,7 +18,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
@@ -57,9 +57,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
     @BindView(R.id.edit_image_logo) CircleImageView edit_image_logo;
     @BindView(R.id.et_phone_number) EditText et_phone_number;
+    @BindView(R.id.text_input_layout_et_phone_number) TextInputLayout text_input_layout_et_phone_number;
     @BindView(R.id.et_email) EditText et_email;
+    @BindView(R.id.text_input_layout_et_email) TextInputLayout text_input_layout_et_email;
     @BindView(R.id.et_last_name2) EditText et_last_name2;
+    @BindView(R.id.text_input_layout_et_last_name) TextInputLayout text_input_layout_et_last_name;
     @BindView(R.id.et_first_name2) EditText et_first_name2;
+    @BindView(R.id.text_input_layout_et_first_name) TextInputLayout text_input_layout_et_first_name;
     @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
     @BindView(R.id.btn_edit_profile) Button btn_edit_profile;
     @BindView(R.id.btn_cancel_edit_profile) Button btn_cancel_edit_profile;
@@ -69,12 +73,16 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.save_photo_progress_bar) ProgressBar save_user_progress_bar;
 
     private static final String TAG = UserProfileFragment.class.getName();
+    private static final int REQUEST_IMAGE_CAPTURE = 1;
+
     private StorageReference userProfileReference;
-    StorageReference filePath;
-    static final int REQUEST_IMAGE_CAPTURE = 1;
+    private StorageReference filePath;
+
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
+
     private View mView;
+
     private UserProfileCallback callback;
     private NavDrawer navDrawer;
 
@@ -104,8 +112,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         mView = inflater.inflate(R.layout.activity_user, container, false);
         ButterKnife.bind(this, mView);
 
-        //updateUI();
-
         FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
 
         btn_edit_profile.setOnClickListener(this);
@@ -128,25 +134,38 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 break;
 
             case R.id.btn_save_profile:
-                String firstNameString = et_first_name2.getText().toString();
-                String lastNameString = et_last_name2.getText().toString();
-                String userEmail = et_email.getText().toString();
-                String phoneNum = et_phone_number.getText().toString();
+                EditText firstNameString = text_input_layout_et_first_name.getEditText();
+                EditText lastNameString = text_input_layout_et_last_name.getEditText();
+                EditText userEmail = text_input_layout_et_email.getEditText();
+                EditText phoneNum = text_input_layout_et_phone_number.getEditText();
 
-                // TODO: Data input validation
+                if (validateEditText(firstNameString) && validateEditText(lastNameString) && validateEditText(userEmail) && validateEditText(phoneNum)) {
+                    FirestoreHelper.getInstance().getCurrentUser().setFirstName(firstNameString.getText().toString());
+                    FirestoreHelper.getInstance().getCurrentUser().setLastName(lastNameString.getText().toString());
+                    FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail.getText().toString());
+                    FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum.getText().toString());
 
+                    FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                    FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
+                    FirestoreHelper.getInstance().getUserNavProfileHeaderFromFirebase();
 
-                FirestoreHelper.getInstance().getCurrentUser().setFirstName(firstNameString);
-                FirestoreHelper.getInstance().getCurrentUser().setLastName(lastNameString);
-                FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail);
-                FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum);
+                    updateUI();
 
-                FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
-                FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
-                FirestoreHelper.getInstance().getUserNavProfileHeaderFromFirebase();
-                updateUI();
+                    text_input_layout_et_first_name.setError(null);
+                    text_input_layout_et_last_name.setError(null);
 
-                profile_view_switcher.showPrevious();
+                    profile_view_switcher.showPrevious();
+
+                } else if (!validateEditText(firstNameString)) {
+                    text_input_layout_et_first_name.setError(getResources().getString(R.string.text_input_layout_et_first_name));
+                } else if (!validateEditText(lastNameString)) {
+                    text_input_layout_et_last_name.setError(getResources().getString(R.string.text_input_layout_et_last_name));
+                } else if (!validateEditText(userEmail)) {
+                    text_input_layout_et_email.setError(getResources().getString(R.string.text_input_layout_et_email));
+                } else if (!validateEditText(phoneNum)) {
+                    text_input_layout_et_phone_number.setError(getResources().getString(R.string.text_input_layout_et_phone_number));
+                }
+
                 break;
 
             case R.id.edit_image_logo:
@@ -154,6 +173,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 break;
 
             case R.id.btn_cancel_edit_profile:
+                text_input_layout_et_first_name.setError(null);
+                text_input_layout_et_last_name.setError(null);
+                text_input_layout_et_email.setError(null);
+                text_input_layout_et_phone_number.setError(null);
+
                 profile_view_switcher.showPrevious();
         }
     }
@@ -202,12 +226,18 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     }
 
     public void updateUserProfilePicture(Uri filePath) {
-        Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
-        Picasso.get().load(filePath).centerCrop().resize(128, 140).rotate(90).into(image_logo);
-    }
-
-    private boolean isEditTextEmpty(EditText editText) {
-        return editText.getText().toString().isEmpty();
+        Picasso.get()
+                .load(filePath)
+                .centerCrop()
+                .resize(getResources()
+                        .getInteger(R.integer.edit_image_logo_width), getResources().getInteger(R.integer.edit_image_logo_height))
+                .rotate(90).into(edit_image_logo);
+        Picasso.get()
+                .load(filePath)
+                .centerCrop()
+                .resize(getResources()
+                        .getInteger(R.integer.image_logo_width), getResources().getInteger(R.integer.image_logo_height))
+                .rotate(90).into(image_logo);
     }
 
     private void dispatchTakePictureIntent() {
@@ -261,6 +291,16 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onStop() {
         super.onStop();
+    }
+
+    private boolean validateEditText(EditText editText) {
+        boolean pass = false;
+
+        if (!editText.getText().toString().isEmpty()) {
+            pass = true;
+        }
+
+        return pass;
     }
 
     public interface UserProfileCallback {

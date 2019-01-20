@@ -2,4 +2,8 @@
 <resources>
     <integer name="minPasswordLength">8</integer>
     <integer name="maxPasswordLength">15</integer>
+    <integer name="edit_image_logo_height">140</integer>
+    <integer name="edit_image_logo_width">128</integer>
+    <integer name="image_logo_height">140</integer>
+    <integer name="image_logo_width">128</integer>
 </resources>

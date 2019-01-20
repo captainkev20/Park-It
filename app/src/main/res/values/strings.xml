@@ -54,6 +54,12 @@
     <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
 
+    <string name="text_input_layout_et_first_name">Please enter first name</string>
+    <string name="text_input_layout_et_last_name">Please enter last name</string>
+    <string name="text_input_layout_et_phone_number">Please enter phone number</string>
+    <string name="text_input_layout_et_email">Please enter e-mail</string>
+
+
     <string-array name="spinner_spot_size_items">
         <item>COMPACT</item>
         <item>STANDARD</item>
