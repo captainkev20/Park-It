@@ -20,6 +20,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
@@ -50,6 +51,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     private static final String VEHICLE_SPINNER_JSON_URL = "https://gist.githubusercontent.com/" +
             "kwalker0456/5d184b08181f819eb1bcca8363a40735/raw/3edf3dd2cbcab4aef3cb83154e46371e5c4c5d3a/" +
             "vehicles.json";
+    private static final String VOLLEY_REQUEST_TAG = "NewVehicleFragment Request";
 
     @BindView(R.id.et_license) EditText et_license;
     @BindView(R.id.et_vehicle_name) EditText et_vehicle_name;
@@ -59,6 +61,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     DocumentReference vehicleDocumentReference;
 
+    StringRequest stringRequest;
     RequestQueue vehicleMakeRequestQueue;
 
     private NewVehicleCallback newVehicleCallback;
@@ -111,9 +114,9 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-        //FirestoreHelper.getInstance().initializeFirestoreVehicle();
 
         vehicleMakeRequestQueue = Volley.newRequestQueue(getContext());
+
         vehicleBrandsAdapter = new ArrayAdapter<>(getActivity(),
                 android.R.layout.simple_spinner_item, vehicleBrands);
         vehicleBrandsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -202,44 +205,51 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
     private void populateVehicleSpinner() {
 
-        JsonObjectRequest vehicleMakeJsonObjectRequest = new JsonObjectRequest(Request.Method.GET,
-                VEHICLE_SPINNER_JSON_URL, null,
-                new Response.Listener<JSONObject>() {
-                    @Override
-                    public void onResponse(JSONObject response) {
-                        try {
+        // TODO: Review with Hollis. Best to create JSONObject inside of loop? Asked during interivew
+        stringRequest = new StringRequest(Request.Method.GET, VEHICLE_SPINNER_JSON_URL, new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                try {
+                    JSONObject vehicle = new JSONObject(response);
+                    JSONArray vehicleArray = vehicle.getJSONArray(getResources()
+                            .getString(R.string.vehicle_json_name));
 
-                            // TODO: Review with Hollis. Best to create JSONObject inside of loop? Asked during interivew
-                            JSONArray vehicleArray = response.getJSONArray(getResources()
-                                    .getString(R.string.vehicle_json_name));
+                    for (int i = 0; i < vehicleArray.length(); i++) {
+                        JSONObject vehicleJSONObject = vehicleArray.getJSONObject(i);
 
-                            for (int i = 0; i < vehicleArray.length(); i++) {
-                                JSONObject vehicle = vehicleArray.getJSONObject(i);
+                        vehicleBrands.add(vehicleJSONObject.getString("make"));
 
-                                vehicleBrands.add(vehicle.getString("make"));
-
-                                spinner_vehicle_make.setAdapter(vehicleBrandsAdapter);
-                            }
-
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
+                        spinner_vehicle_make.setAdapter(vehicleBrandsAdapter);
 
                     }
-                }, new Response.ErrorListener() {
+                } catch (JSONException e) {
+
+                }
+            }
+        }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
 
             }
         });
-
-        vehicleMakeRequestQueue.add(vehicleMakeJsonObjectRequest);
+        stringRequest.setTag(VOLLEY_REQUEST_TAG);
+        vehicleMakeRequestQueue.add(stringRequest);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         getActivity().setTitle(getResources().getString(R.string.add_new_vehicle));
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // If fragment is stopped, remove our network request
+        if (vehicleMakeRequestQueue != null) {
+            vehicleMakeRequestQueue.cancelAll(VOLLEY_REQUEST_TAG);
+        }
     }
 
     @Override
