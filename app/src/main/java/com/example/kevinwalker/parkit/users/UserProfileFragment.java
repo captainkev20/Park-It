@@ -145,9 +145,11 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                     FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail.getText().toString());
                     FirestoreHelper.getInstance().getCurrentUser().setUserPhone(phoneNum.getText().toString());
 
-                    FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
-                    FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
-                    FirestoreHelper.getInstance().getUserNavProfileHeaderFromFirebase();
+                    if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+                        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                        FirestoreHelper.getInstance().getUserProfilePhotoFromFirebase();
+                        FirestoreHelper.getInstance().getUserNavProfileHeaderFromFirebase();
+                    }
 
                     updateUI();
 
@@ -273,8 +275,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                             edit_image_logo.setVisibility(View.VISIBLE);
 
                             Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
-                            FirestoreHelper.getInstance().getCurrentUser().setUserProfilePhotoURL(String.valueOf(filePath));
-                            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                            if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+                                FirestoreHelper.getInstance().getCurrentUser().setUserProfilePhotoURL(String.valueOf(filePath));
+                                FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+                            }
                             Picasso.get().load(uri).centerCrop().resize(128, 140).rotate(90).into(edit_image_logo);
                         }
                     });

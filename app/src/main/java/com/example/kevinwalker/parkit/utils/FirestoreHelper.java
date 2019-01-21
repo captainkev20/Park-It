@@ -127,7 +127,6 @@ public class FirestoreHelper {
 
     }
 
-    // TODO: Ask hollis why this does not work; it writes blank users once I log out.
     public static void logOff() {
         currentUser = null;
         userDocument = null;
@@ -197,19 +196,22 @@ public class FirestoreHelper {
     }
 
     public void mergeCurrentUserWithFirestore() {
-        userDocument.set(currentUser, SetOptions.merge())
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
+        if (FirestoreHelper.getInstance().getCurrentUser() != null && userDocument != null) {
+            userDocument.set(currentUser, SetOptions.merge())
+                    .addOnSuccessListener(new OnSuccessListener<Void>() {
+                        @Override
+                        public void onSuccess(Void aVoid) {
+                            Log.d(TAG, "DocumentSnapshot successfully written!");
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Log.w(TAG, "Error writing document", e);
+                        }
+                    });
+        }
+
     }
 
     public void mergeStripeCustomerWithFirestore() {

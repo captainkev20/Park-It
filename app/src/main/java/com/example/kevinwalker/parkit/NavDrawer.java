@@ -184,25 +184,26 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void logOff() {
-        /*FirebaseAuth.getInstance().signOut();
+        FirebaseAuth.getInstance().signOut();
+        FirestoreHelper.logOff();
         Intent intent = new Intent(this, Login.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(new Intent(NavDrawer.this, Login.class));*/
-
-        // Commentted out as this appeared to write blank user object FB upon signing out
-        // FirestoreHelper.getInstance().setCurrentUser(new User());
+        startActivity(new Intent(NavDrawer.this, Login.class));
     }
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation) {
-        FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
-        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+            FirestoreHelper.getInstance().getCurrentUser().setUserCurrentLocation(currentUserLocation);
+            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        }
     }
 
     public void saveUserParkedLocation(CustomLocation userParkedLocation, boolean isParked) {
-        FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
-        FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
-        FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
-
+        if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+            FirestoreHelper.getInstance().getCurrentUser().setUserParkedLocation(userParkedLocation);
+            FirestoreHelper.getInstance().getCurrentUser().setUserParked(isParked);
+            FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
+        }
     }
 
     @Override
@@ -251,11 +252,6 @@ public class NavDrawer extends AppCompatActivity
 
         if (id == R.id.action_log_off) {
             showLogOffAlertDialog();
-            FirebaseAuth.getInstance().signOut();
-            FirestoreHelper.logOff();
-            Intent intent = new Intent(this, Login.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(new Intent(NavDrawer.this, Login.class));
             return true;
         }
 
