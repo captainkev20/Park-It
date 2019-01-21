@@ -15,7 +15,10 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -45,6 +48,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @BindView(R.id.et_spot_name) EditText et_spot_name;
     @BindView(R.id.et_hourly_rate) EditText et_hourly_rate;
     @BindView(R.id.btn_save_spot) Button btn_save_spot;
+    @BindView(R.id.txt_view_cancel_add_spot) TextView txt_cancel_add_spot;
     @BindView(R.id.spinner_spot_size) Spinner spinner_spot_size;
     @BindView(R.id.layout_et_spot_name) TextInputLayout layout_et_spot_name;
     @BindView(R.id.btn_spot_location) Button btn_spot_location;
@@ -134,6 +138,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
         btn_save_spot.setOnClickListener(this);
         btn_spot_location.setOnClickListener(this);
+        txt_cancel_add_spot.setOnClickListener(this);
 
         return mView;
     }
@@ -165,6 +170,11 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
             case R.id.btn_spot_location:
                 spotLocation = locationHelper.getCurrentLocation();
                 isSpotLocationSet = true;
+
+                break;
+
+            case R.id.txt_view_cancel_add_spot:
+                newSpotCallback.navigateToSpotListings();
 
         }
     }
