@@ -143,7 +143,7 @@ public class FirestoreHelper {
 
     public void initializeFirestoreVehicle() {
         userVehicleDocument = firebaseFirestore.collection("vehicles")
-                .document(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         userVehicleDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override

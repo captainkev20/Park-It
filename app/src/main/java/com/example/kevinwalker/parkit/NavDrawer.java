@@ -100,6 +100,7 @@ public class NavDrawer extends AppCompatActivity
         if (FirestoreHelper.getInstance().getCurrentUser() != null) {
             FirestoreHelper.getInstance(this).initializeFirestore();
             FirestoreHelper.getInstance(this).initializeFirestoreSpot();
+            FirestoreHelper.getInstance(this).initializeFirestoreVehicle();
             FirestoreHelper.getInstance(this).getUserNavProfileHeaderFromFirebase();
         }
 

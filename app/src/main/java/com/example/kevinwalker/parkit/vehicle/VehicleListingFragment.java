@@ -75,7 +75,7 @@ public class VehicleListingFragment extends ParentProfileFragment {
 
         ButterKnife.bind(this, view);
 
-//        FirestoreHelper.getInstance().getAllVehicles();
+        FirestoreHelper.getInstance().getAllVehicles();
 //        FirestoreHelper.getInstance().initializeFirestore();
 //        FirestoreHelper.getInstance().initializeFirestoreVehicle();
 
