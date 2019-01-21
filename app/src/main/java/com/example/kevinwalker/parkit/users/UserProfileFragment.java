@@ -66,7 +66,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @BindView(R.id.text_input_layout_et_first_name) TextInputLayout text_input_layout_et_first_name;
     @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
     @BindView(R.id.btn_edit_profile) Button btn_edit_profile;
-    @BindView(R.id.btn_cancel_edit_profile) Button btn_cancel_edit_profile;
+    @BindView(R.id.txt_view_cancel_edit_profile) TextView txt_cancel_edit_profile;
     @BindView(R.id.btn_save_profile) Button btn_save_profile;
     @BindView(R.id.edit_profile_card_view) CardView edit_profile_card_view;
     @BindView(R.id.main_profile_card_view) CardView main_profile_card_view;
@@ -117,7 +117,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         btn_edit_profile.setOnClickListener(this);
         btn_save_profile.setOnClickListener(this);
         edit_image_logo.setOnClickListener(this);
-        btn_cancel_edit_profile.setOnClickListener(this);
+        txt_cancel_edit_profile.setOnClickListener(this);
 
         save_user_progress_bar.setVisibility(View.GONE);
 
@@ -174,7 +174,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 dispatchTakePictureIntent();
                 break;
 
-            case R.id.btn_cancel_edit_profile:
+            case R.id.txt_view_cancel_edit_profile:
                 text_input_layout_et_first_name.setError(null);
                 text_input_layout_et_last_name.setError(null);
                 text_input_layout_et_email.setError(null);
