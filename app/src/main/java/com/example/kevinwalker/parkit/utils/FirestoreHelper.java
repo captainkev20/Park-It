@@ -4,7 +4,6 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.payments.StripeCustomer;
 import com.example.kevinwalker.parkit.spot.Spot;
@@ -28,9 +27,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Map;
 
 import javax.annotation.Nullable;
 
@@ -43,19 +40,24 @@ public class FirestoreHelper {
 
     private static User currentUser = new User();
     private static StripeCustomer stripeCustomer = new StripeCustomer();
-
     private static Spot userSpot = new Spot();
     private static Vehicle userVehicle = new Vehicle();
+
     private static DocumentReference userDocument;
     private static DocumentReference userSpotDocument;
     private static DocumentReference userVehicleDocument;
     private static DocumentReference stripeCustomers;
+
     private static FirestoreHelper instance;
+
     private static StorageReference filePath;
-    ArrayList<Spot> allSpots = new ArrayList<>();
-    ArrayList<Vehicle> allVehicles = new ArrayList<>();
+
+    private ArrayList<Spot> allSpots = new ArrayList<>();
+    private ArrayList<Vehicle> allVehicles = new ArrayList<>();
+
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
+
     private static FirestoreHelper.OnDataUpdated mListener;
 
 
@@ -79,8 +81,6 @@ public class FirestoreHelper {
             return instance;
         }
     }
-
-
 
     private FirestoreHelper() {}
 
@@ -125,17 +125,6 @@ public class FirestoreHelper {
             });
         }
 
-    }
-
-    public static void logOff() {
-        currentUser = null;
-        userDocument = null;
-        userVehicle = null;
-        userVehicleDocument = null;
-        userSpot = null;
-        stripeCustomers = null;
-        filePath = null;
-        stripeCustomer = null;
     }
 
     public void initializeFirestoreSpot() {
@@ -324,6 +313,17 @@ public class FirestoreHelper {
 
     }
 
+    public static void logOff() {
+        currentUser = null;
+        userDocument = null;
+        userVehicle = null;
+        userVehicleDocument = null;
+        userSpot = null;
+        stripeCustomers = null;
+        filePath = null;
+        stripeCustomer = null;
+    }
+
     public User getCurrentUser() {
         return currentUser;
     }
@@ -340,13 +340,9 @@ public class FirestoreHelper {
 
     public void setStripeUser(StripeCustomer stripeUser) { stripeCustomer = stripeUser; }
 
-    public DatabaseReference getRef() {
-        return ref;
-    }
+    public DatabaseReference getRef() { return ref; }
 
-    public void setRef(DatabaseReference ref) {
-        this.ref = ref;
-    }
+    public void setRef(DatabaseReference ref) { this.ref = ref; }
 
     public interface OnDataUpdated {
         void onUserUpdated(User user);
