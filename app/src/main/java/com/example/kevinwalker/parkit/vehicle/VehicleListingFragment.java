@@ -22,13 +22,14 @@ import butterknife.ButterKnife;
 
 public class VehicleListingFragment extends ParentProfileFragment {
 
-    private View mView;
-
     private static final String ARG_COLUMN_COUNT = "column-count";
+
+    private View mView;
 
     @BindView(R.id.vehicle_recycler_view) RecyclerView vehicleRecyclerView;
 
     private int mColumnCount = 1;
+
     private VehicleListingsInteraction mListener;
     private VehicleListingsAdapter vehicleListingsAdapter;
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
@@ -71,18 +72,16 @@ public class VehicleListingFragment extends ParentProfileFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
+        mView = inflater.inflate(R.layout.fragment_vehicle_list, container, false);
 
-        ButterKnife.bind(this, view);
+        ButterKnife.bind(this, mView);
 
         FirestoreHelper.getInstance().getAllVehicles();
-//        FirestoreHelper.getInstance().initializeFirestore();
-//        FirestoreHelper.getInstance().initializeFirestoreVehicle();
 
         // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            vehicleRecyclerView = (RecyclerView) view;
+        if (mView instanceof RecyclerView) {
+            Context context = mView.getContext();
+            vehicleRecyclerView = (RecyclerView) mView;
             if (mColumnCount <= 1) {
                 vehicleRecyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
@@ -91,7 +90,7 @@ public class VehicleListingFragment extends ParentProfileFragment {
             //resetRecyclerView();
         }
 
-        return view;
+        return mView;
     }
 
     @Override
