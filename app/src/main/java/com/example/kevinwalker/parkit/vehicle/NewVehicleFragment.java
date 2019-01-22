@@ -58,11 +58,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     @BindView(R.id.btn_save_vehicle) Button btn_save_vehicle;
     @BindView(R.id.spinner_vehicle_make) Spinner spinner_vehicle_make;
 
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    DocumentReference vehicleDocumentReference;
-
-    StringRequest stringRequest;
-    RequestQueue vehicleMakeRequestQueue;
+    private StringRequest stringRequest;
+    private RequestQueue vehicleMakeRequestQueue;
 
     private NewVehicleCallback newVehicleCallback;
     private Vehicle userVehicle = new Vehicle();
@@ -81,9 +78,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     private String mParam1;
     private String mParam2;
 
-    public NewVehicleFragment() {
-        // Required empty public constructor
-    }
+    public NewVehicleFragment() { }
 
     @Override
     public void onAttach(Context context) {
@@ -96,7 +91,6 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         }
     }
 
-    // TODO: Rename and change types and number of parameters
     public static NewVehicleFragment newInstance(String param1, String param2) {
         NewVehicleFragment fragment = new NewVehicleFragment();
         Bundle args = new Bundle();
@@ -114,7 +108,6 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
 
-
         vehicleMakeRequestQueue = Volley.newRequestQueue(getContext());
 
         vehicleBrandsAdapter = new ArrayAdapter<>(getActivity(),
@@ -122,31 +115,6 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         vehicleBrandsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
         populateVehicleSpinner();
-
-        vehicleDocumentReference = firebaseFirestore.collection("vehicles")
-                .document(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
-
-        vehicleDocumentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    userVehicle = documentSnapshot.toObject(Vehicle.class);
-                    if (userVehicle.getVehicleUUID().trim().isEmpty()) {
-                        userVehicle.setVehicleUUID(String.valueOf(UUID.randomUUID()));
-                        mergeVehicleWithFirebase(userVehicle);
-                    } else {
-                        mergeVehicleWithFirebase(userVehicle);
-                    }
-                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                }
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Failed to write", Toast.LENGTH_SHORT).show();
-                    }
-                });
     }
 
     @Override
@@ -170,37 +138,20 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                 String vehicleName = et_vehicle_name.getText().toString();
                 String vehicleLicensePlate = et_license.getText().toString();
 
-
                 // TODO: Review with Hollis - creating user/vehicle and adding
                 userVehicle.setVehicleName(vehicleName);
                 userVehicle.setVehicleLicensePlate(vehicleLicensePlate);
                 userVehicle.setVehicleMake(spinner_vehicle_make.getSelectedItem().toString());
+                userVehicle.setVehicleUUID(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
 
                 vehicles.add(0, userVehicle);
 
-                mergeVehicleWithFirebase(vehicles.get(0));
-
+                FirestoreHelper.getInstance().mergeVehicleWithFirestore(vehicles.get(0));
                 newVehicleCallback.navigateToVehicleListings();
 
                 break;
 
         }
-    }
-
-    private void mergeVehicleWithFirebase(Vehicle userVehicle) {
-        vehicleDocumentReference.set(userVehicle, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Successful write");
-                Toast.makeText(getActivity(), "Vehicle Saved!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Failed to write");
-                Toast.makeText(getActivity(), "Vehicle Not Saved!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     private void populateVehicleSpinner() {
@@ -258,15 +209,10 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-
-    }
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) { }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
+    public void onNothingSelected(AdapterView<?> adapterView) { }
 
     public interface NewVehicleCallback {
         void navigateToVehicleListings();

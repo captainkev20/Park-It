@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.example.kevinwalker.parkit.payments.StripeCustomer;
 import com.example.kevinwalker.parkit.spot.Spot;
@@ -27,6 +28,7 @@ import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import javax.annotation.Nullable;
@@ -219,6 +221,22 @@ public class FirestoreHelper {
         });
     }
 
+    public void mergeVehicleWithFirestore(Vehicle userVehicle) {
+        userVehicleDocument.set(userVehicle, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Successful write");
+                Toast.makeText((Context) mListener, "Vehicle Saved!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed to write");
+                Toast.makeText((Context) mListener, "Vehicle Not Saved!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     // TODO: Review with Hollis and determine if this is best way to handle
     public StorageReference getUserProfilePhotoFromFirebase() {
@@ -288,7 +306,7 @@ public class FirestoreHelper {
 
     public ArrayList<Vehicle> getAllVehicles() {
         FirebaseFirestore.getInstance().collection("vehicles")
-                .whereEqualTo("vehicleName","My Acura")
+                .whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                     @Override
