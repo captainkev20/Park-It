@@ -545,6 +545,7 @@ public class NavDrawer extends AppCompatActivity
                     newSpotFragment = new NewSpotFragment();
                 }
                 setSpotFabVisibility(View.GONE);
+                setVehicleFabVisibility(View.GONE);
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -555,6 +556,7 @@ public class NavDrawer extends AppCompatActivity
                     newVehicleFragment = new NewVehicleFragment();
                 }
                 setVehicleFabVisibility(View.GONE);
+                setSpotFabVisibility(View.GONE);
                 setCurrentFragment(newVehicleFragment);
 
                 setTitle(getResources().getString(R.string.add_new_vehicle));
