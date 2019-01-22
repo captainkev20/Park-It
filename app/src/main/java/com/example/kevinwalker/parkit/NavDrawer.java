@@ -58,12 +58,11 @@ public class NavDrawer extends AppCompatActivity
 
     private static final String TAG = NavDrawer.class.getName();
 
-    @BindView(R.id.add_spot_fab)
-    FloatingActionButton addSpotFloatingActionButton;
-    @BindView(R.id.add_vehicle_fab)
-    FloatingActionButton addVehicleFloatingActionButton;
+    @BindView(R.id.add_spot_fab) FloatingActionButton addSpotFloatingActionButton;
+    @BindView(R.id.add_vehicle_fab) FloatingActionButton addVehicleFloatingActionButton;
     @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
     CircleImageView navHeaderProfilePicture;
+
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
     private FrameLayout container;
@@ -88,9 +87,7 @@ public class NavDrawer extends AppCompatActivity
     private static final String vehicleListingFragmentTag = "vehicleListingFragmentTag";
 
     private boolean userExists = false;
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private boolean isUserInitialized = false;
-    static DocumentReference userDocument;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
