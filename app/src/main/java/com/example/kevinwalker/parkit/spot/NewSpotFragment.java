@@ -17,32 +17,34 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import butterknife.BindInt;
 import butterknife.BindView;
 import butterknife.ButterKnife;
-
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.maps.CustomLocation;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
+import com.example.kevinwalker.parkit.utils.EditTextValidator;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.example.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 
+import org.w3c.dom.Text;
+
 import java.util.UUID;
 
 
-public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class NewSpotFragment extends ParentProfileFragment implements View.OnClickListener,
+        AdapterView.OnItemSelectedListener {
 
     private static final String TAG = NewSpotFragment.class.getName();
+
     private CustomLocation spotLocation = new CustomLocation();
     private LocationHelper locationHelper;
+
     private boolean isSpotLocationSet = false;
 
     @BindView(R.id.et_spot_name) EditText et_spot_name;
@@ -50,19 +52,19 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @BindView(R.id.btn_save_spot) Button btn_save_spot;
     @BindView(R.id.txt_view_cancel_add_spot) TextView txt_cancel_add_spot;
     @BindView(R.id.spinner_spot_size) Spinner spinner_spot_size;
-    @BindView(R.id.layout_et_spot_name) TextInputLayout layout_et_spot_name;
     @BindView(R.id.btn_spot_location) Button btn_spot_location;
+    @BindView(R.id.txt_input_layout_hourly_rate) TextInputLayout txt_input_layout_hourly_rate;
+    @BindView(R.id.txt_input_layout_spot_name) TextInputLayout txt_input_layout_spot_name;
 
     FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    CollectionReference spotCollectionReference;
     DocumentReference spotDocumentReference;
-    CollectionReference geoFireStoreRef = FirebaseFirestore.getInstance().collection("spots");
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
 
+    private EditTextValidator newSpotEditTextValidator;
+
     private Context mContext;
-    private NewSpotCallback mListener;
 
     private View mView;
 
@@ -72,9 +74,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     private String mParam1;
     private String mParam2;
 
-    public NewSpotFragment() {
-        // Required empty public constructor
-    }
+    public NewSpotFragment() { }
 
     // TODO: Rename and change types and number of parameters
     public static NewSpotFragment newInstance(String param1, String param2) {
@@ -96,6 +96,8 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
         FirestoreHelper.getInstance().initializeFirestoreSpot();
         locationHelper = new LocationHelper(this.getContext());
+
+        newSpotEditTextValidator = new EditTextValidator(getContext());
 
         spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
 
@@ -148,21 +150,31 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         switch (view.getId()) {
             case R.id.btn_save_spot:
 
-                String spotNameString = et_spot_name.getText().toString();
-                int spotHourlyRate = Integer.parseInt(et_hourly_rate.getText().toString());
+                EditText spotNameEditText = txt_input_layout_spot_name.getEditText();
+                EditText spotHourlyRateEditText = txt_input_layout_hourly_rate.getEditText();
 
-                userSpot.setHourlyRate(spotHourlyRate);
-                userSpot.setName(spotNameString);
-                userSpot.setLatitude(spotLocation.getLatitude());
-                userSpot.setLongitude(spotLocation.getLongitude());
-                userSpot.setSpotSize(spinner_spot_size.getSelectedItem().toString());
+                if (newSpotEditTextValidator.validateEditText(spotNameEditText)
+                        && newSpotEditTextValidator.validateEditText(spotHourlyRateEditText)) {
 
-                // TODO: Review with Hollis
-                if (isSpotLocationSet) {
-                    mergeSpotWithFirebase(userSpot);
-                    newSpotCallback.navigateToSpotListings();
-                } else {
-                    Toast.makeText(getActivity(), "Sorry, you must specify your location when creating spot", Toast.LENGTH_SHORT).show();
+                    userSpot.setHourlyRate(Integer.parseInt(spotHourlyRateEditText.getText().toString()));
+                    userSpot.setName(spotNameEditText.getText().toString());
+                    userSpot.setLatitude(spotLocation.getLatitude());
+                    userSpot.setLongitude(spotLocation.getLongitude());
+                    userSpot.setSpotSize(spinner_spot_size.getSelectedItem().toString());
+
+
+                    if (isSpotLocationSet) {
+                        mergeSpotWithFirebase(userSpot);
+                        newSpotCallback.navigateToSpotListings();
+                    } else {
+                        Toast.makeText(getActivity(), getResources().getString(R.string.spot_button_location_not_pressed),
+                                Toast.LENGTH_SHORT).show();
+                    }
+
+                } else if (!newSpotEditTextValidator.validateEditText(spotHourlyRateEditText)) {
+                    txt_input_layout_hourly_rate.setError(getResources().getString(R.string.text_input_layout_et_hourly_rate));
+                } else if (!newSpotEditTextValidator.validateEditText(spotNameEditText)) {
+                    txt_input_layout_spot_name.setError(getResources().getString(R.string.text_input_layout_et_spot_name));
                 }
 
                 break;
@@ -195,8 +207,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         });
     }
 
-
-
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
@@ -215,20 +225,13 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     }
 
     @Override
-    public void onDetach() {
-        super.onDetach();
-    }
+    public void onDetach() { super.onDetach(); }
 
     @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-
-    }
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) { }
 
     @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
-    }
+    public void onNothingSelected(AdapterView<?> adapterView) { }
 
     public interface NewSpotCallback {
         void onFragmentInteraction(Uri uri);

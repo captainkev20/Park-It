@@ -59,6 +59,8 @@
     <string name="text_input_layout_et_last_name">Please enter last name</string>
     <string name="text_input_layout_et_phone_number">Please enter phone number</string>
     <string name="text_input_layout_et_email">Please enter e-mail</string>
+    <string name="text_input_layout_et_hourly_rate">Please enter an hourly rate</string>
+    <string name="text_input_layout_et_spot_name">Please enter a spot name</string>
 
 
     <string-array name="spinner_spot_size_items">
@@ -87,6 +89,7 @@
     <string name="zip">Zip: </string>
 
     <string name="spot_name">Spot Name: </string>
+    <string name="spot_button_location_not_pressed">Sorry, you must specify your location when creating spot</string>
     <string name="dollar_sign">$</string>
     <string name="miles">Miles</string>
     <string name="hourly_rate">Hourly Rate: </string>
