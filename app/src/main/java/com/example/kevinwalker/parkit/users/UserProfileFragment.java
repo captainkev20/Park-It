@@ -26,6 +26,7 @@ import com.example.kevinwalker.parkit.NavDrawer;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.utils.CustomTextView;
+import com.example.kevinwalker.parkit.utils.EditTextValidator;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -85,6 +86,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
     private UserProfileCallback callback;
     private NavDrawer navDrawer;
+    private EditTextValidator userProfileTextValidator;
 
     @Override
     public void onAttach(Context context) {
@@ -105,6 +107,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
         userProfileReference = FirebaseStorage.getInstance().getReference();
         filePath = userProfileReference.child("UserProfilePhotos/").child(getFirebaseUser().getUid() + "_profile_picture.png");
 
+        userProfileTextValidator = new EditTextValidator(getContext());
     }
 
     @Override
@@ -139,7 +142,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                 EditText userEmail = text_input_layout_et_email.getEditText();
                 EditText phoneNum = text_input_layout_et_phone_number.getEditText();
 
-                if (validateEditText(firstNameString) && validateEditText(lastNameString) && validateEditText(userEmail) && validateEditText(phoneNum)) {
+                if (userProfileTextValidator.validateEditText(firstNameString) && userProfileTextValidator.validateEditText(lastNameString)
+                        && userProfileTextValidator.validateEditText(userEmail) && userProfileTextValidator.validateEditText(phoneNum)) {
                     FirestoreHelper.getInstance().getCurrentUser().setFirstName(firstNameString.getText().toString());
                     FirestoreHelper.getInstance().getCurrentUser().setLastName(lastNameString.getText().toString());
                     FirestoreHelper.getInstance().getCurrentUser().setUserEmail(userEmail.getText().toString());
@@ -158,13 +162,13 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
 
                     profile_view_switcher.showPrevious();
 
-                } else if (!validateEditText(firstNameString)) {
+                } else if (!userProfileTextValidator.validateEditText(firstNameString)) {
                     text_input_layout_et_first_name.setError(getResources().getString(R.string.text_input_layout_et_first_name));
-                } else if (!validateEditText(lastNameString)) {
+                } else if (!userProfileTextValidator.validateEditText(lastNameString)) {
                     text_input_layout_et_last_name.setError(getResources().getString(R.string.text_input_layout_et_last_name));
-                } else if (!validateEditText(userEmail)) {
+                } else if (!userProfileTextValidator.validateEditText(userEmail)) {
                     text_input_layout_et_email.setError(getResources().getString(R.string.text_input_layout_et_email));
-                } else if (!validateEditText(phoneNum)) {
+                } else if (!userProfileTextValidator.validateEditText(phoneNum)) {
                     text_input_layout_et_phone_number.setError(getResources().getString(R.string.text_input_layout_et_phone_number));
                 }
 
@@ -295,16 +299,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onStop() {
         super.onStop();
-    }
-
-    private boolean validateEditText(EditText editText) {
-        boolean pass = false;
-
-        if (!editText.getText().toString().isEmpty()) {
-            pass = true;
-        }
-
-        return pass;
     }
 
     public interface UserProfileCallback {
