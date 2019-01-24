@@ -30,6 +30,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.annotation.Nullable;
 
@@ -308,28 +309,29 @@ public class FirestoreHelper {
         FirebaseFirestore.getInstance().collection("vehicles")
                 .whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                allVehicles.add(documentSnapshot.toObject(Vehicle.class));
-                            }
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+            @Override
+            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                if (!queryDocumentSnapshots.isEmpty()) {
+                    List<Vehicle> vehicles = new ArrayList<>();
 
-                            mListener.onAllVehiclesUpdated(allVehicles);
-                        }
+                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
+                        vehicles.add(documentSnapshot.toObject(Vehicle.class));
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+                    allVehicles.addAll(vehicles);
+                    mListener.onAllVehiclesUpdated(allVehicles);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG,"Failed to fetch");
             }
         });
 
-
         return allVehicles;
-
     }
+
 
     public static void logOff() {
         currentUser = null;
