@@ -13,6 +13,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -57,6 +58,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     @BindView(R.id.et_vehicle_name) EditText et_vehicle_name;
     @BindView(R.id.btn_save_vehicle) Button btn_save_vehicle;
     @BindView(R.id.spinner_vehicle_make) Spinner spinner_vehicle_make;
+    @BindView(R.id.txt_view_cancel_add_vehicle) TextView txt_view_cancel_add_vehicle;
 
     private StringRequest stringRequest;
     private RequestQueue vehicleMakeRequestQueue;
@@ -125,6 +127,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         ButterKnife.bind(this, mView);
 
         btn_save_vehicle.setOnClickListener(this);
+        txt_view_cancel_add_vehicle.setOnClickListener(this);
         spinner_vehicle_make.setOnItemSelectedListener(this);
 
         return mView;
@@ -151,6 +154,10 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
 
                 break;
 
+            case R.id.txt_view_cancel_add_vehicle:
+                newVehicleCallback.navigateToVehicleListings();
+
+                break;
         }
     }
 

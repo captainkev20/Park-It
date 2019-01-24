@@ -8,6 +8,18 @@
     android:layout_height="wrap_content"
     >
 
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/new_vehicle_fragment_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:scrollbars="none">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
     <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools"
@@ -40,6 +52,25 @@
                 android:layout_height="592dp">
 
                 <TextView
+                    android:id="@+id/txt_view_cancel_add_vehicle"
+                    android:layout_width="100dp"
+                    android:layout_height="22dp"
+                    android:layout_marginStart="124dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="16dp"
+                    android:text="@string/txt_cancel_add_new_spot"
+                    android:textAlignment="center"
+                    android:textColor="@color/colorCancelAddNewSpotTxt"
+                    android:textStyle="bold"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/btn_save_vehicle"
+                    app:layout_constraintVertical_bias="1.0" />
+
+                <TextView
                     android:id="@+id/txt_vehicle_make"
                     android:layout_width="107dp"
                     android:layout_height="22dp"
@@ -58,7 +89,7 @@
                     android:layout_width="311dp"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="516dp"
+                    android:layout_marginTop="488dp"
                     android:layout_marginEnd="8dp"
                     android:background="@drawable/register_button_enabled"
                     android:enabled="true"
@@ -67,7 +98,7 @@
                     android:textColor="@android:color/white"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.523"
+                    app:layout_constraintHorizontal_bias="0.619"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
@@ -178,8 +209,10 @@
 
 
     </android.support.constraint.ConstraintLayout>
-
+    </LinearLayout>
+    </ScrollView>
 </com.example.kevinwalker.parkit.utils.SlidingRelativeLayout>
+
 
 
 
