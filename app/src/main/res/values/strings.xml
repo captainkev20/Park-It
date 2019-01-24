@@ -61,6 +61,8 @@
     <string name="text_input_layout_et_email">Please enter e-mail</string>
     <string name="text_input_layout_et_hourly_rate">Please enter an hourly rate</string>
     <string name="text_input_layout_et_spot_name">Please enter a spot name</string>
+    <string name="text_input_layout_et_vehicle_name">Please enter a vehicle name</string>
+    <string name="text_input_layout_et_vehicle_license">Please enter vehicle license plate</string>
 
 
     <string-array name="spinner_spot_size_items">

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,7 @@ import com.android.volley.toolbox.Volley;
 import com.example.kevinwalker.parkit.R;
 import com.example.kevinwalker.parkit.profiles.ParentProfileFragment;
 import com.example.kevinwalker.parkit.users.User;
+import com.example.kevinwalker.parkit.utils.EditTextValidator;
 import com.example.kevinwalker.parkit.utils.FirestoreHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +61,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     @BindView(R.id.btn_save_vehicle) Button btn_save_vehicle;
     @BindView(R.id.spinner_vehicle_make) Spinner spinner_vehicle_make;
     @BindView(R.id.txt_view_cancel_add_vehicle) TextView txt_view_cancel_add_vehicle;
+    @BindView(R.id.txt_input_layout_vehicle_name) TextInputLayout txt_input_layout_vehicle_name;
+    @BindView(R.id.txt_input_layout_license) TextInputLayout txt_input_layout_vehicle_license;
 
     private StringRequest stringRequest;
     private RequestQueue vehicleMakeRequestQueue;
@@ -68,6 +72,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
     private ArrayList<Vehicle> vehicles = new ArrayList<>();
     private ArrayList<String> vehicleBrands = new ArrayList<>();
     private ArrayAdapter<String> vehicleBrandsAdapter;
+
+    private EditTextValidator newVehicleEditTextValidator;
 
     private Context mContext;
     private NewVehicleCallback mListener;
@@ -116,6 +122,8 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                 android.R.layout.simple_spinner_item, vehicleBrands);
         vehicleBrandsAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
+        newVehicleEditTextValidator = new EditTextValidator(getContext());
+
         populateVehicleSpinner();
     }
 
@@ -138,19 +146,27 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         switch (view.getId()) {
             case R.id.btn_save_vehicle:
 
-                String vehicleName = et_vehicle_name.getText().toString();
-                String vehicleLicensePlate = et_license.getText().toString();
+                EditText vehicleNameEditText = txt_input_layout_vehicle_name.getEditText();
+                EditText vehicleLicensePlateEditText = txt_input_layout_vehicle_license.getEditText();
 
-                // TODO: Review with Hollis - creating user/vehicle and adding
-                userVehicle.setVehicleName(vehicleName);
-                userVehicle.setVehicleLicensePlate(vehicleLicensePlate);
-                userVehicle.setVehicleMake(spinner_vehicle_make.getSelectedItem().toString());
-                userVehicle.setVehicleUUID(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
+                if (newVehicleEditTextValidator.validateEditText(vehicleNameEditText)
+                        && newVehicleEditTextValidator.validateEditText(vehicleLicensePlateEditText)) {
 
-                vehicles.add(0, userVehicle);
+                    // TODO: Review with Hollis - creating user/vehicle and adding
+                    userVehicle.setVehicleName(vehicleNameEditText.getText().toString());
+                    userVehicle.setVehicleLicensePlate(vehicleLicensePlateEditText.getText().toString());
+                    userVehicle.setVehicleMake(spinner_vehicle_make.getSelectedItem().toString());
+                    userVehicle.setVehicleUUID(FirestoreHelper.getInstance().getCurrentUser().getUserUUID());
 
-                FirestoreHelper.getInstance().mergeVehicleWithFirestore(vehicles.get(0));
-                newVehicleCallback.navigateToVehicleListings();
+                    vehicles.add(0, userVehicle);
+
+                    FirestoreHelper.getInstance().mergeVehicleWithFirestore(vehicles.get(0));
+                    newVehicleCallback.navigateToVehicleListings();
+                } else if (!newVehicleEditTextValidator.validateEditText(vehicleNameEditText)) {
+                    txt_input_layout_vehicle_name.setError(getResources().getString(R.string.text_input_layout_et_vehicle_name));
+                } else if (!newVehicleEditTextValidator.validateEditText(vehicleLicensePlateEditText)) {
+                    txt_input_layout_vehicle_license.setError(getResources().getString(R.string.text_input_layout_et_vehicle_license));
+                }
 
                 break;
 
@@ -187,7 +203,7 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-
+                Log.d(TAG, "Error on request");
             }
         });
         stringRequest.setTag(VOLLEY_REQUEST_TAG);
