@@ -18,7 +18,7 @@
             xmlns:app="http://schemas.android.com/apk/res-auto"
             xmlns:tools="http://schemas.android.com/tools"
             android:id="@+id/cardView1"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
@@ -43,12 +43,9 @@
                     android:layout_width="96dp"
                     android:layout_height="23dp"
                     android:layout_marginStart="40dp"
-                    android:layout_marginEnd="8dp"
                     android:fontFamily="@font/roboto"
                     android:text="@string/distance"
                     android:textSize="12sp"
-                    app:layout_constraintEnd_toStartOf="@+id/btn_status"
-                    app:layout_constraintHorizontal_bias="0.0"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_distance" />
 
@@ -80,7 +77,7 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.027"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/edit_image_logo" />
+                    app:layout_constraintTop_toBottomOf="@+id/spot_image" />
 
                 <TextView
                     android:id="@+id/txt_distance"
@@ -111,26 +108,16 @@
                     app:layout_constraintStart_toEndOf="@+id/txt_dollar_sign"
                     app:layout_constraintTop_toBottomOf="@+id/txt_distance" />
 
-                <Button
-                    android:id="@+id/btn_status"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="32dp"
-                    android:layout_marginBottom="152dp"
-                    android:text="@string/btn_park_status"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
-
                 <ImageView
-                    android:id="@+id/edit_image_logo"
+                    android:id="@+id/spot_image"
                     android:layout_width="316dp"
                     android:layout_height="122dp"
                     android:layout_marginStart="8dp"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="28dp"
                     android:layout_marginEnd="8dp"
-                    android:src="@mipmap/ic_launcher"
+                    android:src="@drawable/parking_space"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.498"
+                    app:layout_constraintHorizontal_bias="0.489"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 

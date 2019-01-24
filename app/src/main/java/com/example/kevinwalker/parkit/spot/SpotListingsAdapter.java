@@ -38,7 +38,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
         holder.txt_cost.setText(String.valueOf(mValues.get(position).getHourlyRate()));
         holder.txt_distance.setText(String.valueOf(mValues.get(position).getSpotDistance()));
         holder.txt_spot_name.setText(mValues.get(position).getName());
-        holder.edit_image_logo.setImageResource(R.drawable.ic_test_profile_pic);
+        holder.spot_image.setImageResource(R.drawable.parking_space);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,7 +63,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
         public final TextView txt_distance;
         public final TextView txt_cost;
         public final TextView txt_spot_name;
-        public final ImageView edit_image_logo;
+        public final ImageView spot_image;
         public Spot mItem;
 
         public ViewHolder(View view) {
@@ -73,7 +73,7 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
             txt_distance = view.findViewById(R.id.txt_distance);
             txt_cost = view.findViewById(R.id.txt_cost);
             txt_spot_name = view.findViewById(R.id.txt_spot_name);
-            edit_image_logo = view.findViewById(R.id.edit_image_logo);
+            spot_image = view.findViewById(R.id.spot_image);
         }
 
         @Override
