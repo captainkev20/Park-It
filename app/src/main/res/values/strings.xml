@@ -4,17 +4,83 @@
     <string name="last_updated">Last Updated: </string>
     <string name="surface">Surface: </string>
     <string name="payment_type">Payment Type: </string>
-    <string name="distance">Distance: </string>
+    <string name="distance">Miles</string>
     <string name="park_button">PARK</string>
     <string name="rating">Rating: </string>
+    <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
-    <string name="score">Score: </string>
     <string name="vehicle">Vehicle: </string>
+    <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
+    <string name="et_vehicle_name">Enter Vehicle Name</string>
+    <string name="et_license">Enter License</string>
+    <string name="txt_enter_email">Email: </string>
+    <string name="et_enter_new_email">Enter Email</string>
+    <string name="login_enter_first_name">First Name</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="park_it_login_screen">Park It</string>
+    <string name="park_it_welcome_message">Making parking better one spot at a time…</string>
+    <string name="et_enter_first_name">Enter First Name</string>
+    <string name="confirm_password">Confirm Password: </string>
+    <string name="et_confirm_password">Confirm Password</string>
+    <string name="password">Password: </string>
+    <string name="et_forgot_password_enter_email">Enter E-mail</string>
+    <string name="et_enter_new_password">Enter New Password</string>
+
+
+    <!--// Icons //-->
+    <string name="ic_phone">\ue942</string>
+    <string name="ic_address_book">\ue944</string>
+    <string name="ic_email_envelope">\ue945</string>
+
+    <!--// Save Profile Pic //-->
+    <string name="change_profile_pic">Are you sure you want to change your profile vehiclePicture?</string>
+    <string name="positive_change_profile_pic">YES</string>
+
     <string name="score_placeholder">000099</string>
-    <string name="badges">Badges: </string>
+    <string name="first_name_placeholder">First Name: </string>
+    <string name="last_name_placeholder">Last Name: </string>
+    <string name="phone_number">Phone Number: </string>
+    <string name="edit_profile">EDIT</string>
+    <string name="save">SAVE</string>
+    <string name="cancel_user_edit_profile">CANCEL</string>
+    <string name="email">E-mail: </string>
+    <string name="enter_first_Name">Enter First Name</string>
+    <string name="enter_last_name">Enter Last Name</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="enter_email">Enter Email</string>
+    <string name="saved_profile_photo">Photo Saved</string>
+    <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
+    <string name="btn_find_user_parked_location_not_parked">"Sorry, it looks like you have not parked yet!</string>
+
+    <string name="text_input_layout_et_first_name">Please enter first name</string>
+    <string name="text_input_layout_et_last_name">Please enter last name</string>
+    <string name="text_input_layout_et_phone_number">Please enter phone number</string>
+    <string name="text_input_layout_et_email">Please enter e-mail</string>
+    <string name="text_input_layout_et_hourly_rate">Please enter an hourly rate</string>
+    <string name="text_input_layout_et_spot_name">Please enter a spot name</string>
+    <string name="text_input_layout_et_vehicle_name">Please enter a vehicle name</string>
+    <string name="text_input_layout_et_vehicle_license">Please enter vehicle license plate</string>
+
+
+    <string-array name="spinner_spot_size_items">
+        <item>COMPACT</item>
+        <item>STANDARD</item>
+        <item>TRUCK</item>
+        <item>RV</item>
+        <item>SEMI</item>
+
+    </string-array>
+
+    <string name="vehicle_name">Nickname</string>
+    <string name="vehicle_nickname_label">Vehicle Nickname</string>
+    <string name="vehicle_license_place_label">License Plate</string>
+    <string name="vehicle_license_plate">License Plate</string>
+    <string name="vehicle_json_name">vehicles</string>
+    <string name="vehicle_make">Make</string>
+    <string name="vehicle_make_label">Vehicle Make</string>
 
 
 
@@ -24,12 +90,95 @@
     <string name="expiration_date">Expiration Date: </string>
     <string name="zip">Zip: </string>
 
+    <string name="spot_name">Spot Name: </string>
+    <string name="spot_button_location_not_pressed">Sorry, you must specify your location when creating spot</string>
+    <string name="dollar_sign">$</string>
+    <string name="miles">Miles</string>
+    <string name="hourly_rate">Hourly Rate: </string>
+    <string name="txt_spot_type">Spot Type</string>
+    <string name="per_hour">Per Hour</string>
+    <string name="payment_types_accepted">Payment Types Accepted</string>
+    <string name="add_new_spot">Add New Spot</string>
+    <string name="btn_spot_location">Spot Location</string>
+    <string name="txt_cancel_add_new_spot">CANCEL</string>
+    <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
+    press button below.</string>
+
+
+    <string name="map_nav_title">Map </string>
+    <string name="profile_nav_title">Profile </string>
+    <string name="listings_nav_title">Listings </string>
+    <string name="payments_nav_title">Payments </string>
+    <string name="settings_nav_title">Settings </string>
+    <string name="about_nav_title">About Us </string>
+    <string name="vehicles_nav_title">Vehicles</string>
+
+
     <string name="btn_save">SAVE </string>
     <string name="btn_cancel">CANCEL </string>
+    <string name="btn_user_cars_">MY CARS</string>
+    <string name="go_back">Go Back</string>
+    <string name="et_email_hint">E-mail</string>
+    <string name="et_password_hint">Password</string>
+    <string name="tv_homepage_welcome">Welcome to HomePage</string>
+    <string name="onCreate">Hello from onCreate()!</string>
+    <string name="onStart">Hello from onStart()!</string>
+    <string name="onResume">Hello from onResume()!</string>
+    <string name="onPause">Hello from onPause()!</string>
+    <string name="onStop">Hello from onStop()!</string>
+    <string name="onDestroy">Hello from onDestroy()!</string>
+    <string name="login">Login</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="login_banned">Feel the wrath of the BAN HAMMER!!!</string>
+    <string name="login_success">Login Successful!</string>
+    <string name="login_incorrect_password">Incorrect Password</string>
+    <string name="login_registration_required">Please register before attempting to login</string>
+    <string name="login_username_empty">Your username is blank</string>
+    <string name="login_password_empty">Your password field is blank</string>
+    <string name="registration_register">Register</string>
+    <string name="registration_create">Create Account!</string>
+    <string name="registration_success">You are now registered</string>
+    <string name="registration_failure">We\'re sorry but an error occurred during registration...</string>
+    <string name="registration_password_mismatch">Your passwords do not match</string>
+    <string name="registration_already_registered">You have already registered this email</string>
+    <string name="registration_email_banned">The email you entered is banned from this app</string>
+    <string name="registration_username_empty">Please enter your email as a username</string>
+    <string name="registration_first_name_empty">Please enter your first name</string>
+    <string name="registration_password_empty">Please supply a password</string>
+    <string name="registration_confirm_password_empty">Please confirm your password</string>
+    <string name="registration_weak_password">Your password is weak</string>
+    <string name="registration_invalid_credentials">Invalid credentials</string>
+    <string name="registration_user_collision">Your credentials are tied to another account</string>
+    <string name="registration_password_short">Your password needs to be longer than 7 characters</string>
+    <string name="registration_password_long">Your password needs to be less than 16 characters</string>
+    <string name="forgot_password_enter_reg_email">"Enter E-mail"</string>
+    <string name="forgot_password_button_send_reminder">SEND REMINDER</string>
+    <string name="title_activity_nav_drawer">NavDrawer</string>
+    <string name="Park">Park</string>
+    <string name="Leave">Leave</string>
+    <string name="find_me">FIND ME</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_log_off">Log off</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_login">Park It</string>
+    <string name="nav_header_greeting">Hi</string>
+    <string name="nav_header_desc">Navigation header</string>
 
 
-
-
-
+    <string name="PERMISSION_DIALOG_TITLE">Location Permission </string>
+    <string name="PERMISSION_DIALOG_MESSAGE">Hi there! Our app can\'t function properly without your location. Will you please grant it? </string>
+    <string name="PERMISSION_DIALOG_POSITIVE_BUTTON_TEXT">Okay! </string>
+    <string name="PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT">No thanks! </string>
+    <string name="title_activity_vehicle_profile">VehicleProfileActivity</string>
+    <string name="LEAVE_DIALOG_TITLE">"HOLD UP!"</string>
+    <string name="LEAVE_DIALOG_MESSAGE">"This will vacate your space and let other users know it is available."</string>
+    <string name="LEAVE_DIALOG_NEGATIVE_BUTTON_TEXT">"Not Yet!</string>
+    <string name="LEAVE_DIALOG_POSITIVE_BUTTON_TEXT">"I'm outta here!</string>
+    <string name="title_activity_maps">Map</string>
 
 </resources>

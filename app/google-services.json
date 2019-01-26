@@ -1,0 +1,104 @@
+{
+  "project_info": {
+    "project_number": "96856603305",
+    "firebase_url": "https://park-it-1522607517807.firebaseio.com",
+    "project_id": "park-it-1522607517807",
+    "storage_bucket": "park-it-1522607517807.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96856603305:android:955fad0fc1d65903",
+        "android_client_info": {
+          "package_name": "com.droid.rocks.kevinwalker.parkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "96856603305-doa894akupf1r4tv968t94527hco7nvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnU4hbm1BjeNsr0O6ZH_9cugcZxuMjgw0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96856603305:android:8b3eb67e73216528",
+        "android_client_info": {
+          "package_name": "com.example.kevinwalker.parkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "96856603305-doa894akupf1r4tv968t94527hco7nvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnU4hbm1BjeNsr0O6ZH_9cugcZxuMjgw0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:96856603305:android:522057837f38d1b3",
+        "android_client_info": {
+          "package_name": "com.rocks.kevinwalker.parkit"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "96856603305-doa894akupf1r4tv968t94527hco7nvi.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAnU4hbm1BjeNsr0O6ZH_9cugcZxuMjgw0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
