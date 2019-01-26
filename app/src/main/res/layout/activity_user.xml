@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.example.kevinwalker.parkit.utils.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -23,7 +23,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.example.kevinwalker.parkit.users.UserProfileFragment">
+        tools:context="com.rocks.kevinwalker.parkit.users.UserProfileFragment">
 
         <ViewSwitcher
             android:id="@+id/profile_view_switcher"
@@ -109,7 +109,7 @@
                         app:layout_constraintTop_toTopOf="parent"
                         app:layout_constraintVertical_bias="0.018" />
 
-                    <com.example.kevinwalker.parkit.utils.CustomTextView
+                    <com.rocks.kevinwalker.parkit.utils.CustomTextView
                         android:id="@+id/ic_phone"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
@@ -122,7 +122,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/ic_email"
                         customAttrs:customFont="PARK_IT_ICON_FONT" />
 
-                    <com.example.kevinwalker.parkit.utils.CustomTextView
+                    <com.rocks.kevinwalker.parkit.utils.CustomTextView
                         android:id="@+id/ic_email"
                         android:layout_width="52dp"
                         android:layout_height="52dp"
@@ -438,7 +438,7 @@
     </android.support.constraint.ConstraintLayout>
     </LinearLayout>
     </ScrollView>
-</com.example.kevinwalker.parkit.utils.SlidingRelativeLayout>
+</com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout>
 
 
 

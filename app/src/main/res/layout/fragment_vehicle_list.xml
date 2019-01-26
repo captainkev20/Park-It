@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<com.example.kevinwalker.parkit.utils.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -17,9 +17,9 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="48dp"
         app:layoutManager="LinearLayoutManager"
-        tools:context="com.example.kevinwalker.parkit.spot.SpotListingsFragment"
+        tools:context="com.rocks.kevinwalker.parkit.spot.SpotListingsFragment"
         tools:listitem="@layout/fragment_vehicle" />
 
-</com.example.kevinwalker.parkit.utils.SlidingRelativeLayout>
+</com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout>
 
 

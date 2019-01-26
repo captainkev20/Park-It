@@ -5,7 +5,7 @@ apply plugin: 'kotlin-android-extensions'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.kevinwalker.parkit"
+        applicationId "com.rocks.kevinwalker.parkit"
         minSdkVersion 22
         targetSdkVersion 26
         versionCode 1

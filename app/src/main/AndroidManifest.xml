@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.kevinwalker.parkit">
+    package="com.rocks.kevinwalker.parkit">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -36,7 +36,7 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".authentication.Login"
+            android:name="com.rocks.kevinwalker.parkit.authentication.Login"
             android:label="@string/title_activity_login"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
@@ -45,15 +45,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".authentication.Registration" />
+        <activity android:name="com.rocks.kevinwalker.parkit.authentication.Registration" />
         <activity
-            android:name=".NavDrawer"
+            android:name="com.rocks.kevinwalker.parkit.NavDrawer"
             android:screenOrientation="portrait"
             android:label="@string/title_activity_nav_drawer"
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="adjustPan"
             />
-        <activity android:name=".authentication.ForgotPassword" />
+        <activity android:name="com.rocks.kevinwalker.parkit.authentication.ForgotPassword" />
     </application>
 
 </manifest>

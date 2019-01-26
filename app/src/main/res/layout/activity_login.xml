@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.kevinwalker.parkit.authentication.Login">
+    tools:context="com.rocks.kevinwalker.parkit.authentication.Login">
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/textInputLayout5"
