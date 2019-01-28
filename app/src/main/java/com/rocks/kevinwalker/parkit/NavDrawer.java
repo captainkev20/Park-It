@@ -476,6 +476,11 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
+    public void onAllMapSpotsUpdated(ArrayList<Spot> mapSpots) {
+        mapFragment.placeSpotsOnMap(mapSpots);
+    }
+
+    @Override
     public void onAllVehiclesUpdated(ArrayList<Vehicle> vehicles) {
         vehicleListingFragment.resetRecyclerView(vehicles);
     }
