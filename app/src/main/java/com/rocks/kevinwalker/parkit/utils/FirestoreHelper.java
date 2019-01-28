@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rocks.kevinwalker.parkit.NavDrawer;
 import com.rocks.kevinwalker.parkit.payments.StripeCustomer;
 import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.users.User;
@@ -56,12 +57,12 @@ public class FirestoreHelper {
 
     private ArrayList<Spot> allSpots = new ArrayList<>();
     private ArrayList<Vehicle> allVehicles = new ArrayList<>();
+    private ArrayList<Spot> mapSpots = new ArrayList<>();
 
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
 
     private static FirestoreHelper.OnDataUpdated mListener;
-
 
     public static FirestoreHelper getInstance() {
         if (instance != null) {
@@ -96,6 +97,11 @@ public class FirestoreHelper {
             userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.d(TAG, "Listener failed");
+                        return;
+                    }
+
                     if (documentSnapshot.exists()) {
                         currentUser = documentSnapshot.toObject(User.class);
                         mergeCurrentUserWithFirestore();
@@ -290,6 +296,7 @@ public class FirestoreHelper {
                 if (task.isSuccessful()) {
 
                     // Clear array list - fixes RecyclerView issue of duplicating list items
+
                     allSpots.clear();
 
                     for (QueryDocumentSnapshot document : task.getResult()) {
@@ -306,6 +313,23 @@ public class FirestoreHelper {
         });
 
         return allSpots;
+    }
+
+    public ArrayList<Spot> getSpotForMap() {
+        FirebaseFirestore.getInstance().collection("spots")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        mapSpots.add(documentSnapshot.toObject(Spot.class));
+                    }
+                    mListener.onAllMapSpotsUpdated(mapSpots);
+                }
+            }
+        });
+
+        return mapSpots;
     }
 
     public ArrayList<Vehicle> getAllVehicles() {
@@ -376,5 +400,6 @@ public class FirestoreHelper {
         void onAllVehiclesUpdated(ArrayList<Vehicle> vehicles);
         void profilePictureUpdated(Uri filePath);
         void navHeaderProfilePictureUpdated(Uri filePath);
+        void onAllMapSpotsUpdated(ArrayList<Spot> mapSpots);
     }
 }
