@@ -1,8 +1,11 @@
 package com.rocks.kevinwalker.parkit.spot;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -14,11 +17,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.rocks.kevinwalker.parkit.NavDrawer;
 import com.rocks.kevinwalker.parkit.R;
 import com.rocks.kevinwalker.parkit.maps.CustomLocation;
 import com.rocks.kevinwalker.parkit.profiles.ParentProfileFragment;
@@ -28,10 +37,11 @@ import com.rocks.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.SetOptions;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.UUID;
 
 
@@ -39,6 +49,7 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         AdapterView.OnItemSelectedListener {
 
     private static final String TAG = NewSpotFragment.class.getName();
+    private static final int REQUEST_IMAGE_CAPTURE = 3;
 
     private CustomLocation spotLocation = new CustomLocation();
     private LocationHelper locationHelper;
@@ -53,9 +64,13 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @BindView(R.id.btn_spot_location) Button btn_spot_location;
     @BindView(R.id.txt_input_layout_hourly_rate) TextInputLayout txt_input_layout_hourly_rate;
     @BindView(R.id.txt_input_layout_spot_name) TextInputLayout txt_input_layout_spot_name;
+    @BindView(R.id.spot_image) ImageView spot_image;
 
-    FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    DocumentReference spotDocumentReference;
+    private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    private DocumentReference spotDocumentReference;
+    private StorageReference spotReference;
+    private UUID spotUUID;
+
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
@@ -97,29 +112,33 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
         newSpotEditTextValidator = new EditTextValidator(getContext());
 
-        spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
+        spotUUID = UUID.randomUUID();
 
-        spotDocumentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-            @Override
-            public void onSuccess(DocumentSnapshot documentSnapshot) {
-                if (documentSnapshot.exists()) {
-                    userSpot = documentSnapshot.toObject(Spot.class);
-                    if (userSpot.getSpotUUID().trim().isEmpty()) {
-                        userSpot.setSpotUUID(String.valueOf(UUID.randomUUID()));
-                        mergeSpotWithFirebase(userSpot);
-                    } else {
-                        mergeSpotWithFirebase(userSpot);
-                    }
-                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-                }
-            }
-        })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(getActivity(), "Failed to write", Toast.LENGTH_SHORT).show();
-                    }
-                });
+        spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(spotUUID));
+
+        spotReference = FirebaseStorage.getInstance().getReference();
+
+//        spotDocumentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//            @Override
+//            public void onSuccess(DocumentSnapshot documentSnapshot) {
+//                if (documentSnapshot.exists()) {
+//                    userSpot = documentSnapshot.toObject(Spot.class);
+//                    if (userSpot.getSpotUUID().trim().isEmpty()) {
+//                        userSpot.setSpotUUID(String.valueOf(UUID.randomUUID()));
+//                        mergeSpotWithFirebase(userSpot);
+//                    } else {
+//                        mergeSpotWithFirebase(userSpot);
+//                    }
+//                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        })
+//                .addOnFailureListener(new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        Toast.makeText(getActivity(), "Failed to write", Toast.LENGTH_SHORT).show();
+//                    }
+//                });
     }
 
     @Override
@@ -139,6 +158,8 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         btn_save_spot.setOnClickListener(this);
         btn_spot_location.setOnClickListener(this);
         txt_cancel_add_spot.setOnClickListener(this);
+        spot_image.setOnClickListener(this);
+
 
         return mView;
     }
@@ -159,10 +180,11 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                     userSpot.setLatitude(spotLocation.getLatitude());
                     userSpot.setLongitude(spotLocation.getLongitude());
                     userSpot.setSpotSize(spinner_spot_size.getSelectedItem().toString());
+                    userSpot.setSpotPhotoURL(FirestoreHelper.getInstance().getUserSpot().getSpotPhotoURL());
 
 
                     if (isSpotLocationSet) {
-                        mergeSpotWithFirebase(userSpot);
+                        FirestoreHelper.getInstance().mergeSpotWithFirestore(userSpot);
                         newSpotCallback.navigateToSpotListings();
                     } else {
                         Toast.makeText(getActivity(), getResources().getString(R.string.spot_button_location_not_pressed),
@@ -185,24 +207,12 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
             case R.id.txt_view_cancel_add_spot:
                 newSpotCallback.navigateToSpotListings();
+                break;
 
+            case R.id.spot_image:
+                dispatchTakePictureIntent();
+                break;
         }
-    }
-
-    private void mergeSpotWithFirebase(Spot userSpot) {
-        spotDocumentReference.set(userSpot, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
-            @Override
-            public void onSuccess(Void aVoid) {
-                Log.d(TAG, "Successful write");
-                Toast.makeText(getActivity(), "Spot Saved!", Toast.LENGTH_SHORT).show();
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.d(TAG, "Failed to write");
-                Toast.makeText(getActivity(), "Spot Not Saved!", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
     @Override
@@ -219,6 +229,73 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    private File getProfilePictureFile(Bitmap bitmap) {
+        String filename = getActivity().getFilesDir().getAbsolutePath() + "/" + FirestoreHelper.getInstance()
+                .getSpotRef()
+                + "_spot_picture.png";
+        File dest = new File(filename);
+
+        try {
+            FileOutputStream out = new FileOutputStream(dest);
+            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            out.flush();
+            out.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dest;
+    }
+
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Verify a camera activity can handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == NavDrawer.RESULT_OK) {
+
+            //vehicle_photo_progress_bar.setVisibility(View.VISIBLE);
+            //edit_image_logo.setVisibility(View.INVISIBLE);
+
+            Bundle extras = data.getExtras();
+            Bitmap imageBitmap = (Bitmap) extras.get("data");
+            Uri uri = Uri.fromFile(getProfilePictureFile(imageBitmap));
+
+            StorageReference filePath = spotReference.child("UserSpotPhotos/").child(uri.getLastPathSegment());
+
+            filePath.putFile(uri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    filePath.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            //vehicle_photo_progress_bar.setVisibility(View.GONE);
+                            //edit_image_logo.setVisibility(View.VISIBLE);
+
+                            Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
+                            if (FirestoreHelper.getInstance().getCurrentUser() != null) {
+                                FirestoreHelper.getInstance().getUserSpot().setSpotPhotoURL(String.valueOf(uri));
+                                FirestoreHelper.getInstance().mergeSpotWithFirestore(userSpot);
+                            }
+                            Picasso.get().load(uri).centerCrop().resize(128, 140).rotate(90).into(spot_image);
+                        }
+                    });
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getActivity(), "Failed to write!", Toast.LENGTH_SHORT).show();
+                }
+            });
         }
     }
 
