@@ -59,9 +59,9 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     @BindView(R.id.et_spot_name) EditText et_spot_name;
     @BindView(R.id.et_hourly_rate) EditText et_hourly_rate;
     @BindView(R.id.btn_save_spot) Button btn_save_spot;
+    @BindView(R.id.btn_spot_location) Button btn_spot_location;
     @BindView(R.id.txt_view_cancel_add_spot) TextView txt_cancel_add_spot;
     @BindView(R.id.spinner_spot_size) Spinner spinner_spot_size;
-    @BindView(R.id.btn_spot_location) Button btn_spot_location;
     @BindView(R.id.txt_input_layout_hourly_rate) TextInputLayout txt_input_layout_hourly_rate;
     @BindView(R.id.txt_input_layout_spot_name) TextInputLayout txt_input_layout_spot_name;
     @BindView(R.id.spot_image) ImageView spot_image;
@@ -70,7 +70,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     private DocumentReference spotDocumentReference;
     private StorageReference spotReference;
     private UUID spotUUID;
-
 
     private NewSpotCallback newSpotCallback;
     private Spot userSpot = new Spot();
@@ -89,7 +88,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
     public NewSpotFragment() { }
 
-    // TODO: Rename and change types and number of parameters
     public static NewSpotFragment newInstance(String param1, String param2) {
         NewSpotFragment fragment = new NewSpotFragment();
         Bundle args = new Bundle();
@@ -97,6 +95,17 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         args.putString(ARG_PARAM2, param2);
         fragment.setArguments(args);
         return fragment;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof NewSpotFragment.NewSpotCallback) {
+            newSpotCallback = (NewSpotFragment.NewSpotCallback) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -117,28 +126,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
         spotDocumentReference = firebaseFirestore.collection("spots").document(String.valueOf(spotUUID));
 
         spotReference = FirebaseStorage.getInstance().getReference();
-
-//        spotDocumentReference.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-//            @Override
-//            public void onSuccess(DocumentSnapshot documentSnapshot) {
-//                if (documentSnapshot.exists()) {
-//                    userSpot = documentSnapshot.toObject(Spot.class);
-//                    if (userSpot.getSpotUUID().trim().isEmpty()) {
-//                        userSpot.setSpotUUID(String.valueOf(UUID.randomUUID()));
-//                        mergeSpotWithFirebase(userSpot);
-//                    } else {
-//                        mergeSpotWithFirebase(userSpot);
-//                    }
-//                    Toast.makeText(getActivity(), "Success", Toast.LENGTH_SHORT).show();
-//                }
-//            }
-//        })
-//                .addOnFailureListener(new OnFailureListener() {
-//                    @Override
-//                    public void onFailure(@NonNull Exception e) {
-//                        Toast.makeText(getActivity(), "Failed to write", Toast.LENGTH_SHORT).show();
-//                    }
-//                });
     }
 
     @Override
@@ -219,17 +206,6 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
 
         getActivity().setTitle(getResources().getString(R.string.add_new_spot));
-    }
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof NewSpotFragment.NewSpotCallback) {
-            newSpotCallback = (NewSpotFragment.NewSpotCallback) context;
-        } else {
-            throw new RuntimeException(context.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
     }
 
     private File getProfilePictureFile(Bitmap bitmap) {
