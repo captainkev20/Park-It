@@ -99,7 +99,7 @@
     <string name="per_hour">Per Hour</string>
     <string name="payment_types_accepted">Payment Types Accepted</string>
     <string name="add_new_spot">Add New Spot</string>
-    <string name="btn_spot_location">Spot Location</string>
+    <string name="btn_spot_location">Set Spot Location</string>
     <string name="txt_cancel_add_new_spot">CANCEL</string>
     <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
     press button below.</string>
