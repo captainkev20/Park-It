@@ -21,7 +21,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewSwitcher;
-
 import com.rocks.kevinwalker.parkit.NavDrawer;
 import com.rocks.kevinwalker.parkit.R;
 import com.rocks.kevinwalker.parkit.profiles.ParentProfileFragment;
@@ -44,40 +43,44 @@ import de.hdodenhof.circleimageview.CircleImageView;
 import java.io.File;
 import java.io.FileOutputStream;
 
-import static android.app.Activity.RESULT_OK;
-
 public class UserProfileFragment extends ParentProfileFragment implements View.OnClickListener {
 
     @BindView(R.id.image_logo) CircleImageView image_logo;
+    @BindView(R.id.edit_image_logo) CircleImageView edit_image_logo;
+
     @BindView(R.id.ic_phone) CustomTextView ic_phone;
     @BindView(R.id.ic_email) CustomTextView ic_email;
+
     @BindView(R.id.txt_first_name) TextView txt_first_name;
     @BindView(R.id.txt_last_name) TextView txt_last_name;
     @BindView(R.id.txt_phone_number) TextView txt_phone_number;
     @BindView(R.id.txt_email) TextView txt_email;
-
-    @BindView(R.id.edit_image_logo) CircleImageView edit_image_logo;
-    @BindView(R.id.et_phone_number) EditText et_phone_number;
-    @BindView(R.id.text_input_layout_et_phone_number) TextInputLayout text_input_layout_et_phone_number;
-    @BindView(R.id.et_email) EditText et_email;
-    @BindView(R.id.text_input_layout_et_email) TextInputLayout text_input_layout_et_email;
-    @BindView(R.id.et_last_name2) EditText et_last_name2;
-    @BindView(R.id.text_input_layout_et_last_name) TextInputLayout text_input_layout_et_last_name;
-    @BindView(R.id.et_first_name2) EditText et_first_name2;
-    @BindView(R.id.text_input_layout_et_first_name) TextInputLayout text_input_layout_et_first_name;
-    @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
-    @BindView(R.id.btn_edit_profile) Button btn_edit_profile;
     @BindView(R.id.txt_view_cancel_edit_profile) TextView txt_cancel_edit_profile;
+
+    @BindView(R.id.et_phone_number) EditText et_phone_number;
+    @BindView(R.id.et_email) EditText et_email;
+    @BindView(R.id.et_last_name2) EditText et_last_name2;
+    @BindView(R.id.et_first_name2) EditText et_first_name2;
+
+    @BindView(R.id.text_input_layout_et_email) TextInputLayout text_input_layout_et_email;
+    @BindView(R.id.text_input_layout_et_phone_number) TextInputLayout text_input_layout_et_phone_number;
+    @BindView(R.id.text_input_layout_et_last_name) TextInputLayout text_input_layout_et_last_name;
+    @BindView(R.id.text_input_layout_et_first_name) TextInputLayout text_input_layout_et_first_name;
+
+    @BindView(R.id.profile_view_switcher) ViewSwitcher profile_view_switcher;
+
+    @BindView(R.id.btn_edit_profile) Button btn_edit_profile;
     @BindView(R.id.btn_save_profile) Button btn_save_profile;
+
     @BindView(R.id.edit_profile_card_view) CardView edit_profile_card_view;
     @BindView(R.id.main_profile_card_view) CardView main_profile_card_view;
+
     @BindView(R.id.save_photo_progress_bar) ProgressBar save_user_progress_bar;
 
     private static final String TAG = UserProfileFragment.class.getName();
     private static final int REQUEST_IMAGE_CAPTURE = 1;
 
     private StorageReference userProfileReference;
-    private StorageReference filePath;
 
     protected DrawerLayout drawer;
     protected Toolbar toolbar;
@@ -85,7 +88,6 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     private View mView;
 
     private UserProfileCallback callback;
-    private NavDrawer navDrawer;
     private EditTextValidator userProfileTextValidator;
 
     @Override
@@ -103,9 +105,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        navDrawer = (NavDrawer) getActivity();
         userProfileReference = FirebaseStorage.getInstance().getReference();
-        filePath = userProfileReference.child("UserProfilePhotos/").child(getFirebaseUser().getUid() + "_profile_picture.png");
 
         userProfileTextValidator = new EditTextValidator(getContext());
     }
@@ -258,7 +258,7 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == NavDrawer.RESULT_OK) {
 
             save_user_progress_bar.setVisibility(View.VISIBLE);
             edit_image_logo.setVisibility(View.INVISIBLE);
