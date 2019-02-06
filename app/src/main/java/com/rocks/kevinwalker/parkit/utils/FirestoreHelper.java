@@ -31,6 +31,9 @@ import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -137,7 +140,7 @@ public class FirestoreHelper {
 
     public void initializeFirestoreSpot() {
         // Initialize our Spot DocumentReference
-        userSpotDocument = firebaseFirestore.collection("spots").document(testSpot);
+        userSpotDocument = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
 
         userSpotDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -243,6 +246,32 @@ public class FirestoreHelper {
         });
     }
 
+//    // TODO: Review with Hollis on how to handle multiple vehicles
+//    public void mergeVehicleWithFirestore(Map<String,Vehicle> userVehicle) {
+//        userVehicleDocument.set(userVehicle).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Toast.makeText((Context) mListener, "Vehicle Saved!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+    public void mergeSpotWithFirestore(Spot userSpot) {
+        userSpotDocument.set(userSpot, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Successful write");
+                Toast.makeText((Context) mListener, "Spot Saved!", Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed to write");
+                Toast.makeText((Context) mListener, "Spot Not Saved!", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     // TODO: Review with Hollis and determine if this is best way to handle
     public StorageReference getUserProfilePhotoFromFirebase() {
@@ -337,31 +366,52 @@ public class FirestoreHelper {
                 .whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    List<Vehicle> vehicles = new ArrayList<>();
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                    // Clear array list - fixes RecyclerView issues of duplicating list items
-                    allVehicles.clear();
+                        allVehicles.clear();
 
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        vehicles.add(documentSnapshot.toObject(Vehicle.class));
+                        if (queryDocumentSnapshots.isEmpty()) {
+                            return;
+                        } else {
+                            allVehicles.addAll(queryDocumentSnapshots.toObjects(Vehicle.class));
+                        }
+
+                        mListener.onAllVehiclesUpdated(allVehicles);
                     }
-                    allVehicles.addAll(vehicles);
-                    mListener.onAllVehiclesUpdated(allVehicles);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Failed to fetch");
+                Log.d(TAG, "Failed to fetch");
             }
         });
 
         return allVehicles;
     }
 
+    // TODO: Get working with Holis to get all vehicles out. Maybe use GSON to convert Map to POJO
+//    public ArrayList<Vehicle> getAllVehicles() {
+//        FirebaseFirestore.getInstance().collection("vehicles")
+//                //.whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (DocumentSnapshot documentSnapshot : task.getResult()) {
+//                                Map<String,Object> map = (Map<String,Object>) documentSnapshot.getData();
+//                                for (Map.Entry<String,Object> entry : map.entrySet()) {
+//                                    System.out.print(entry.getKey() + "/" + entry.getValue());
+//
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
+//
+//        return allVehicles;
+//
+//    }
 
     public static void logOff() {
         currentUser = null;
@@ -389,6 +439,8 @@ public class FirestoreHelper {
     public StripeCustomer getStripeCustomer() { return stripeCustomer; }
 
     public void setStripeUser(StripeCustomer stripeUser) { stripeCustomer = stripeUser; }
+
+    public DocumentReference getSpotRef() { return userSpotDocument; }
 
     public DatabaseReference getRef() { return ref; }
 
