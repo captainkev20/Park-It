@@ -160,6 +160,8 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                     text_input_layout_et_first_name.setError(null);
                     text_input_layout_et_last_name.setError(null);
 
+                    Toast.makeText(getActivity(), R.string.saved_profile, Toast.LENGTH_SHORT).show();
+
                     profile_view_switcher.showPrevious();
 
                 } else if (!userProfileTextValidator.validateEditText(firstNameString)) {
