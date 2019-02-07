@@ -167,7 +167,8 @@ public class FirestoreHelper {
     }
 
     public void initializeFirestoreStripeCustomer() {
-        stripeCustomers = firebaseFirestore.collection("stripe_customers").document(testStripe);
+        stripeCustomers = firebaseFirestore.collection("stripe_customers")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         stripeCustomers.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
