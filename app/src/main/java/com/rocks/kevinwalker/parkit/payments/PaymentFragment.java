@@ -9,10 +9,12 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.rocks.kevinwalker.parkit.utils.FirestoreHelper;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
 import com.stripe.android.model.Card;
+import com.stripe.android.model.Customer;
 import com.stripe.android.model.Token;
 import com.stripe.android.view.CardInputWidget;
 
@@ -34,6 +36,7 @@ public class PaymentFragment extends Fragment
 
     private Card card;
     private Stripe stripe;
+    private Customer customer;
 
 
     @Override
@@ -41,7 +44,6 @@ public class PaymentFragment extends Fragment
         super.onCreate(savedInstanceState);
 
         FirestoreHelper.getInstance().initializeFirestoreStripeCustomer();
-        
     }
 
     @Override
@@ -65,6 +67,8 @@ public class PaymentFragment extends Fragment
         switch(view.getId()) {
             case R.id.btn_save_payment:
 
+                //TODO: Save customer ID for future charges
+
                 card = card_input_widget.getCard();
                 if (card == null) {
                     return;
@@ -79,10 +83,9 @@ public class PaymentFragment extends Fragment
 
                                 @Override
                                 public void onSuccess(Token token) {
-                                    // TODO: Send to back-end
                                     Toast.makeText(getActivity(), "Card Successfully Saved!", Toast.LENGTH_SHORT).show();
-
-                                    FirestoreHelper.getInstance().getStripeCustomer().setToken(token.getId());
+                                    FirestoreHelper.getInstance().getStripeCustomer().setCardLastFourDigits(card.getLast4());
+                                    FirestoreHelper.getInstance().getStripeCustomer().setCardBrand(card.getBrand());
                                     FirestoreHelper.getInstance().mergeStripeCustomerWithFirestore();
                                 }
                             });
