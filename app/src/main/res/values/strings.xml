@@ -51,6 +51,7 @@
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="enter_email">Enter Email</string>
     <string name="saved_profile_photo">Photo Saved</string>
+    <string name="saved_profile">Profile Saved!</string>
     <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
     <string name="btn_find_user_parked_location_not_parked">"Sorry, it looks like you have not parked yet!</string>
