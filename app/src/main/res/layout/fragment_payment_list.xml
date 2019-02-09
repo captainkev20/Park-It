@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/payment_recycler_view"
+        android:name="com.example.kevinwalker.parkit.payments.PaymentListings"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="48dp"
+        app:layoutManager="LinearLayoutManager"
+        tools:context="com.rocks.kevinwalker.parkit.payments.PaymentListingsFragment"
+        tools:listitem="@layout/fragment_payment" />
+
+</com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout>
+
+
