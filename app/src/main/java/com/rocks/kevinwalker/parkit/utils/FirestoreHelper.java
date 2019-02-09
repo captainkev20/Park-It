@@ -6,8 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rocks.kevinwalker.parkit.NavDrawer;
-import com.rocks.kevinwalker.parkit.payments.StripeCustomer;
+import com.rocks.kevinwalker.parkit.payments.Payment;
 import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.users.User;
 import com.rocks.kevinwalker.parkit.vehicle.Vehicle;
@@ -30,9 +29,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -45,7 +41,7 @@ public class FirestoreHelper {
     private static final String testStripe = "9HjucfCGRlm5CGz4pYdo";
 
     private static User currentUser = new User();
-    private static StripeCustomer stripeCustomer = new StripeCustomer();
+    private static Payment userPayment = new Payment();
     private static Spot userSpot = new Spot();
     private static Vehicle userVehicle = new Vehicle();
 
@@ -61,6 +57,7 @@ public class FirestoreHelper {
     private ArrayList<Spot> allSpots = new ArrayList<>();
     private ArrayList<Vehicle> allVehicles = new ArrayList<>();
     private ArrayList<Spot> mapSpots = new ArrayList<>();
+    private ArrayList<Payment> allPayments = new ArrayList<>();
 
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
@@ -174,7 +171,7 @@ public class FirestoreHelper {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    stripeCustomer = documentSnapshot.toObject(StripeCustomer.class);
+                    userPayment = documentSnapshot.toObject(Payment.class);
                 }
             }
         });
@@ -216,7 +213,7 @@ public class FirestoreHelper {
     }
 
     public void mergeStripeCustomerWithFirestore() {
-        stripeCustomers.set(stripeCustomer, SetOptions.merge())
+        stripeCustomers.set(userPayment, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -338,11 +335,36 @@ public class FirestoreHelper {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Failed to fetch");
+                Log.d(TAG,"Failed to fetch spots");
             }
         });
 
         return allSpots;
+    }
+
+    public ArrayList<Payment> getAllUserPayments() {
+        FirebaseFirestore.getInstance().collection("stripe_customers")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    allPayments.clear();
+
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        allPayments.add(documentSnapshot.toObject(Payment.class));
+                    }
+                    mListener.onAllPaymentsUpdated(allPayments);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed to fetch payments");
+            }
+        });
+
+        return allPayments;
     }
 
     public ArrayList<Spot> getSpotForMap() {
@@ -422,7 +444,7 @@ public class FirestoreHelper {
         userSpot = null;
         stripeCustomers = null;
         filePath = null;
-        stripeCustomer = null;
+        userPayment = null;
     }
 
     public User getCurrentUser() {
@@ -435,11 +457,13 @@ public class FirestoreHelper {
 
     public Spot getUserSpot() { return userSpot; }
 
+    public Payment getUserPayment() { return userPayment; }
+
     public Vehicle getUserVehicle() { return userVehicle; }
 
-    public StripeCustomer getStripeCustomer() { return stripeCustomer; }
+    public Payment getStripeCustomer() { return userPayment; }
 
-    public void setStripeUser(StripeCustomer stripeUser) { stripeCustomer = stripeUser; }
+    public void setStripeUser(Payment stripeUser) { userPayment = stripeUser; }
 
     public DocumentReference getSpotRef() { return userSpotDocument; }
 
@@ -454,5 +478,6 @@ public class FirestoreHelper {
         void profilePictureUpdated(Uri filePath);
         void navHeaderProfilePictureUpdated(Uri filePath);
         void onAllMapSpotsUpdated(ArrayList<Spot> mapSpots);
+        void onAllPaymentsUpdated(ArrayList<Payment> payments);
     }
 }
