@@ -23,11 +23,14 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
+import com.rocks.kevinwalker.parkit.about.AboutFragment;
 import com.rocks.kevinwalker.parkit.authentication.Login;
 import com.rocks.kevinwalker.parkit.maps.CustomLocation;
 import com.rocks.kevinwalker.parkit.maps.MapsFragment;
 import com.rocks.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
-import com.rocks.kevinwalker.parkit.payments.PaymentFragment;
+import com.rocks.kevinwalker.parkit.payments.NewPaymentFragment;
+import com.rocks.kevinwalker.parkit.payments.Payment;
+import com.rocks.kevinwalker.parkit.payments.PaymentListingsFragment;
 import com.rocks.kevinwalker.parkit.spot.NewSpotFragment;
 import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.spot.SpotListingsFragment;
@@ -50,13 +53,16 @@ public class NavDrawer extends AppCompatActivity
         VehicleListingFragment.VehicleListingsInteraction,
         NewSpotFragment.NewSpotCallback,
         NewVehicleFragment.NewVehicleCallback,
+        NewPaymentFragment.NewPaymentCallback,
         UserProfileFragment.UserProfileCallback,
+        PaymentListingsFragment.PaymentListingsInteraction,
         FirestoreHelper.OnDataUpdated, View.OnClickListener {
 
     private static final String TAG = NavDrawer.class.getName();
 
     @BindView(R.id.add_spot_fab) FloatingActionButton addSpotFloatingActionButton;
     @BindView(R.id.add_vehicle_fab) FloatingActionButton addVehicleFloatingActionButton;
+    @BindView(R.id.add_payment_fab) FloatingActionButton addPaymentFloatingActionButton;
     @BindView(R.id.nav_progress_bar) ProgressBar navProgressBar;
     CircleImageView navHeaderProfilePicture;
 
@@ -70,9 +76,11 @@ public class NavDrawer extends AppCompatActivity
     private NewSpotFragment newSpotFragment;
     private UserProfileFragment userProfileFragment;
     private SpotListingsFragment spotListingsFragment;
-    private PaymentFragment paymentFragment;
+    private NewPaymentFragment newPaymentFragment;
     private VehicleListingFragment vehicleListingFragment;
+    private PaymentListingsFragment paymentListingsFragment;
     private NewVehicleFragment newVehicleFragment;
+    private AboutFragment aboutFragment;
 
     private String currentFragmentTAG = "";
     private static final String mapFragmentTag = "mapFragmentTag";
@@ -80,8 +88,10 @@ public class NavDrawer extends AppCompatActivity
     private static final String newVehicleFragmentTag = "newVehicleFragmentTag";
     private static final String userProfileFragmentTag = "userProfileFragmentTag";
     private static final String spotListingFragmentTag = "spotListingFragment";
-    private static final String paymentFragmentTag = "paymentFragmentTag";
+    private static final String newPaymentFragmentTag = "newPaymentFragmentTag";
     private static final String vehicleListingFragmentTag = "vehicleListingFragmentTag";
+    private static final String paymentListingFragmentTag = "paymentListingFragmentTag";
+    private static final String aboutFragmentTag = "aboutFragmentTag";
 
     private boolean userExists = false;
     private boolean isUserInitialized = false;
@@ -98,11 +108,9 @@ public class NavDrawer extends AppCompatActivity
             FirestoreHelper.getInstance(this).getUserNavProfileHeaderFromFirebase();
         }
 
-
         setContentView(R.layout.activity_nav_drawer);
 
         ButterKnife.bind(this);
-
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -115,9 +123,11 @@ public class NavDrawer extends AppCompatActivity
 
         addSpotFloatingActionButton.setOnClickListener(this);
         addVehicleFloatingActionButton.setOnClickListener(this);
+        addPaymentFloatingActionButton.setOnClickListener(this);
 
         addSpotFloatingActionButton.setVisibility(View.GONE);
         addVehicleFloatingActionButton.setVisibility(View.GONE);
+        addPaymentFloatingActionButton.setVisibility(View.GONE);
 
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -218,10 +228,16 @@ public class NavDrawer extends AppCompatActivity
                 case spotListingFragmentTag:
                     setCurrentFragment(mapFragment);
                     break;
-                case paymentFragmentTag:
+                case newPaymentFragmentTag:
                     setCurrentFragment(mapFragment);
                     break;
                 case vehicleListingFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                case paymentListingFragmentTag:
+                    setCurrentFragment(mapFragment);
+                    break;
+                case aboutFragmentTag:
                     setCurrentFragment(mapFragment);
                     break;
                 default:
@@ -266,6 +282,7 @@ public class NavDrawer extends AppCompatActivity
             setCurrentFragment(userProfileFragment);
             setSpotFabVisibility(View.GONE);
             setVehicleFabVisibility(View.GONE);
+            setPaymentFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -275,6 +292,7 @@ public class NavDrawer extends AppCompatActivity
             setCurrentFragment(spotListingsFragment);
             setSpotFabVisibility(View.VISIBLE);
             setVehicleFabVisibility(View.GONE);
+            setPaymentFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
@@ -284,15 +302,17 @@ public class NavDrawer extends AppCompatActivity
             setCurrentFragment(mapFragment);
             setSpotFabVisibility(View.GONE);
             setVehicleFabVisibility(View.GONE);
+            setPaymentFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
-            if (paymentFragment == null) {
-                paymentFragment = new PaymentFragment();
+            if (paymentListingsFragment == null) {
+                paymentListingsFragment = new PaymentListingsFragment();
             }
-            setCurrentFragment(paymentFragment);
+            setCurrentFragment(paymentListingsFragment);
             setSpotFabVisibility(View.GONE);
             setVehicleFabVisibility(View.GONE);
+            setPaymentFabVisibility(View.VISIBLE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_vehicles) {
@@ -301,10 +321,18 @@ public class NavDrawer extends AppCompatActivity
             }
             setCurrentFragment(vehicleListingFragment);
             setVehicleFabVisibility(View.VISIBLE);
+            setPaymentFabVisibility(View.GONE);
             setTitle(getResources().getString(R.string.vehicles_nav_title));
 
         } else if (id == R.id.nav_about) {
-
+            if (aboutFragment == null) {
+                aboutFragment = new AboutFragment();
+            }
+            setCurrentFragment(aboutFragment);
+            setVehicleFabVisibility(View.GONE);
+            setPaymentFabVisibility(View.GONE);
+            setSpotFabVisibility(View.GONE);
+            setTitle(getResources().getString(R.string.about_nav_title));
         }
 
         DrawerLayout drawer = findViewById(R.id.drawer_layout);
@@ -351,14 +379,20 @@ public class NavDrawer extends AppCompatActivity
             case spotListingFragmentTag:
                 fragment = spotListingsFragment;
                 break;
-            case paymentFragmentTag:
-                fragment = paymentFragment;
+            case newPaymentFragmentTag:
+                fragment = newPaymentFragment;
                 break;
             case vehicleListingFragmentTag:
                 fragment = vehicleListingFragment;
                 break;
             case newVehicleFragmentTag:
                 fragment = newVehicleFragment;
+                break;
+            case paymentListingFragmentTag:
+                fragment = paymentListingsFragment;
+                break;
+            case aboutFragmentTag:
+                fragment = aboutFragment;
                 break;
             default:
                 fragment = mapFragment;
@@ -377,12 +411,16 @@ public class NavDrawer extends AppCompatActivity
             fragmentTag = userProfileFragmentTag;
         } else if (fragment instanceof SpotListingsFragment) {
             fragmentTag = spotListingFragmentTag;
-        } else if (fragment instanceof PaymentFragment) {
-            fragmentTag = paymentFragmentTag;
+        } else if (fragment instanceof NewPaymentFragment) {
+            fragmentTag = newPaymentFragmentTag;
         } else if (fragment instanceof VehicleListingFragment) {
             fragmentTag = vehicleListingFragmentTag;
         } else if (fragment instanceof  NewVehicleFragment) {
             fragmentTag = newVehicleFragmentTag;
+        } else if (fragment instanceof  PaymentListingsFragment) {
+            fragmentTag = paymentListingFragmentTag;
+        } else if (fragment instanceof AboutFragment) {
+            fragmentTag = aboutFragmentTag;
         }
 
         return fragmentTag;
@@ -397,12 +435,16 @@ public class NavDrawer extends AppCompatActivity
             currentFragmentTAG = userProfileFragmentTag;
         } else if (fragment instanceof SpotListingsFragment) {
             currentFragmentTAG = spotListingFragmentTag;
-        } else if (fragment instanceof PaymentFragment) {
-            currentFragmentTAG = paymentFragmentTag;
+        } else if (fragment instanceof NewPaymentFragment) {
+            currentFragmentTAG = newPaymentFragmentTag;
         } else if (fragment instanceof VehicleListingFragment) {
             currentFragmentTAG = vehicleListingFragmentTag;
         } else if (fragment instanceof NewVehicleFragment) {
             currentFragmentTAG = newVehicleFragmentTag;
+        } else if (fragment instanceof PaymentListingsFragment) {
+            currentFragmentTAG = paymentListingFragmentTag;
+        } else if (fragment instanceof AboutFragment) {
+            currentFragmentTAG = aboutFragmentTag;
         }
     }
 
@@ -432,6 +474,11 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
+    public void onPaymentListingInteraction(Payment item) {
+
+    }
+
+    @Override
     public void setSpotFabVisibility(int viewVisibilityConstant) {
         addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
@@ -439,6 +486,11 @@ public class NavDrawer extends AppCompatActivity
     @Override
     public void setVehicleFabVisibility(int viewVisibilityConstant) {
         addVehicleFloatingActionButton.setVisibility(viewVisibilityConstant);
+    }
+
+    @Override
+    public void setPaymentFabVisibility(int viewVisibilityConstant) {
+        addPaymentFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
 
     @Override
@@ -471,6 +523,19 @@ public class NavDrawer extends AppCompatActivity
     }
 
     @Override
+    public void navigateToPaymentListings() {
+
+        if (paymentListingsFragment == null) {
+            paymentListingsFragment = new PaymentListingsFragment();
+            paymentListingsFragment.resetRecyclerView();
+        } else {
+            paymentListingsFragment = new PaymentListingsFragment();
+        }
+        setPaymentFabVisibility(View.VISIBLE);
+        setCurrentFragment(paymentListingsFragment);
+    }
+
+    @Override
     public void onAllSpotsUpdated(ArrayList<Spot> spots) {
         spotListingsFragment.resetRecyclerView(spots);
     }
@@ -485,6 +550,10 @@ public class NavDrawer extends AppCompatActivity
         vehicleListingFragment.resetRecyclerView(vehicles);
     }
 
+    @Override
+    public void onAllPaymentsUpdated(ArrayList<Payment> payments) {
+        paymentListingsFragment.resetRecyclerView(payments);
+    }
 
     public boolean isUserExists() {
         return userExists;
@@ -545,6 +614,8 @@ public class NavDrawer extends AppCompatActivity
                 }
                 setSpotFabVisibility(View.GONE);
                 setVehicleFabVisibility(View.GONE);
+                setPaymentFabVisibility(View.GONE);
+
                 setCurrentFragment(newSpotFragment);
 
                 setTitle(getResources().getString(R.string.add_new_spot));
@@ -556,9 +627,24 @@ public class NavDrawer extends AppCompatActivity
                 }
                 setVehicleFabVisibility(View.GONE);
                 setSpotFabVisibility(View.GONE);
+                setPaymentFabVisibility(View.GONE);
+
                 setCurrentFragment(newVehicleFragment);
 
                 setTitle(getResources().getString(R.string.add_new_vehicle));
+                break;
+
+            case R.id.add_payment_fab:
+                if (newPaymentFragment == null) {
+                    newPaymentFragment = new NewPaymentFragment();
+                }
+                setPaymentFabVisibility(View.GONE);
+                setSpotFabVisibility(View.GONE);
+                setVehicleFabVisibility(View.GONE);
+
+                setCurrentFragment(newPaymentFragment);
+
+                setTitle(getResources().getString(R.string.payments_add_new_title));
                 break;
         }
     }
