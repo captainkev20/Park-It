@@ -2,14 +2,14 @@ package com.rocks.kevinwalker.parkit.payments;
 
 import com.stripe.android.model.Customer;
 
-public class StripeCustomer {
+public class Payment {
 
     private String token = "";
     private Customer customer;
     private String cardLastFourDigits;
     private String cardBrand;
 
-    public StripeCustomer() {}
+    public Payment() {}
 
     public String getToken() {
         return token;
