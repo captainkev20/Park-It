@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
 import com.rocks.kevinwalker.parkit.utils.FirestoreHelper;
 import com.stripe.android.Stripe;
 import com.stripe.android.TokenCallback;
@@ -98,6 +100,7 @@ public class NewPaymentFragment extends Fragment
                                     Toast.makeText(getActivity(), "Card Successfully Saved!", Toast.LENGTH_SHORT).show();
                                     FirestoreHelper.getInstance().getStripeCustomer().setCardLastFourDigits(card.getLast4());
                                     FirestoreHelper.getInstance().getStripeCustomer().setCardBrand(card.getBrand());
+                                    FirestoreHelper.getInstance().getStripeCustomer().setPaymentUserUUID(FirebaseAuth.getInstance().getUid());
                                     FirestoreHelper.getInstance().mergeStripeCustomerWithFirestore();
                                 }
                             });

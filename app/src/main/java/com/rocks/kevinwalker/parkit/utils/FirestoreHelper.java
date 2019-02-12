@@ -344,6 +344,7 @@ public class FirestoreHelper {
 
     public ArrayList<Payment> getAllUserPayments() {
         FirebaseFirestore.getInstance().collection("stripe_customers")
+                .whereEqualTo("paymentUserUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {

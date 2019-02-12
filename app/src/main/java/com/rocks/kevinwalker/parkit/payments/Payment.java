@@ -8,6 +8,7 @@ public class Payment {
     private Customer customer;
     private String cardLastFourDigits;
     private String cardBrand;
+    private String paymentUserUUID;
 
     public Payment() {}
 
@@ -30,5 +31,9 @@ public class Payment {
     public String getCardBrand() { return cardBrand; }
 
     public void setCardBrand(String cardBrand) { this.cardBrand = cardBrand; }
+
+    public String getPaymentUserUUID() { return paymentUserUUID; }
+
+    public void setPaymentUserUUID(String paymentUserUUID) { this.paymentUserUUID = paymentUserUUID; }
 
 }
