@@ -100,11 +100,7 @@ public class PaymentListingsFragment extends Fragment {
     public void onResume(){
         super.onResume();
 
-        // TODO: Review with Hollis and determine if best way to handle this
-        NavDrawer navDrawer = new NavDrawer();
-        if (navDrawer.getCurrentFragmentTag().equals("paymentListingFragmentTag")) {
-            mListener.setPaymentFabVisibility(View.VISIBLE);
-        }
+        mListener.setPaymentFabVisibility(View.VISIBLE);
 
     }
 
