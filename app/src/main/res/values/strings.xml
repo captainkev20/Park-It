@@ -4,12 +4,15 @@
     <string name="last_updated">Last Updated: </string>
     <string name="surface">Surface: </string>
     <string name="payment_type">Payment Type: </string>
+    <string name="card_saved">Card Saved!</string>
     <string name="distance">Miles</string>
     <string name="park_button">PARK</string>
     <string name="rating">Rating: </string>
     <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
     <string name="vehicle">Vehicle: </string>
+    <string name="saved_vehicle">Vehicle Saved!</string>
+    <string name="vehicle_photo_saved">Vehicle Photo Saved</string>
     <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
@@ -105,6 +108,8 @@
     <string name="payment_types_accepted">Payment Types Accepted</string>
     <string name="add_new_spot">Add New Spot</string>
     <string name="btn_spot_location">Set Spot Location</string>
+    <string name="spot_saved">Spot Saved!</string>
+    <string name="spot_photo_saved">Spot Photo Saved</string>
     <string name="txt_cancel_add_new_spot">CANCEL</string>
     <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
     press button below.</string>
