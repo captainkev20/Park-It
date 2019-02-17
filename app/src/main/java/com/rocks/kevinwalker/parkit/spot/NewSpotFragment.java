@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -172,10 +173,17 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
 
                     if (isSpotLocationSet) {
                         FirestoreHelper.getInstance().mergeSpotWithFirestore(userSpot);
+                        if (getView()!= null) {
+                            Snackbar.make(getView(), getString(R.string.spot_saved),
+                                    Snackbar.LENGTH_LONG).show();
+                        }
+
                         newSpotCallback.navigateToSpotListings();
                     } else {
-                        Toast.makeText(getActivity(), getResources().getString(R.string.spot_button_location_not_pressed),
-                                Toast.LENGTH_SHORT).show();
+                        if (getView()!= null) {
+                            Snackbar.make(getView(), getString(R.string.spot_button_location_not_pressed),
+                                    Snackbar.LENGTH_LONG).show();
+                        }
                     }
 
                 } else if (!newSpotEditTextValidator.validateEditText(spotHourlyRateEditText)) {
@@ -257,7 +265,11 @@ public class NewSpotFragment extends ParentProfileFragment implements View.OnCli
                             //vehicle_photo_progress_bar.setVisibility(View.GONE);
                             //edit_image_logo.setVisibility(View.VISIBLE);
 
-                            Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
+                            if (getView()!= null) {
+                                Snackbar.make(getView(), getString(R.string.spot_photo_saved),
+                                        Snackbar.LENGTH_LONG).show();
+                            }
+
                             if (FirestoreHelper.getInstance().getCurrentUser() != null) {
                                 FirestoreHelper.getInstance().getUserSpot().setSpotPhotoURL(String.valueOf(uri));
                                 FirestoreHelper.getInstance().mergeSpotWithFirestore(userSpot);
