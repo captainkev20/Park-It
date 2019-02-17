@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.os.Bundle;
@@ -160,7 +161,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                     text_input_layout_et_first_name.setError(null);
                     text_input_layout_et_last_name.setError(null);
 
-                    Toast.makeText(getActivity(), R.string.saved_profile, Toast.LENGTH_SHORT).show();
+                    if (getView()!= null) {
+                        Snackbar.make(getView(), getString(R.string.saved_profile),
+                                Snackbar.LENGTH_LONG).show();
+                    }
 
                     profile_view_switcher.showPrevious();
 
@@ -280,7 +284,10 @@ public class UserProfileFragment extends ParentProfileFragment implements View.O
                             save_user_progress_bar.setVisibility(View.GONE);
                             edit_image_logo.setVisibility(View.VISIBLE);
 
-                            Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
+                            if (getView()!= null) {
+                                Snackbar.make(getView(), getString(R.string.saved_profile_photo),
+                                        Snackbar.LENGTH_LONG).show();
+                            }
                             if (FirestoreHelper.getInstance().getCurrentUser() != null) {
                                 FirestoreHelper.getInstance().getCurrentUser().setUserProfilePhotoURL(String.valueOf(filePath));
                                 FirestoreHelper.getInstance().mergeCurrentUserWithFirestore();
