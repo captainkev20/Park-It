@@ -18,6 +18,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -255,7 +256,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
                     animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), DEFAULT_ZOOM, currentAddress);
                 } else {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.btn_find_user_parked_location_not_parked), Toast.LENGTH_SHORT).show();
+                    if (getView()!= null) {
+                        Snackbar.make(getView(), getString(R.string.btn_find_user_parked_location_not_parked),
+                                Snackbar.LENGTH_LONG).show();
+                    }
                 }
         }
     }
