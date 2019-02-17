@@ -169,14 +169,6 @@ public class NavDrawer extends AppCompatActivity
         } else {
             navProgressBar.setVisibility(View.VISIBLE);
         }
-
-        if (currentFragmentTAG == vehicleListingFragmentTag) {
-            addVehicleFloatingActionButton.setVisibility(View.VISIBLE);
-        }
-
-        if (currentFragmentTAG == spotListingFragmentTag) {
-            addSpotFloatingActionButton.setVisibility(View.VISIBLE);
-        }
     }
 
     @Override
@@ -280,9 +272,9 @@ public class NavDrawer extends AppCompatActivity
                 userProfileFragment = new UserProfileFragment();
             }
             setCurrentFragment(userProfileFragment);
-            setSpotFabVisibility(View.GONE);
-            setVehicleFabVisibility(View.GONE);
-            setPaymentFabVisibility(View.GONE);
+            addSpotFloatingActionButton.setVisibility(View.GONE);
+            addVehicleFloatingActionButton.setVisibility(View.GONE);
+            addPaymentFloatingActionButton.setVisibility(View.GONE);
             setTitle(getResources().getString(R.string.profile_nav_title));
 
         } else if (id == R.id.nav_listings) {
@@ -290,9 +282,9 @@ public class NavDrawer extends AppCompatActivity
                 spotListingsFragment = SpotListingsFragment.newInstance(1);
             }
             setCurrentFragment(spotListingsFragment);
-            setSpotFabVisibility(View.VISIBLE);
-            setVehicleFabVisibility(View.GONE);
-            setPaymentFabVisibility(View.GONE);
+            addSpotFloatingActionButton.setVisibility(View.VISIBLE);
+            addVehicleFloatingActionButton.setVisibility(View.GONE);
+            addPaymentFloatingActionButton.setVisibility(View.GONE);
             setTitle(getResources().getString(R.string.listings_nav_title));
 
         } else if (id == R.id.nav_map) {
@@ -300,9 +292,9 @@ public class NavDrawer extends AppCompatActivity
                 mapFragment = new MapsFragment();
             }
             setCurrentFragment(mapFragment);
-            setSpotFabVisibility(View.GONE);
-            setVehicleFabVisibility(View.GONE);
-            setPaymentFabVisibility(View.GONE);
+            addSpotFloatingActionButton.setVisibility(View.GONE);
+            addVehicleFloatingActionButton.setVisibility(View.GONE);
+            addPaymentFloatingActionButton.setVisibility(View.GONE);
             setTitle(getResources().getString(R.string.map_nav_title));
 
         } else if (id == R.id.nav_payments) {
@@ -310,9 +302,9 @@ public class NavDrawer extends AppCompatActivity
                 paymentListingsFragment = new PaymentListingsFragment();
             }
             setCurrentFragment(paymentListingsFragment);
-            setSpotFabVisibility(View.GONE);
-            setVehicleFabVisibility(View.GONE);
-            setPaymentFabVisibility(View.VISIBLE);
+            addSpotFloatingActionButton.setVisibility(View.GONE);
+            addVehicleFloatingActionButton.setVisibility(View.GONE);
+            addPaymentFloatingActionButton.setVisibility(View.VISIBLE);
             setTitle(getResources().getString(R.string.payments_nav_title));
 
         } else if (id == R.id.nav_vehicles) {
@@ -320,8 +312,8 @@ public class NavDrawer extends AppCompatActivity
                 vehicleListingFragment = new VehicleListingFragment();
             }
             setCurrentFragment(vehicleListingFragment);
-            setVehicleFabVisibility(View.VISIBLE);
-            setPaymentFabVisibility(View.GONE);
+            addVehicleFloatingActionButton.setVisibility(View.VISIBLE);
+            addPaymentFloatingActionButton.setVisibility(View.GONE);
             setTitle(getResources().getString(R.string.vehicles_nav_title));
 
         } else if (id == R.id.nav_about) {
@@ -329,9 +321,9 @@ public class NavDrawer extends AppCompatActivity
                 aboutFragment = new AboutFragment();
             }
             setCurrentFragment(aboutFragment);
-            setVehicleFabVisibility(View.GONE);
-            setPaymentFabVisibility(View.GONE);
-            setSpotFabVisibility(View.GONE);
+            addVehicleFloatingActionButton.setVisibility(View.GONE);
+            addPaymentFloatingActionButton.setVisibility(View.GONE);
+            addSpotFloatingActionButton.setVisibility(View.GONE);
             setTitle(getResources().getString(R.string.about_nav_title));
         }
 
@@ -480,17 +472,22 @@ public class NavDrawer extends AppCompatActivity
 
     @Override
     public void setSpotFabVisibility(int viewVisibilityConstant) {
-        addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
+        if (getCurrentFragmentTag().equals(spotListingFragmentTag)) {
+            addSpotFloatingActionButton.setVisibility(viewVisibilityConstant);
+        }
     }
 
     @Override
     public void setVehicleFabVisibility(int viewVisibilityConstant) {
+        if (getCurrentFragmentTag().equals(vehicleListingFragmentTag))
         addVehicleFloatingActionButton.setVisibility(viewVisibilityConstant);
     }
 
     @Override
     public void setPaymentFabVisibility(int viewVisibilityConstant) {
-        addPaymentFloatingActionButton.setVisibility(viewVisibilityConstant);
+        if (getCurrentFragmentTag().equals(paymentListingFragmentTag)) {
+            addPaymentFloatingActionButton.setVisibility(viewVisibilityConstant);
+        }
     }
 
     @Override
@@ -505,7 +502,7 @@ public class NavDrawer extends AppCompatActivity
         } else {
             spotListingsFragment = new SpotListingsFragment();
         }
-        setSpotFabVisibility(View.VISIBLE);
+        addSpotFloatingActionButton.setVisibility(View.VISIBLE);
         setCurrentFragment(spotListingsFragment);
     }
 
@@ -518,7 +515,7 @@ public class NavDrawer extends AppCompatActivity
         } else {
             vehicleListingFragment = new VehicleListingFragment();
         }
-        setVehicleFabVisibility(View.VISIBLE);
+        addVehicleFloatingActionButton.setVisibility(View.VISIBLE);
         setCurrentFragment(vehicleListingFragment);
     }
 
@@ -531,7 +528,7 @@ public class NavDrawer extends AppCompatActivity
         } else {
             paymentListingsFragment = new PaymentListingsFragment();
         }
-        setPaymentFabVisibility(View.VISIBLE);
+        addPaymentFloatingActionButton.setVisibility(View.VISIBLE);
         setCurrentFragment(paymentListingsFragment);
     }
 
@@ -612,9 +609,9 @@ public class NavDrawer extends AppCompatActivity
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
-                setSpotFabVisibility(View.GONE);
-                setVehicleFabVisibility(View.GONE);
-                setPaymentFabVisibility(View.GONE);
+                addSpotFloatingActionButton.setVisibility(View.GONE);
+                addVehicleFloatingActionButton.setVisibility(View.GONE);
+                addPaymentFloatingActionButton.setVisibility(View.GONE);
 
                 setCurrentFragment(newSpotFragment);
 
@@ -625,9 +622,9 @@ public class NavDrawer extends AppCompatActivity
                 if (newVehicleFragment == null) {
                     newVehicleFragment = new NewVehicleFragment();
                 }
-                setVehicleFabVisibility(View.GONE);
-                setSpotFabVisibility(View.GONE);
-                setPaymentFabVisibility(View.GONE);
+                addSpotFloatingActionButton.setVisibility(View.GONE);
+                addVehicleFloatingActionButton.setVisibility(View.GONE);
+                addPaymentFloatingActionButton.setVisibility(View.GONE);
 
                 setCurrentFragment(newVehicleFragment);
 
@@ -638,9 +635,9 @@ public class NavDrawer extends AppCompatActivity
                 if (newPaymentFragment == null) {
                     newPaymentFragment = new NewPaymentFragment();
                 }
-                setPaymentFabVisibility(View.GONE);
-                setSpotFabVisibility(View.GONE);
-                setVehicleFabVisibility(View.GONE);
+                addSpotFloatingActionButton.setVisibility(View.GONE);
+                addVehicleFloatingActionButton.setVisibility(View.GONE);
+                addPaymentFloatingActionButton.setVisibility(View.GONE);
 
                 setCurrentFragment(newPaymentFragment);
 
