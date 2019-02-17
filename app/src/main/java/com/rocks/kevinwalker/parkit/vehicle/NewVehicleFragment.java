@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TextInputLayout;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -189,6 +190,11 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                     vehicles.add(0, userVehicle);
 
                     FirestoreHelper.getInstance().mergeVehicleWithFirestore(vehicles.get(0));
+                    if (getView() != null) {
+                        Snackbar.make(getView(), getString(R.string.saved_vehicle),
+                                Snackbar.LENGTH_LONG).show();
+                    }
+
                     newVehicleCallback.navigateToVehicleListings();
 
                 } else if (!newVehicleEditTextValidator.validateEditText(vehicleNameEditText)) {
@@ -289,7 +295,10 @@ public class NewVehicleFragment extends ParentProfileFragment implements View.On
                             vehicle_photo_progress_bar.setVisibility(View.GONE);
                             //edit_image_logo.setVisibility(View.VISIBLE);
 
-                            Toast.makeText(getActivity(), R.string.saved_profile_photo, Toast.LENGTH_SHORT).show();
+                            if (getView()!= null) {
+                                Snackbar.make(getView(), getString(R.string.vehicle_photo_saved),
+                                        Snackbar.LENGTH_LONG).show();
+                            }
                             if (FirestoreHelper.getInstance().getCurrentUser() != null) {
                                 FirestoreHelper.getInstance().getUserVehicle().setVehiclePhotoURL(String.valueOf(uri));
                                 FirestoreHelper.getInstance().mergeVehicleWithFirestore(userVehicle);
