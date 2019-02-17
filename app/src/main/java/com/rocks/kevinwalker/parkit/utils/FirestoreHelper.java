@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.rocks.kevinwalker.parkit.R;
 import com.rocks.kevinwalker.parkit.payments.Payment;
 import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.users.User;
@@ -233,13 +234,12 @@ public class FirestoreHelper {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
-                Toast.makeText((Context) mListener, "Vehicle Saved!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Failed to write");
-                Toast.makeText((Context) mListener, "Vehicle Not Saved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText((Context) mListener, "Vehicle Not Saved! Check internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -259,13 +259,12 @@ public class FirestoreHelper {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
-                Toast.makeText((Context) mListener, "Spot Saved!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Failed to write");
-                Toast.makeText((Context) mListener, "Spot Not Saved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText((Context) mListener, "Spot Not Saved! Check internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
