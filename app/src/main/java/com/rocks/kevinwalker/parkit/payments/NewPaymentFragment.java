@@ -3,6 +3,7 @@ package com.rocks.kevinwalker.parkit.payments;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -97,11 +98,15 @@ public class NewPaymentFragment extends Fragment
 
                                 @Override
                                 public void onSuccess(Token token) {
-                                    Toast.makeText(getActivity(), "Card Successfully Saved!", Toast.LENGTH_SHORT).show();
+                                    if (getView()!= null) {
+                                        Snackbar.make(getView(), getString(R.string.card_saved),
+                                                Snackbar.LENGTH_LONG).show();
+                                    }
                                     FirestoreHelper.getInstance().getStripeCustomer().setCardLastFourDigits(card.getLast4());
                                     FirestoreHelper.getInstance().getStripeCustomer().setCardBrand(card.getBrand());
                                     FirestoreHelper.getInstance().getStripeCustomer().setPaymentUserUUID(FirebaseAuth.getInstance().getUid());
                                     FirestoreHelper.getInstance().mergeStripeCustomerWithFirestore();
+                                    newPaymentCallback.navigateToPaymentListings();
                                 }
                             });
                 }
