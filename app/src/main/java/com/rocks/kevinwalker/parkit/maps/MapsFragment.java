@@ -126,6 +126,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         geocoder = new Geocoder(mContext);
         locationHelper = new LocationHelper(this.getContext());
         locationHelper.startLocationUpdates();
+        locationHelper.getCurrentLocation();
 
         userSpotsForMap = FirestoreHelper.getInstance().getSpotForMap();
 
