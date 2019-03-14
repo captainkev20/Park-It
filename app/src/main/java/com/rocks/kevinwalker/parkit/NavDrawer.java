@@ -37,6 +37,7 @@ import com.rocks.kevinwalker.parkit.spot.SpotListingsFragment;
 import com.rocks.kevinwalker.parkit.users.User;
 import com.rocks.kevinwalker.parkit.users.UserProfileFragment;
 import com.rocks.kevinwalker.parkit.utils.FirestoreHelper;
+import com.rocks.kevinwalker.parkit.utils.LocationHelper;
 import com.rocks.kevinwalker.parkit.vehicle.NewVehicleFragment;
 import com.rocks.kevinwalker.parkit.vehicle.Vehicle;
 import com.rocks.kevinwalker.parkit.vehicle.VehicleListingFragment;
@@ -559,6 +560,12 @@ public class NavDrawer extends AppCompatActivity
     private void updateNavDrawerHeaderProfilePicture() {
     }
 
+    private void hideAllFABs() {
+        addSpotFloatingActionButton.setVisibility(View.GONE);
+        addVehicleFloatingActionButton.setVisibility(View.GONE);
+        addPaymentFloatingActionButton.setVisibility(View.GONE);
+    }
+
     @Override
     public void userUpdated(User user) {
 
@@ -609,11 +616,10 @@ public class NavDrawer extends AppCompatActivity
                 if (newSpotFragment == null) {
                     newSpotFragment = new NewSpotFragment();
                 }
-                addSpotFloatingActionButton.setVisibility(View.GONE);
-                addVehicleFloatingActionButton.setVisibility(View.GONE);
-                addPaymentFloatingActionButton.setVisibility(View.GONE);
 
                 setCurrentFragment(newSpotFragment);
+
+                hideAllFABs();
 
                 setTitle(getResources().getString(R.string.add_new_spot));
                 break;
@@ -622,9 +628,8 @@ public class NavDrawer extends AppCompatActivity
                 if (newVehicleFragment == null) {
                     newVehicleFragment = new NewVehicleFragment();
                 }
-                addSpotFloatingActionButton.setVisibility(View.GONE);
-                addVehicleFloatingActionButton.setVisibility(View.GONE);
-                addPaymentFloatingActionButton.setVisibility(View.GONE);
+
+                hideAllFABs();
 
                 setCurrentFragment(newVehicleFragment);
 
@@ -635,9 +640,8 @@ public class NavDrawer extends AppCompatActivity
                 if (newPaymentFragment == null) {
                     newPaymentFragment = new NewPaymentFragment();
                 }
-                addSpotFloatingActionButton.setVisibility(View.GONE);
-                addVehicleFloatingActionButton.setVisibility(View.GONE);
-                addPaymentFloatingActionButton.setVisibility(View.GONE);
+
+                hideAllFABs();
 
                 setCurrentFragment(newPaymentFragment);
 
