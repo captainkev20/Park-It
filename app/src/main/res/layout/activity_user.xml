@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    <ScrollView
         android:id="@+id/user_profile_fragment_scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -17,10 +17,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:customAttrs="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context="com.rocks.kevinwalker.parkit.users.UserProfileFragment">
@@ -70,7 +67,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/edit_profile_button"
                         android:enabled="true"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/edit_profile"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
@@ -118,9 +115,9 @@
                         android:text="@string/ic_phone"
                         android:textColor="@color/colorPrimary"
                         android:textSize="36sp"
+                        app:customFont="PARK_IT_ICON_FONT"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/ic_email"
-                        customAttrs:customFont="PARK_IT_ICON_FONT" />
+                        app:layout_constraintTop_toBottomOf="@+id/ic_email" />
 
                     <com.rocks.kevinwalker.parkit.utils.CustomTextView
                         android:id="@+id/ic_email"
@@ -131,9 +128,9 @@
                         android:text="@string/ic_email_envelope"
                         android:textColor="@color/colorPrimary"
                         android:textSize="36sp"
+                        app:customFont="PARK_IT_ICON_FONT"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        customAttrs:customFont="PARK_IT_ICON_FONT" />
+                        app:layout_constraintTop_toTopOf="parent" />
 
 
                     <TextView
@@ -143,7 +140,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="16dp"
                         android:layout_marginEnd="8dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/first_name_placeholder"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
@@ -162,7 +159,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="48dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/last_name_placeholder"
                         android:textAlignment="center"
                         android:textColor="@color/colorPrimary"
@@ -181,7 +178,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="36dp"
                         android:layout_marginEnd="8dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/phone_number"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
@@ -198,7 +195,7 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginTop="24dp"
                         android:layout_marginEnd="8dp"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/email"
                         android:textColor="@color/colorPrimary"
                         android:textSize="18sp"
@@ -239,6 +236,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="124dp"
                         android:layout_marginBottom="28dp"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/txt_cancel_add_new_spot"
                         android:textAlignment="center"
                         android:textColor="@color/colorCancelAddNewSpotTxt"
@@ -259,7 +257,7 @@
                         android:layout_marginEnd="8dp"
                         android:background="@drawable/save_profile_button"
                         android:enabled="true"
-                        android:fontFamily="@font/roboto"
+                        android:fontFamily="@font/open_sans"
                         android:text="@string/save"
                         android:textColor="@android:color/white"
                         android:textStyle="bold"
@@ -307,6 +305,7 @@
                             android:layout_marginEnd="8dp"
                             android:backgroundTint="@color/colorPrimary"
                             android:ems="10"
+                            android:fontFamily="@font/open_sans"
                             android:hint="@string/enter_phone_number"
                             android:inputType="phone"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -340,6 +339,7 @@
                             android:layout_marginEnd="8dp"
                             android:backgroundTint="@color/colorPrimary"
                             android:ems="10"
+                            android:fontFamily="@font/open_sans"
                             android:hint="@string/enter_email"
                             android:inputType="textEmailAddress"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -372,6 +372,7 @@
                             android:layout_marginEnd="8dp"
                             android:backgroundTint="@color/colorPrimary"
                             android:ems="10"
+                            android:fontFamily="@font/open_sans"
                             android:hint="@string/enter_last_name"
                             android:inputType="textPersonName"
                             app:layout_constraintEnd_toEndOf="parent"
@@ -405,6 +406,7 @@
                             android:layout_marginEnd="8dp"
                             android:backgroundTint="@color/colorPrimary"
                             android:ems="10"
+                            android:fontFamily="@font/open_sans"
                             android:hint="@string/enter_first_Name"
                             android:inputType="textPersonName"
                             app:layout_constraintEnd_toEndOf="parent"

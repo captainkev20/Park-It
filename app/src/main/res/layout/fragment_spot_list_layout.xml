@@ -35,15 +35,15 @@
             tools:context="com.rocks.kevinwalker.parkit.users.UserProfileFragment">
 
             <android.support.constraint.ConstraintLayout
-                android:layout_width="379dp"
+                android:layout_width="match_parent"
                 android:layout_height="417dp">
 
                 <TextView
                     android:id="@+id/txt_distance_placeholder"
-                    android:layout_width="96dp"
-                    android:layout_height="23dp"
-                    android:layout_marginStart="40dp"
-                    android:fontFamily="@font/roboto"
+                    android:layout_width="60dp"
+                    android:layout_height="18dp"
+                    android:layout_marginStart="28dp"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/distance"
                     android:textSize="12sp"
                     app:layout_constraintStart_toStartOf="parent"
@@ -51,29 +51,30 @@
 
                 <TextView
                     android:id="@+id/txt_per_hour_placeholder"
-                    android:layout_width="96dp"
-                    android:layout_height="23dp"
+                    android:layout_width="54dp"
+                    android:layout_height="17dp"
                     android:layout_marginStart="36dp"
                     android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/roboto"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/per_hour"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.012"
+                    app:layout_constraintHorizontal_bias="0.244"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_cost" />
 
                 <TextView
                     android:id="@+id/txt_spot_name"
-                    android:layout_width="235dp"
-                    android:layout_height="42dp"
+                    android:layout_width="316dp"
+                    android:layout_height="50dp"
                     android:layout_marginStart="28dp"
                     android:layout_marginTop="12dp"
                     android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/roboto"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/spot_name"
                     android:textColor="@color/colorPrimary"
                     android:textSize="30sp"
+                    android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintHorizontal_bias="0.027"
                     app:layout_constraintStart_toStartOf="parent"
@@ -82,10 +83,10 @@
                 <TextView
                     android:id="@+id/txt_distance"
                     android:layout_width="58dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="40dp"
+                    android:layout_height="29dp"
+                    android:layout_marginStart="28dp"
                     android:layout_marginTop="8dp"
-                    android:fontFamily="@font/roboto"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/distance"
                     android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
@@ -97,21 +98,20 @@
                     android:id="@+id/txt_cost"
                     android:layout_width="60dp"
                     android:layout_height="30dp"
-                    android:layout_marginTop="32dp"
-                    android:fontFamily="@font/roboto"
-                    android:gravity="center_vertical"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="@font/open_sans"
                     android:inputType="numberSigned"
                     android:text="@string/cost"
                     android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintStart_toEndOf="@+id/txt_dollar_sign"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_distance" />
+                    app:layout_constraintTop_toBottomOf="@+id/txt_spot_name" />
 
                 <ImageView
                     android:id="@+id/spot_image"
                     android:layout_width="316dp"
-                    android:layout_height="122dp"
+                    android:layout_height="200dp"
                     android:layout_marginStart="8dp"
                     android:layout_marginTop="28dp"
                     android:layout_marginEnd="8dp"
@@ -123,47 +123,44 @@
 
                 <TextView
                     android:id="@+id/txt_payment_type"
-                    android:layout_width="198dp"
-                    android:layout_height="27dp"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginTop="12dp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/roboto"
+                    android:layout_width="153dp"
+                    android:layout_height="30dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="4dp"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/payment_type"
                     android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.075"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_per_hour_placeholder" />
+                    app:layout_constraintHorizontal_bias="0.483"
+                    app:layout_constraintStart_toEndOf="@+id/txt_cost"
+                    app:layout_constraintTop_toBottomOf="@+id/txt_spot_name" />
 
                 <TextView
                     android:id="@+id/txt_dollar_sign"
                     android:layout_width="11dp"
                     android:layout_height="27dp"
-                    android:layout_marginStart="40dp"
-                    android:layout_marginTop="32dp"
-                    android:gravity="center_vertical"
+                    android:layout_marginStart="12dp"
+                    android:layout_marginTop="56dp"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/dollar_sign"
                     android:textColor="@color/colorPrimary"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/txt_distance" />
+                    app:layout_constraintStart_toEndOf="@+id/txt_distance"
+                    app:layout_constraintTop_toTopOf="@+id/txt_spot_name" />
 
                 <TextView
                     android:id="@+id/txt_payment_type_placeholder"
-                    android:layout_width="198dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="28dp"
-                    android:layout_marginEnd="8dp"
-                    android:fontFamily="@font/roboto"
+                    android:layout_width="145dp"
+                    android:layout_height="18dp"
+                    android:layout_marginEnd="20dp"
+                    android:fontFamily="@font/open_sans"
                     android:text="@string/payment_types_accepted"
                     android:textSize="12sp"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.075"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/txt_payment_type" />
 
             </android.support.constraint.ConstraintLayout>

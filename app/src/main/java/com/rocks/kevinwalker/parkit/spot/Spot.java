@@ -10,6 +10,7 @@ public class Spot {
     private String name = "";
     private String ownerUUID = "";
     private String spotUUID = "";
+    private String spotPhotoURL = "";
     private boolean occupied = false;
     private String spotSize = "STANDARD";
     private Surface surface = Surface.ASPHALT;
@@ -121,9 +122,7 @@ public class Spot {
         this.longitude = longitude;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() { return name; }
 
     public void setName(String name) {
         this.name = name;
@@ -167,4 +166,7 @@ public class Spot {
 
     public void setPaymentType(PaymentType paymentType) { this.paymentType = paymentType; }
 
+    public String getSpotPhotoURL() { return spotPhotoURL; }
+
+    public void setSpotPhotoURL(String spotPhotoURL) { this.spotPhotoURL = spotPhotoURL; }
 }

@@ -12,36 +12,81 @@
         tools:context="com.rocks.kevinwalker.parkit.users.UserProfileFragment">
 
 
+        <TextView
+            android:id="@+id/txt_view_cancel_add_payment"
+            android:layout_width="100dp"
+            android:layout_height="19dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="124dp"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/txt_cancel_add_new_spot"
+            android:textAlignment="center"
+            android:textColor="@color/colorCancelAddNewSpotTxt"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.821"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/btn_save_payment"
+            app:layout_constraintVertical_bias="0.018" />
+
         <Button
             android:id="@+id/btn_save_payment"
             android:layout_width="311dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="88dp"
+            android:layout_marginTop="156dp"
             android:layout_marginEnd="8dp"
             android:background="@drawable/save_payment_button"
             android:enabled="true"
-            android:fontFamily="@font/roboto"
-            android:text="@string/save"
+            android:fontFamily="@font/open_sans"
+            android:text="@string/add_card"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/card_input_widget" />
+            app:layout_constraintTop_toBottomOf="@+id/powered_by_stripe" />
 
         <com.stripe.android.view.CardInputWidget
             android:id="@+id/card_input_widget"
             android:layout_width="393dp"
-            android:layout_height="46dp"
-            android:layout_marginBottom="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_height="44dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="368dp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <ImageView
+            android:id="@+id/powered_by_stripe"
+            android:layout_width="117dp"
+            android:layout_height="30dp"
+            android:layout_marginStart="244dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.261"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_input_widget"
+            app:srcCompat="@drawable/powered_by_stripe" />
+
+        <com.airbnb.lottie.LottieAnimationView
+            android:id="@+id/car_animation"
+            android:layout_width="333dp"
+            android:layout_height="179dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="68dp"
+            android:layout_marginEnd="8dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.409" />
+            app:lottie_autoPlay="true"
+            app:lottie_fileName="credit_card_animation.json"
+            app:lottie_loop="false" />
 
     </android.support.constraint.ConstraintLayout>
 </com.rocks.kevinwalker.parkit.utils.SlidingRelativeLayout>

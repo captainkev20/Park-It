@@ -18,12 +18,14 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.rocks.kevinwalker.parkit.R;
+import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.utils.FirestoreHelper;
 import com.rocks.kevinwalker.parkit.utils.LocationHelper;
 import com.google.android.gms.common.ConnectionResult;
@@ -76,6 +78,7 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
     private String currentAddress = "";
     private Geocoder geocoder;
     private List<Address> addressList = new ArrayList<>();
+    private ArrayList<Spot> userSpotsForMap = new ArrayList<>();
 
     private GoogleMap map;
     private Marker userMarker;
@@ -123,7 +126,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
         geocoder = new Geocoder(mContext);
         locationHelper = new LocationHelper(this.getContext());
         locationHelper.startLocationUpdates();
-//        FirestoreHelper.getInstance().initializeFirestore();
+        locationHelper.getCurrentLocation();
+
+        userSpotsForMap = FirestoreHelper.getInstance().getSpotForMap();
+
 
         getActivity().setTitle(getResources().getString(R.string.map_nav_title));
     }
@@ -251,7 +257,10 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
                 if (FirestoreHelper.getInstance().getCurrentUser().isUserParked()) {
                     animateCamera(FirestoreHelper.getInstance().getCurrentUser().getUserParkedLocation(), DEFAULT_ZOOM, currentAddress);
                 } else {
-                    Toast.makeText(getActivity(), getResources().getString(R.string.btn_find_user_parked_location_not_parked), Toast.LENGTH_SHORT).show();
+                    if (getView()!= null) {
+                        Snackbar.make(getView(), getString(R.string.btn_find_user_parked_location_not_parked),
+                                Snackbar.LENGTH_LONG).show();
+                    }
                 }
         }
     }
@@ -343,13 +352,28 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             MarkerOptions markerOptions = new MarkerOptions();
             markerOptions.position(new LatLng(customLocation.getLatitude(), customLocation.getLongitude()));
             markerOptions.title(title);
-            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.ic_marker));
+            markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.pin));
             markerOptions.visible(markerVisible);
-            map.clear();
+            //map.clear();
 
             userMarker = map.addMarker(markerOptions);
 
             setMarkerBounce(userMarker);
+        }
+    }
+
+    public void placeSpotsOnMap(ArrayList<Spot> spots) {
+        if (map != null) {
+
+            for (int i = 0; i < spots.size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions();
+                markerOptions.position(new LatLng(spots.get(i).getLatitude(), spots.get(i).getLongitude()));
+                markerOptions.title(spots.get(i).getName());
+                markerOptions.icon(bitmapDescriptorFromVector(mContext, R.drawable.pin));
+                markerOptions.visible(true);
+
+                map.addMarker(markerOptions);
+            }
         }
     }
 
@@ -447,6 +471,8 @@ public class MapsFragment extends android.support.v4.app.Fragment implements OnM
             btn_park.setEnabled(true);
             btn_leave.setEnabled(false);
         }
+
+        placeSpotsOnMap(userSpotsForMap);
 
         // Set the button to be enabled when the map is ready
         btn_park.setEnabled(true);

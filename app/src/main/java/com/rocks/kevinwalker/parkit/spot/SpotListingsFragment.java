@@ -99,11 +99,7 @@ public class SpotListingsFragment extends Fragment {
     public void onResume(){
         super.onResume();
 
-        // TODO: Review with Hollis and determine if best way to handle this
-        NavDrawer navDrawer = new NavDrawer();
-        if (navDrawer.getCurrentFragmentTag().equals("spotListingFragment")) {
-            mListener.setSpotFabVisibility(View.VISIBLE);
-        }
+        mListener.setSpotFabVisibility(View.VISIBLE);
 
     }
 

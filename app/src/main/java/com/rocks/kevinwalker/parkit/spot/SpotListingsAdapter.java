@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rocks.kevinwalker.parkit.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -39,7 +40,15 @@ public class SpotListingsAdapter extends RecyclerView.Adapter<SpotListingsAdapte
         holder.txt_cost.setText(String.valueOf(mValues.get(position).getHourlyRate()));
         holder.txt_distance.setText(String.valueOf(mValues.get(position).getSpotDistance()));
         holder.txt_spot_name.setText(mValues.get(position).getName());
-        holder.spot_image.setImageResource(R.drawable.parking_space);
+
+        if (!mValues.get(position).getSpotPhotoURL().isEmpty()) {
+            Picasso.get().load(String.valueOf(mValues.get(position).getSpotPhotoURL()))
+                    .centerCrop()
+                    .resize(316, 200)
+                    .rotate(90)
+                    .placeholder(R.drawable.parking_space)
+                    .into(holder.spot_image);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

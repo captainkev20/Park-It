@@ -1,6 +1,12 @@
 package com.rocks.kevinwalker.parkit.authentication;
 
+import android.Manifest;
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +28,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.rocks.kevinwalker.parkit.utils.LocationHelper;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -39,6 +46,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
     private Button btn_register;
 
     private FirebaseAuth mAuth;
+    private LocationHelper locationHelper;
 
     // This is the entry point for our Activity's lifecycle - this always comes before "onStart()"
     // Set up any resources we can before the application becomes visible to the user
@@ -47,6 +55,7 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
 
         mAuth = FirebaseAuth.getInstance();
+        locationHelper = new LocationHelper(this);
         // Check if user is signed in redirect to NavDrawer if so.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         if (currentUser != null) {
@@ -54,6 +63,8 @@ public class Login extends AppCompatActivity implements View.OnClickListener {
         }
 
         setContentView(R.layout.activity_login);
+
+        locationHelper.userFirstLoginLocationPermissionCheck();
 
         ConstraintLayout constraintLayout = findViewById(R.id.constraint_layout);
         TextView txt_forgot_password;

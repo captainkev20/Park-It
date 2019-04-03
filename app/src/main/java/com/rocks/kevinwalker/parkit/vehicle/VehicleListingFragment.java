@@ -95,11 +95,8 @@ public class VehicleListingFragment extends ParentProfileFragment {
     @Override
     public void onResume(){
         super.onResume();
-        // TODO: Review with Hollis and determine if best way to handle this. Not showing btn when onResume called
-        NavDrawer navDrawer = new NavDrawer();
-        if (navDrawer.getCurrentFragmentTag().equals("vehicleListingFragmentTag")) {
-            mListener.setVehicleFabVisibility(View.VISIBLE);
-        }
+
+        mListener.setVehicleFabVisibility(View.VISIBLE);
     }
 
     @Override

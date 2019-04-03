@@ -4,12 +4,15 @@
     <string name="last_updated">Last Updated: </string>
     <string name="surface">Surface: </string>
     <string name="payment_type">Payment Type: </string>
+    <string name="card_saved">Card Saved!</string>
     <string name="distance">Miles</string>
     <string name="park_button">PARK</string>
     <string name="rating">Rating: </string>
     <string name="rating_placeholder">Rating Placeholder </string>
     <string name="name">Name: </string>
     <string name="vehicle">Vehicle: </string>
+    <string name="saved_vehicle">Vehicle Saved!</string>
+    <string name="vehicle_photo_saved">Vehicle Photo Saved</string>
     <string name="add_new_vehicle">Add New Vehicle</string>
     <string name="license">License: </string>
     <string name="address">Address: </string>
@@ -51,6 +54,7 @@
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="enter_email">Enter Email</string>
     <string name="saved_profile_photo">Photo Saved</string>
+    <string name="saved_profile">Profile Saved!</string>
     <string name="failed_save_profile_photo">Photo Failed to Save</string>
     <string name="btn_park_status">Park Status: </string>
     <string name="btn_find_user_parked_location_not_parked">"Sorry, it looks like you have not parked yet!</string>
@@ -82,6 +86,10 @@
     <string name="vehicle_make">Make</string>
     <string name="vehicle_make_label">Vehicle Make</string>
 
+    <string name="payment_brand_place_label">Card Brand</string>
+    <string name="payment_card_ending_in_label">Ending In</string>
+    <string name="payment_brand">Card Brand</string>
+    <string name="payment_ending_in">Ending In</string>
 
 
     <string name="name_on_card">Name on Card: </string>
@@ -89,6 +97,7 @@
     <string name="cvv">CVV: </string>
     <string name="expiration_date">Expiration Date: </string>
     <string name="zip">Zip: </string>
+    <string name="add_card">ADD CARD</string>
 
     <string name="spot_name">Spot Name: </string>
     <string name="spot_button_location_not_pressed">Sorry, you must specify your location when creating spot</string>
@@ -99,7 +108,9 @@
     <string name="per_hour">Per Hour</string>
     <string name="payment_types_accepted">Payment Types Accepted</string>
     <string name="add_new_spot">Add New Spot</string>
-    <string name="btn_spot_location">Spot Location</string>
+    <string name="btn_spot_location">Set Spot Location</string>
+    <string name="spot_saved">Spot Saved!</string>
+    <string name="spot_photo_saved">Spot Photo Saved</string>
     <string name="txt_cancel_add_new_spot">CANCEL</string>
     <string name="info_spot_location">Please stand in the location of your spot. When you are ready,
     press button below.</string>
@@ -109,9 +120,23 @@
     <string name="profile_nav_title">Profile </string>
     <string name="listings_nav_title">Listings </string>
     <string name="payments_nav_title">Payments </string>
+    <string name="payments_add_new_title">Add New Payment</string>
     <string name="settings_nav_title">Settings </string>
     <string name="about_nav_title">About Us </string>
     <string name="vehicles_nav_title">Vehicles</string>
+    <string name="about_us_nav_title">About Us</string>
+
+    <string name="about_us_description">Park It was developed with the goal of making finding parking easier.
+        We hope you enjoy this app as much as we have enjoyed making it. With that said, there are a few disclosures
+        we would like to add.
+        When you sign up, you agree to share certain information with us to allow our application to operate properly.
+        Upon signing up, we collect your email address and password. As you use the application, we may collect
+        information regarding your phone number, first and last name, credit card information, pictures
+        you may upload, vehicle information, and location data. At your discretion, you may delete
+        your personal information from the application at which point we will make every effort to
+        remove it from our records. Additionally, you may uninstall the application from your device.
+    </string>
+    <string name="privacy_policy_heading">Privacy Policy</string>
 
 
     <string name="btn_save">SAVE </string>
@@ -153,6 +178,7 @@
     <string name="registration_password_long">Your password needs to be less than 16 characters</string>
     <string name="forgot_password_enter_reg_email">"Enter E-mail"</string>
     <string name="forgot_password_button_send_reminder">SEND REMINDER</string>
+    <string name="forgot_password_oh_no_txt">Not to worry! Just enter your registration e-mail below and we will get you up and running again!</string>
     <string name="title_activity_nav_drawer">NavDrawer</string>
     <string name="Park">Park</string>
     <string name="Leave">Leave</string>

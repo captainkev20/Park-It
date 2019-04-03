@@ -6,7 +6,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.rocks.kevinwalker.parkit.payments.StripeCustomer;
+import com.rocks.kevinwalker.parkit.R;
+import com.rocks.kevinwalker.parkit.payments.Payment;
 import com.rocks.kevinwalker.parkit.spot.Spot;
 import com.rocks.kevinwalker.parkit.users.User;
 import com.rocks.kevinwalker.parkit.vehicle.Vehicle;
@@ -29,7 +30,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -41,7 +42,7 @@ public class FirestoreHelper {
     private static final String testStripe = "9HjucfCGRlm5CGz4pYdo";
 
     private static User currentUser = new User();
-    private static StripeCustomer stripeCustomer = new StripeCustomer();
+    private static Payment userPayment = new Payment();
     private static Spot userSpot = new Spot();
     private static Vehicle userVehicle = new Vehicle();
 
@@ -56,12 +57,13 @@ public class FirestoreHelper {
 
     private ArrayList<Spot> allSpots = new ArrayList<>();
     private ArrayList<Vehicle> allVehicles = new ArrayList<>();
+    private ArrayList<Spot> mapSpots = new ArrayList<>();
+    private ArrayList<Payment> allPayments = new ArrayList<>();
 
     private FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     private DatabaseReference ref = FirebaseDatabase.getInstance().getReference("spots");
 
     private static FirestoreHelper.OnDataUpdated mListener;
-
 
     public static FirestoreHelper getInstance() {
         if (instance != null) {
@@ -96,6 +98,11 @@ public class FirestoreHelper {
             userDocument.addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
                 public void onEvent(@Nullable DocumentSnapshot documentSnapshot, @Nullable FirebaseFirestoreException e) {
+                    if (e != null) {
+                        Log.d(TAG, "Listener failed");
+                        return;
+                    }
+
                     if (documentSnapshot.exists()) {
                         currentUser = documentSnapshot.toObject(User.class);
                         mergeCurrentUserWithFirestore();
@@ -131,7 +138,7 @@ public class FirestoreHelper {
 
     public void initializeFirestoreSpot() {
         // Initialize our Spot DocumentReference
-        userSpotDocument = firebaseFirestore.collection("spots").document(testSpot);
+        userSpotDocument = firebaseFirestore.collection("spots").document(String.valueOf(UUID.randomUUID()));
 
         userSpotDocument.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
@@ -158,13 +165,14 @@ public class FirestoreHelper {
     }
 
     public void initializeFirestoreStripeCustomer() {
-        stripeCustomers = firebaseFirestore.collection("stripe_customers").document(testStripe);
+        stripeCustomers = firebaseFirestore.collection("stripe_customers")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         stripeCustomers.get().addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
             @Override
             public void onSuccess(DocumentSnapshot documentSnapshot) {
                 if (documentSnapshot.exists()) {
-                    stripeCustomer = documentSnapshot.toObject(StripeCustomer.class);
+                    userPayment = documentSnapshot.toObject(Payment.class);
                 }
             }
         });
@@ -206,7 +214,7 @@ public class FirestoreHelper {
     }
 
     public void mergeStripeCustomerWithFirestore() {
-        stripeCustomers.set(stripeCustomer, SetOptions.merge())
+        stripeCustomers.set(userPayment, SetOptions.merge())
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     @Override
                     public void onSuccess(Void aVoid) {
@@ -226,13 +234,37 @@ public class FirestoreHelper {
             @Override
             public void onSuccess(Void aVoid) {
                 Log.d(TAG, "Successful write");
-                Toast.makeText((Context) mListener, "Vehicle Saved!", Toast.LENGTH_SHORT).show();
             }
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Log.d(TAG, "Failed to write");
-                Toast.makeText((Context) mListener, "Vehicle Not Saved!", Toast.LENGTH_SHORT).show();
+                Toast.makeText((Context) mListener, "Vehicle Not Saved! Check internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+//    // TODO: Review with Hollis on how to handle multiple vehicles
+//    public void mergeVehicleWithFirestore(Map<String,Vehicle> userVehicle) {
+//        userVehicleDocument.set(userVehicle).addOnSuccessListener(new OnSuccessListener<Void>() {
+//            @Override
+//            public void onSuccess(Void aVoid) {
+//                Toast.makeText((Context) mListener, "Vehicle Saved!", Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+    public void mergeSpotWithFirestore(Spot userSpot) {
+        userSpotDocument.set(userSpot, SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                Log.d(TAG, "Successful write");
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed to write");
+                Toast.makeText((Context) mListener, "Spot Not Saved! Check internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -290,6 +322,7 @@ public class FirestoreHelper {
                 if (task.isSuccessful()) {
 
                     // Clear array list - fixes RecyclerView issue of duplicating list items
+
                     allSpots.clear();
 
                     for (QueryDocumentSnapshot document : task.getResult()) {
@@ -301,11 +334,54 @@ public class FirestoreHelper {
         }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Failed to fetch");
+                Log.d(TAG,"Failed to fetch spots");
             }
         });
 
         return allSpots;
+    }
+
+    public ArrayList<Payment> getAllUserPayments() {
+        FirebaseFirestore.getInstance().collection("stripe_customers")
+                .whereEqualTo("paymentUserUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+
+                    allPayments.clear();
+
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        allPayments.add(documentSnapshot.toObject(Payment.class));
+                    }
+                    mListener.onAllPaymentsUpdated(allPayments);
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Log.d(TAG, "Failed to fetch payments");
+            }
+        });
+
+        return allPayments;
+    }
+
+    public ArrayList<Spot> getSpotForMap() {
+        FirebaseFirestore.getInstance().collection("spots")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                        mapSpots.add(documentSnapshot.toObject(Spot.class));
+                    }
+                    mListener.onAllMapSpotsUpdated(mapSpots);
+                }
+            }
+        });
+
+        return mapSpots;
     }
 
     public ArrayList<Vehicle> getAllVehicles() {
@@ -313,31 +389,52 @@ public class FirestoreHelper {
                 .whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
                 .get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-            @Override
-            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                if (!queryDocumentSnapshots.isEmpty()) {
-                    List<Vehicle> vehicles = new ArrayList<>();
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
 
-                    // Clear array list - fixes RecyclerView issues of duplicating list items
-                    allVehicles.clear();
+                        allVehicles.clear();
 
-                    for (DocumentSnapshot documentSnapshot : queryDocumentSnapshots) {
-                        vehicles.add(documentSnapshot.toObject(Vehicle.class));
+                        if (queryDocumentSnapshots.isEmpty()) {
+                            return;
+                        } else {
+                            allVehicles.addAll(queryDocumentSnapshots.toObjects(Vehicle.class));
+                        }
+
+                        mListener.onAllVehiclesUpdated(allVehicles);
                     }
-                    allVehicles.addAll(vehicles);
-                    mListener.onAllVehiclesUpdated(allVehicles);
-                }
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+                }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Log.d(TAG,"Failed to fetch");
+                Log.d(TAG, "Failed to fetch");
             }
         });
 
         return allVehicles;
     }
 
+    // TODO: Get working with Holis to get all vehicles out. Maybe use GSON to convert Map to POJO
+//    public ArrayList<Vehicle> getAllVehicles() {
+//        FirebaseFirestore.getInstance().collection("vehicles")
+//                //.whereEqualTo("vehicleUUID",FirebaseAuth.getInstance().getCurrentUser().getUid())
+//                .get()
+//                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+//                        if (task.isSuccessful()) {
+//                            for (DocumentSnapshot documentSnapshot : task.getResult()) {
+//                                Map<String,Object> map = (Map<String,Object>) documentSnapshot.getData();
+//                                for (Map.Entry<String,Object> entry : map.entrySet()) {
+//                                    System.out.print(entry.getKey() + "/" + entry.getValue());
+//
+//                                }
+//                            }
+//                        }
+//                    }
+//                });
+//
+//        return allVehicles;
+//
+//    }
 
     public static void logOff() {
         currentUser = null;
@@ -347,7 +444,7 @@ public class FirestoreHelper {
         userSpot = null;
         stripeCustomers = null;
         filePath = null;
-        stripeCustomer = null;
+        userPayment = null;
     }
 
     public User getCurrentUser() {
@@ -360,11 +457,15 @@ public class FirestoreHelper {
 
     public Spot getUserSpot() { return userSpot; }
 
+    public Payment getUserPayment() { return userPayment; }
+
     public Vehicle getUserVehicle() { return userVehicle; }
 
-    public StripeCustomer getStripeCustomer() { return stripeCustomer; }
+    public Payment getStripeCustomer() { return userPayment; }
 
-    public void setStripeUser(StripeCustomer stripeUser) { stripeCustomer = stripeUser; }
+    public void setStripeUser(Payment stripeUser) { userPayment = stripeUser; }
+
+    public DocumentReference getSpotRef() { return userSpotDocument; }
 
     public DatabaseReference getRef() { return ref; }
 
@@ -376,5 +477,7 @@ public class FirestoreHelper {
         void onAllVehiclesUpdated(ArrayList<Vehicle> vehicles);
         void profilePictureUpdated(Uri filePath);
         void navHeaderProfilePictureUpdated(Uri filePath);
+        void onAllMapSpotsUpdated(ArrayList<Spot> mapSpots);
+        void onAllPaymentsUpdated(ArrayList<Payment> payments);
     }
 }

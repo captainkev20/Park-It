@@ -114,6 +114,34 @@ public class LocationHelper {
         }
     }
 
+    public boolean userFirstLoginLocationPermissionCheck() {
+        if (ContextCompat.checkSelfPermission(mContext, FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            new AlertDialog.Builder(getmContext())
+                    .setTitle(getmContext().getResources().getString(R.string.PERMISSION_DIALOG_TITLE))
+                    .setMessage(getmContext().getResources().getString(R.string.PERMISSION_DIALOG_MESSAGE))
+                    .setPositiveButton(getmContext().getResources().getString(R.string.PERMISSION_DIALOG_POSITIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            ActivityCompat.requestPermissions((Activity) getmContext(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, LOCATION_PERMISSION_REQUEST_CODE);
+                            // They said yes, so set to true
+                            mhasLocationPermission = true;
+                        }
+                    })
+                    .setNegativeButton(getmContext().getResources().getString(R.string.PERMISSION_DIALOG_NEGATIVE_BUTTON_TEXT), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(mContext, "CustomLocation not available", Toast.LENGTH_SHORT).show();
+                            // UserProfileFragment said no, set to false
+                            mhasLocationPermission = false;
+                        }
+                    }).show();
+        } else {
+            mhasLocationPermission = true;
+        }
+
+        return mhasLocationPermission;
+    }
+
     public void startLocationUpdates() {
 
         // Create the location request to start receiving updates

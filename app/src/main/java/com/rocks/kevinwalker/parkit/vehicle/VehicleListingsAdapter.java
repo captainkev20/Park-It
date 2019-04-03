@@ -10,6 +10,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rocks.kevinwalker.parkit.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ public class VehicleListingsAdapter extends RecyclerView.Adapter<VehicleListings
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.fragment_vehicle_list_layout, parent, false);
+
         return new ViewHolder(view);
     }
 
@@ -38,7 +40,15 @@ public class VehicleListingsAdapter extends RecyclerView.Adapter<VehicleListings
         holder.txt_vehicle_name.setText(mValues.get(position).getVehicleName());
         holder.txt_vehicle_make.setText(String.valueOf(mValues.get(position).getVehicleMake()));
         holder.txt_license_plate.setText(String.valueOf(mValues.get(position).getVehicleLicensePlate()));
-        holder.vehicle_image.setImageResource(R.drawable.ic_vehicle);
+
+        if (!mValues.get(position).getVehiclePhotoURL().isEmpty()) {
+            Picasso.get().load(String.valueOf(mValues.get(position).getVehiclePhotoURL()))
+                    .centerCrop()
+                    .resize(128, 140)
+                    .rotate(90)
+                    .placeholder(R.drawable.ic_vehicle)
+                    .into(holder.vehicle_image);
+        }
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override

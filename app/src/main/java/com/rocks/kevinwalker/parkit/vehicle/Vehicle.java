@@ -7,10 +7,11 @@ public class Vehicle {
     private String vehicleMake = "";
     private String vehicleModel = "";
     private String vehicleName = "";
-    private String vehicleLicensePlate;
+    private String vehicleLicensePlate = "";
     private String vehicleUUID = "";
     private int vehicleYear = 0;
     private ImageView vehiclePicture;
+    private String vehiclePhotoURL = "";
 
     public Vehicle(){}
 
@@ -58,5 +59,7 @@ public class Vehicle {
 
     public void setVehicleUUID(String vehicleUUID) { this.vehicleUUID = vehicleUUID; }
 
+    public String getVehiclePhotoURL() { return vehiclePhotoURL; }
 
+    public void setVehiclePhotoURL(String vehiclePhotoURL) { this.vehiclePhotoURL = vehiclePhotoURL; }
 }
