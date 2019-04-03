@@ -97,6 +97,7 @@
     <string name="cvv">CVV: </string>
     <string name="expiration_date">Expiration Date: </string>
     <string name="zip">Zip: </string>
+    <string name="add_card">ADD CARD</string>
 
     <string name="spot_name">Spot Name: </string>
     <string name="spot_button_location_not_pressed">Sorry, you must specify your location when creating spot</string>
@@ -177,6 +178,7 @@
     <string name="registration_password_long">Your password needs to be less than 16 characters</string>
     <string name="forgot_password_enter_reg_email">"Enter E-mail"</string>
     <string name="forgot_password_button_send_reminder">SEND REMINDER</string>
+    <string name="forgot_password_oh_no_txt">Not to worry! Just enter your registration e-mail below and we will get you up and running again!</string>
     <string name="title_activity_nav_drawer">NavDrawer</string>
     <string name="Park">Park</string>
     <string name="Leave">Leave</string>
