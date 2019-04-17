@@ -8,8 +8,8 @@ android {
         applicationId "com.rocks.kevinwalker.parkit"
         minSdkVersion 22
         targetSdkVersion 26
-        versionCode 5
-        versionName "1.1.1"
+        versionCode 6
+        versionName "1.1.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
