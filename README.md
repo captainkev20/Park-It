@@ -1,7 +1,7 @@
 # Park-It
 
 Park It allows users to sign up and rent out their personal parking spots. This app was designed to be different from 
-typical parking apps, which generally only work with participating cities/towns. It is all about giving power to the end-user.
+typical parking apps, which generally only work with participating cities/towns. The goal is to give power to the end-user.
 This application is still under development, but is in a demonstrable state.
 
 # Features
