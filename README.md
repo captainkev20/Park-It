@@ -8,7 +8,7 @@ This application is still under development, but is in a demonstrable state.
 * Submit personal spaces - add a spot photo, specify a rate, spot type, and geographic coordinates.
 * View spots near you with Google Maps.
 * Add your vehicle - add vehicle name, license plate, and photo.
-* Use your favorite credit card - users can securely enter their credit card information, processed by Stripe.
+* Add your favorite credit card - users can securely enter their credit card information, processed by Stripe.
 
 # Built With
 * Java 8
