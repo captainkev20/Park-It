@@ -24,7 +24,7 @@ import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 import com.rocks.kevinwalker.parkit.about.AboutFragment;
-import com.rocks.kevinwalker.parkit.authentication.Login;
+import com.rocks.kevinwalker.parkit.authentication.login.LoginView;
 import com.rocks.kevinwalker.parkit.maps.CustomLocation;
 import com.rocks.kevinwalker.parkit.maps.MapsFragment;
 import com.rocks.kevinwalker.parkit.notifications.LogOffAlertDialogFragment;
@@ -37,7 +37,6 @@ import com.rocks.kevinwalker.parkit.spot.SpotListingsFragment;
 import com.rocks.kevinwalker.parkit.users.User;
 import com.rocks.kevinwalker.parkit.users.UserProfileFragment;
 import com.rocks.kevinwalker.parkit.utils.FirestoreHelper;
-import com.rocks.kevinwalker.parkit.utils.LocationHelper;
 import com.rocks.kevinwalker.parkit.vehicle.NewVehicleFragment;
 import com.rocks.kevinwalker.parkit.vehicle.Vehicle;
 import com.rocks.kevinwalker.parkit.vehicle.VehicleListingFragment;
@@ -184,9 +183,9 @@ public class NavDrawer extends AppCompatActivity
     public void logOff() {
         FirebaseAuth.getInstance().signOut();
         FirestoreHelper.logOff();
-        Intent intent = new Intent(this, Login.class);
+        Intent intent = new Intent(this, LoginView.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(new Intent(NavDrawer.this, Login.class));
+        startActivity(new Intent(NavDrawer.this, LoginView.class));
     }
 
     public static void saveCurrentUserLocation(CustomLocation currentUserLocation) {
