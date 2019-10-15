@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
 import com.google.firebase.auth.FirebaseUser;
+import com.rocks.kevinwalker.parkit.authentication.login.LoginView;
 
 public class Registration extends AppCompatActivity implements View.OnClickListener {
 
@@ -71,7 +72,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                             FirebaseUser user = mAuth.getCurrentUser();
                             Toast.makeText(Registration.this, R.string.registration_success,
                                     Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(Registration.this, Login.class));
+                            startActivity(new Intent(Registration.this, LoginView.class));
                         } else {
                             try {
                                 throw task.getException();
@@ -121,7 +122,7 @@ public class Registration extends AppCompatActivity implements View.OnClickListe
                             createAccount(username.getText().toString(), password.getText().toString());
                             // Return newly registered user back to Login
 
-                            startActivity(new Intent(getApplicationContext(), Login.class));
+                            startActivity(new Intent(getApplicationContext(), LoginView.class));
                         }
                         // User's passwords do not match
                     } else {
